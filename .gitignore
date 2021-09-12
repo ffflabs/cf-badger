@@ -1,0 +1,15 @@
+dist
+node_modules
+transpiled
+worker
+.vscode
+
+
+.env
+.mf
+wrangler.yaml
+*.log
+
+
+wrangler.toml
+
