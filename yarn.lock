@@ -263,6 +263,13 @@
   resolved "https://registry.yarnpkg.com/@cfworker/worker-types/-/worker-types-1.8.0.tgz#10d0a1a8969b0101132420ca0686dcb0c824ca7e"
   integrity sha512-J/jEY6CRuZqwtr/9dwjFJKPdG1MwWeihcKOKJFkbWQgBcvuf0I3HI8LXOd3XKV1LoMwBkLZan+WjN9YHJbJSwQ==
 
+"@cloudflare/kv-asset-handler@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@cloudflare/kv-asset-handler/-/kv-asset-handler-0.1.3.tgz#3eaaf962b16c48a7189db5d5ac1c4dca4e2ed1a0"
+  integrity sha512-FNcunDuTmEfQTLRLtA6zz+buIXUHj1soPvSWzzQFBC+n2lsy+CGf/NIrR3SEPCmsVNQj70/Jx2lViCpq+09YpQ==
+  dependencies:
+    mime "^2.5.2"
+
 "@cloudflare/workers-types@^2.0.0", "@cloudflare/workers-types@^2.1.0", "@cloudflare/workers-types@^2.2.2":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-2.2.2.tgz#1bced16bba801d7af987da835467545bb5cc7ac6"
@@ -302,10 +309,10 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
-"@mrbbot/node-fetch@^4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@mrbbot/node-fetch/-/node-fetch-4.5.0.tgz#3b0e184cf4f22781f9de1950fa3b57be7fff7cb8"
-  integrity sha512-EuFTbohMH/dzWXy4PRTM/bn1fqmOkyiCHfXzioA9lYV/xRAnUKjIvaRiA0h4YQ6ZSPvgTGzvZi7O+Ro66xDN5A==
+"@mrbbot/node-fetch@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@mrbbot/node-fetch/-/node-fetch-4.6.0.tgz#82c273b8e6b5d7846dfec0ed331007801ac49fff"
+  integrity sha512-GTSOdhpiUnJ9a+XK90NUiqCqOmqXOUU4tqg8WbpZW+nEUTJ4dF3QZ4xhfWg5bqYPagIh/e9r5HxGrftzmulbmw==
   dependencies:
     "@cloudflare/workers-types" "^2.2.2"
     busboy "^0.3.1"
@@ -3359,13 +3366,18 @@ mime@^1.4.1:
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
   integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
 
-miniflare@^1.3.3:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/miniflare/-/miniflare-1.4.0.tgz#305c5a675e41fc3f015fc920bb87ac1b50d789c1"
-  integrity sha512-jmxwA/+E8dGb80+AJyjgb6isT2ojIk852Jl1qpacDpIAkWOPKoq1VshxLtiMsotheoAuZKQCQQrjJnTMOrAFiw==
+mime@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-2.5.2.tgz#6e3dc6cc2b9510643830e5f19d5cb753da5eeabe"
+  integrity sha512-tqkh47FzKeCPD2PUiPB6pkbMzsCasjxAfC62/Wap5qrUWcb+sFasXUC5I3gYM5iBM8v/Qpn4UK0x+j0iHyFPDg==
+
+miniflare@~1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/miniflare/-/miniflare-1.4.1.tgz#96f13652350a36cdc633ed61232df023cd095ffc"
+  integrity sha512-hJkMbTEM+sSiAo2yuPOucrdFYINLU7vvl9uVkRzAQ/h0CjmkYOCoyBn4jYzWtDZeQ0XrkyS6PGUCO277B5TsXA==
   dependencies:
     "@iarna/toml" "^2.2.5"
-    "@mrbbot/node-fetch" "^4.5.0"
+    "@mrbbot/node-fetch" "^4.6.0"
     "@peculiar/webcrypto" "^1.1.4"
     chokidar "^3.5.1"
     cjstoesm "^1.1.4"

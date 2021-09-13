@@ -2,10 +2,11 @@
 //import { version } from '../package.json';
 import { fallbackSvg } from './modules/fallback_svg';
 
-import { playgroundHTML } from './frontend'
 interface IWaitableObject {
   waitUntil: (promise: Promise<any>) => void;
 }
+import { getAssetFromKV } from "@cloudflare/kv-asset-handler"
+
 
 interface IPkgConfig {
   name: string;
@@ -19,7 +20,7 @@ import Toucan from 'toucan-js';
 import type { Context } from 'toucan-js/dist/types';
 import type { WorkflowRunPart, IWorkflowList, IWorkflowRuns, WorkflowRun } from './handler';
 import { computeColorAndMessage } from './handler';
-import { ThrowableRouter, json, error } from 'itty-router-extras';
+import { ThrowableRouter, json, error, missing } from 'itty-router-extras';
 
 const pkg: IPkgConfig = require('../package.json'),
   { version: release } = pkg
@@ -55,13 +56,21 @@ function computeGithubRequest(
   { repo, owner, workflow_id }: { repo: string, owner: string, workflow_id?: string },
   env: EnvWithBindings
 ): Request {
-  const cfInit = {
-    headers: {
-      Accept: "application/vnd.github.v3+json",
-      Authorization: `token ${env.GITHUB_TOKEN}`
-    }
+  const cf: RequestInitCfProperties = {
+    // cacheTtl: 43200,
+    cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
   },
+
+    cfInit = {
+      cf,
+      headers: {
+        Accept: "application/vnd.github.v3+json",
+        Authorization: `token ${env.GITHUB_TOKEN}`
+      }
+    },
     ghRequest = new Request(`https://api.github.com/repos/${owner}/${repo}/actions/workflows${workflow_id ? ('/' + workflow_id + '/runs') : ''}`, cfInit);
+  ghRequest.headers.set('cache-control', 'public');
+  ghRequest.headers.append('cache-control', `max-age=300`);
   console.log({ ghRequestUrl: ghRequest.url.toString(), cfInit })
   return ghRequest
 }
@@ -123,18 +132,19 @@ router
     const { workflows } = (await res.json()) as IWorkflowList,
       workflow_runs_urls = workflows.map(workflow => {
         let { id, name, path } = workflow, fileName = path.split('/').pop()
-        return { id_url: `${url}/${id}`, name, filename_url: `${url}/${fileName}` }
+        return { id, id_url: `${url}/${id}`, name, filename_url: `${url}/${fileName}` }
       })
     return json(workflow_runs_urls)
   })
-  .get('/:owner/:repo/:workflow_id', async (
+  .get('/:owner/:repo/:workflow_id/:branch?*', async (
     request: RequestWithParams,
     env: EnvWithBindings,
     ctx: TctxWithSentry
   ): Promise<Response> => {
-    let { url: originalUrl, params: { owner, repo, workflow_id: wf_id } } = request,
+    let { url: originalUrl, params } = request,
+      { owner, repo, workflow_id: wf_id } = params,
       requestURL = new URL(originalUrl),
-      branch = requestURL.searchParams.get('branch'),
+      branch = requestURL.searchParams.get('branch') || decodeURIComponent(request.params.branch),
       ghRequest = computeGithubRequest({ owner, repo, workflow_id: wf_id }, env)
 
     ctx.sentry.addBreadcrumb({ data: { originalUrl, ghRequest } });
@@ -143,10 +153,10 @@ router
       throw computeErroredResponse({ owner, repo }, res)
     }
     const { workflow_runs } = (await res.json()) as IWorkflowRuns,
-      runs = workflow_runs.map((run): WorkflowRunPart => {
+      runs = Object.values(workflow_runs.reduce((accum, run) => {
         let { id, name, head_branch, status, conclusion, workflow_id } = run
-        //
-        return {
+
+        accum[head_branch] = accum[head_branch] || {
           id,
           url: `https://github.com/${owner}/${repo}/actions/runs/${id}`,
           name,
@@ -155,14 +165,41 @@ router
           conclusion,
           workflow_id
         }
-      })
-    return json(computeColorAndMessage(runs as WorkflowRun[], Number(wf_id), branch))
+        return accum;
+      }, {} as { [s: string]: WorkflowRunPart }))
+    if (branch) {
+      return json({ ...params, branch, ...computeColorAndMessage(runs as WorkflowRun[], Number(wf_id), branch) })
+    }
+    return json(runs)
     //return json({ msg: computeColorAndMessage(runs as WorkflowRun[], Number(wf_id), branch), runs })
 
 
   })
   .get('/favicon.ico', () => new Response(fallbackSvg, { headers: { 'Content-Type': 'image/svg' } }))
-  .get('/', () => new Response(playgroundHTML, { headers: { 'Content-Type': 'text/html' } }))
+  .get('*', async (request: FetchEvent['request']) => {
+
+
+    try {
+
+      const page = await getAssetFromKV({ request } as FetchEvent, { cacheControl: { bypassCache: true } })
+
+      // allow headers to be altered
+      const response = new Response(page.body, page)
+
+      response.headers.set('X-XSS-Protection', '1; mode=block')
+      response.headers.set('X-Content-Type-Options', 'nosniff')
+      response.headers.set('X-Frame-Options', 'DENY')
+      response.headers.set('Referrer-Policy', 'unsafe-url')
+      response.headers.set('Feature-Policy', 'none')
+
+      return response
+
+    } catch (e) {
+      // if an error is thrown try to serve the asset at 404.html
+      return missing('not found: ' + request.url)
+
+    }
+  })
 const exportDefault = {
   fetch: async (request: Request, env: EnvWithBindings, ctx: TctxWithSentry): Promise<Response> => {
     return Promise.resolve(router.handle(request, env, ctx))
