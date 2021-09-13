@@ -54,6 +54,7 @@
     "@cfworker/sentry": "^1.8.0",
     "@cfworker/web": "^1.8.0",
     "itty-router": "^2.4.2",
+    "itty-router-extras": "^0.4.2",
     "toucan-js": "^2.5.0"
   }
 }

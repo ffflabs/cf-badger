@@ -30,51 +30,45 @@ export const playgroundHTML = `
 						<div class="field">
 							<label class="label">Repository</label>
 							<div class="control">
-								<input class="input" type="text" placeholder="atrox/sync-dotenv" v-model="repository">
+								<input class="input" type="text" placeholder="ffflabs/cf-badger" v-model="repository">
 							</div>
 						</div>
-
-						<div class="field">
-							<label class="label">Branch</label>
-							<div class="control">
-								<input class="input" type="text" placeholder="master" v-model="ref">
-							</div>
-						</div>
+                        <div class="field" >
+                            <label class="label">Github Token (<a v-on:click="openNewTokenPage">create</a>)</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Only needed for private repos" v-model="token">
+                            </div>
+                        </div>
+						
 					</div>
-
+                    <div class="field-body">
+                        <div class="field">
+                            <label class="label">Branch</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="master" v-model="branch">
+                            </div>
+                        </div>
 					
-                    <div class="field">
-                        <label class="label">Style</label>
-                        <div class="control">
-                            <div class="select">
-                                <select v-model="style">
-                                    <option>flat</option>
-                                    <option>flat-square</option>
-                                    <option>plastic</option>
-                                    <option>for-the-badge</option>
-                                    <option>popout</option>
-                                    <option>popout-square</option>
-                                    <option>social</option>
-                                </select>
+                        <div class="field">
+                            <label class="label">Style</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select v-model="style">
+                                        <option>flat</option>
+                                        <option>flat-square</option>
+                                        <option>plastic</option>
+                                        <option>for-the-badge</option>
+                                        <option>popout</option>
+                                        <option>popout-square</option>
+                                        <option>social</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="field">
-                        <div class="control">
-                            <label class="checkbox">
-                                <input type="checkbox" v-model="privateRepo">
-                                Private Repository?
-                            </label>
-                        </div>
-                    </div>
 
-                    <div class="field" v-if="privateRepo">
-                        <label class="label">Github Token (<a v-on:click="openNewTokenPage">create</a>)</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="GitHub Access Token" v-model="token">
-                        </div>
-                    </div>
+                   
 
                     <div class="card has-text-centered">
                         <div class="card-content">
@@ -129,7 +123,7 @@ export const playgroundHTML = `
     data: {
       repository: '',
       style: 'flat',
-	  ref: '',
+	  branch: '',
       privateRepo: false,
       token: ''
     },

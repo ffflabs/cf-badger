@@ -39,7 +39,7 @@ export interface WorkflowRun {
   rerun_url: string;
   workflow_url: string;
 }
-
+// #CB2431
 
 export const Conclusion = {
   success: (): ShieldsAttributes => ({
@@ -54,7 +54,7 @@ export const Conclusion = {
 
   , failure: (): ShieldsAttributes => ({
     color: "critical",
-    message: "failure",
+    message: "failing",
   })
 
   , cancelled: (): ShieldsAttributes => ({
@@ -91,22 +91,25 @@ export interface IWorkflowRuns {
 }
 type ShieldsAttributes = { color: string; message: string, isError?: boolean }
 
-export function computeColorAndMessage(runs: Pick<WorkflowRun, 'id' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>[], branch: string, workflow_id: number): ShieldsAttributes {
-  const wfRun = runs.find(run => run.workflow_id === workflow_id && run.head_branch === branch)
+export type WorkflowRunPart = Pick<WorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>
+
+export function computeColorAndMessage(runs: WorkflowRunPart[], workflow_id: number, branch?: string | null | undefined): ShieldsAttributes {
+  const wfRun = runs.find(run => run.workflow_id === workflow_id && (!branch || run.head_branch === branch))
+
+  const payload = (label: string) => ({
+    "schemaVersion": 1,
+    label,
+    "namedLogo": "github",
+    "cacheSeconds": 300
+  })
   if (!wfRun) {
-    return Errors.no_runs()
+    return { ...payload('Unknown workflow'), ...Errors.no_runs() }
   }
-  const { name: label } = wfRun,
-    payload = {
-      "schemaVersion": 1,
-      label,
-      "namedLogo": "github",
-      "cacheSeconds": 300
-    }
+
   if (wfRun.status === 'completed') {
-    return { ...payload, ...Conclusion[wfRun.conclusion]() }
+    return { ...payload(wfRun.name), ...Conclusion[wfRun.conclusion]() }
   }
-  return { ...payload, ...Status[wfRun.status]() }
+  return { ...payload(wfRun.name), ...Status[wfRun.status]() }
 }
 
 export const Errors = {

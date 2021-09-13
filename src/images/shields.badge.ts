@@ -1,4 +1,4 @@
-export function badge(workflow_name, workflow_status) {
+export function badge(workflow_name: string, workflow_status: string): string {
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="231" height="20" role="img" aria-label="${workflow_name}: ${workflow_status}">
 <title>${workflow_name}: ${workflow_status}</title>
@@ -24,3 +24,4 @@ export function badge(workflow_name, workflow_status) {
 </svg>`
 
 }
+

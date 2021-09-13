@@ -14,13 +14,5 @@ declare global {
   const WORKER_URL: string | boolean;
   const USE_CACHE: boolean;
   const FALLBACK_DOMAIN: string;
-  const WEBHOOK_PROXY_URL: string;
-  const APP_ID: number;
-  const PRIVATE_KEY: string;
-  const WEBHOOK_SECRET: string;
-  const GITHUB_CLIENT_ID: string;
-  const GITHUB_CLIENT_SECRET: string;
-  const PRIVATE_KEY_1: string
-  const PRIVATE_KEY_2: string
-  const PRIVATE_KEY_3: string
+
 }
