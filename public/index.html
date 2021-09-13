@@ -5,147 +5,196 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description"
-        content="GitHub Actions Badge provides you with simple badges for your GitHub READMEs to show your GitHub Actions status.">
-    <meta name="author" content="Atrox <hello@atrox.dev>">
-    <title>GitHub Actions Badge</title>
+        content="CF-Badger is a Cloudflare Worker offering Status Badges for any workflow in your private Github Repos.">
+    <meta name="author" content="Felipe Figueroa">
+    <title>CF-Badger</title>
     <link rel="stylesheet" href="https://unpkg.com/bulma@0.7.5/css/bulma.min.css">
 </head>
 
 <body>
-    <section class="hero is-dark is-small">
+    <section class="hero  is-small">
         <div class="hero-body">
             <div class="container has-text-centered">
-                <h1 class="title">
-                    GitHub Actions Badge
-                </h1>
+                <header class="card-header-icon content ">
+                    <div class="media">
+                        
+                            <figure class="image ">
+                                <img src="/cf-badger-extended-title-round-corners.svg" style="height:84px">
+                            </figure>
+                       
+
+                    </div>
+                  </header>
             </div>
         </div>
     </section>
 
     <section class="section">
         <div class="container">
+
             <div class="columns">
-                <div class="column is-half-desktop is-three-quarters-mobile is-two-thirds-tablet is-offset-one-quarter">
-                    <div id="app">
+                <div
+                    class="column is-two-thirds-desktop is-four-fifths-mobile is-three-quarters-tablet is-offset-one-fifth">
+                    <div class="card">
+                      
+                        <div class="card-content">
+                         
+                            <div id="app">
 
-                        <div class="field-body columns">
-                            <div class="field column is-two-fifths">
-                                <label class="label">Repository</label>
-                                <div class="control">
-                                    <input class="input" type="text" placeholder="ffflabs/cf-badger"
-                                        v-model="repository">
+                                <div class="field-body columns">
+                                    <div class="field column is-4">
+                                        <label class="label">Repository</label>
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="ffflabs/cf-badger"
+                                                v-model="repository">
+                                        </div>
+                                    </div>
+                                    <div class="column is-6">
+                                        <label class="label">Github Token (<a
+                                                v-on:click="openNewTokenPage">create</a>)</label>
+                                        <div class="field ">
+                                            <div class="control">
+                                                <input class="input" type="text"
+                                                    placeholder="Only needed for private repos" v-model="token">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-1">
+                                        <div class="field ">
+                                            <label class="label">Workflows</label>
+                                            <div class="control">
+                                                <button class="button is-info" v-on:click="getWorkFlows">
+                                                    Discover
+
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field-body columns" style="margin-bottom:2em">
+
+
+                                    <div class="column is-6">
+                                        <label class="label"
+                                            :style="WorkflowTitle.color">{{WorkflowTitle.content}}</label>
+                                        <div class="field has-addons">
+
+                                            <div class="control">
+                                                <div class="select">
+                                                    <select v-model="workflow" v-bind:disabled="!workflows.length">
+                                                        <option v-if="!workflows.length">No workflows discovered yet
+                                                        </option>
+                                                        <option v-for="workflow in workflows" :key="workflow.id"
+                                                            v-bind:title="workflow.name" :value="workflow">
+                                                            {{workflow.name}}
+                                                        </option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="control">
+                                                <button v-bind:disabled="!workflows.length" class="button is-info"
+                                                    v-on:click="pickWorkFlow">
+                                                    Pick
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-6">
+                                        <label class="label"
+                                            :style="BranchesTitle.color">{{BranchesTitle.content}}</label>
+                                        <div class="field has-addons">
+
+                                            <div class="control">
+                                                <div class="select">
+                                                    <select v-model="branch" v-bind:disabled="!branches.length">
+                                                        <option v-if="!branches.length">No branches discovered yet
+                                                        </option>
+                                                        <option v-for="branch in branches" :key="branch.id"
+                                                            :value="branch.head_branch">{{branch.head_branch}}
+                                                        </option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+
+
+
+
+                                <div class="  has-text-centered">
+                                    <div class="columns">
+                                        <div class="column is-4">
+                                            <div class="field is-horizontal">
+                                                <div class="field-label is-normal">
+                                                    <label class="label">Style</label>
+                                                </div>
+                                                <div class="control">
+                                                    <div class="select">
+                                                        <select v-model="style">
+                                                            <option>flat</option>
+                                                            <option>flat-square</option>
+                                                            <option>plastic</option>
+                                                            <option>for-the-badge</option>
+                                                            <option>popout</option>
+                                                            <option>popout-square</option>
+                                                            <option>social</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="column is-6">
+                                            <div class="field">
+
+                                                <a v-bind:href="gotoURL" target="_blank">
+                                                    <img alt="Build Status" v-bind:src="badgeURL" />
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                 
+                                   
+                                    <label class="label">Markdown</label>
+                                    <div class="field has-addons">
+
+                                        <div class="control is-expanded">
+                                            <textarea class="is-small textarea" rows="2" placeholder="e.g. Hello world"
+                                                ref="markdownTA">{{markdownSource}}</textarea>
+                                        </div>
+                                        <div class="control">
+                                            <button class="button is-info" v-on:click="copy($refs.markdownTA)">
+                                                Copy
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <label v-if="showHtml" class="label">HTML</label>
+                                    <div v-if="showHtml" class="field has-addons">
+                                        <div class="control is-expanded">
+                                            <input class="input" type="text" readonly="readonly"
+                                                v-bind:value="htmlSource" v-on:focus="$event.target.select()"
+                                                ref="htmlInput">
+                                        </div>
+                                        <div class="control">
+                                            <button class="button is-info" v-on:click="copy($refs.htmlInput)">
+                                                Copy
+                                            </button>
+                                        </div>
+                                    </div>  
+                                   
                                 </div>
                             </div>
-                            <div class="column is-three-fifths">
-                                <label class="label">Github Token (<a v-on:click="openNewTokenPage">create</a>)</label>
-                                <div class="field  has-addons">
-                                    <div class="control">
-                                        <input class="input" type="text" placeholder="Only needed for private repos"
-                                            v-model="token">
-                                    </div>
-                                    <div class="control">
-                                        <button class="button is-info" v-on:click="getWorkFlows">
-                                            <span class="icon">
-                                                <i class="fas fa-sync-alt"></i>
 
-
-                                            </span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field-body" v-if="workflows.length">
-
-
-                            <div class="field has-addons">
-                                <label class="label">Workflow &nbsp;</label>
-                                <div class="control">
-                                    <div class="select">
-                                        <select v-model="workflow">
-                                            <option v-for="workflow in workflows" :key="workflow.id"
-                                                v-bind:title="workflow.name" :value="workflow.id">{{workflow.name}}
-                                            </option>
-
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="control">
-                                    <button class="button is-info" v-on:click="pickWorkFlow">
-                                        Pick
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="field-body" v-if="branches.length">
-                            <div class="field">
-                                <label class="label">Branch</label>
-                                <div class="control">
-                                    <div class="select">
-                                        <select v-model="branch">
-                                            <option v-for="branch in branches" :key="branch.id"                                                :value="branch.head_branch">{{branch.head_branch}}
-                                            </option>
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="field">
-                                <label class="label">Style</label>
-                                <div class="control">
-                                    <div class="select">
-                                        <select v-model="style">
-                                            <option>flat</option>
-                                            <option>flat-square</option>
-                                            <option>plastic</option>
-                                            <option>for-the-badge</option>
-                                            <option>popout</option>
-                                            <option>popout-square</option>
-                                            <option>social</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-                        <div class="card has-text-centered">
-                            <div class="card-content">
-                                <a v-bind:href="gotoURL" target="_blank">
-                                    <img alt="Build Status" v-bind:src="badgeURL" />
-                                </a>
-{{endpointUrl}}
-                                <label class="label">Markdown</label>
-                                <div class="field has-addons">
-                                    <div class="control is-expanded">
-                                        <input class="input" type="text" readonly="readonly"
-                                            v-bind:value="markdownSource" v-on:focus="$event.target.select()"
-                                            ref="markdownInput">
-                                    </div>
-                                    <div class="control">
-                                        <button class="button is-info" v-on:click="copy($refs.markdownInput)">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <label class="label">HTML</label>
-                                <div class="field has-addons">
-                                    <div class="control is-expanded">
-                                        <input class="input" type="text" readonly="readonly" v-bind:value="htmlSource"
-                                            v-on:focus="$event.target.select()" ref="htmlInput">
-                                    </div>
-                                    <div class="control">
-                                        <button class="button is-info" v-on:click="copy($refs.htmlInput)">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -168,6 +217,7 @@
         window.app = new Vue({
             el: '#app',
             data: {
+                showHtml: false,
                 repository: '',
                 style: 'flat',
                 branch: '',
@@ -178,25 +228,31 @@
                 branches: []
             },
             computed: {
-
+                WorkflowTitle: function () {
+                    return this.workflows.length ? { content: 'WorkFlow', color: 'color:black' } : { content: 'Discover Workflows to enable selection', color: 'color:#aaa' }
+                },
+                BranchesTitle: function () {
+                    return this.branches.length ? { content: 'Branch', color: 'color:black' } : { content: 'Pick Workflow to enable selection', color: 'color:#aaa' }
+                },
                 badgeURL: function () {
-                    var repo = this.repository || 'ffflabs/cf-badger'
+
                     var style = this.style || ''
 
-                    var url = encodeURIComponent('https://actions-badge.atrox.dev/' + repo + '/badge' + this.params())
-
-                    return 'https://img.shields.io/endpoint.svg?url=' + url + '&style=' + style
+                    return `${this.endpointUrl}/endpoint.svg?style=${style}`
                 },
-                endpointUrl:function() {
-                  return  `${location.protocol}//${location.host}/${this.repository||'treidspa/api.mydot.app'}/${this.workflow||'N/A'}/${encodeURIComponent(this.branch||'master')}`
+                endpointUrl: function () {
+                    return `${this.repoUrl}/${(this.workflow.id || 0)}/${encodeURIComponent(this.branch || 'master')}`
+                },
+                repoUrl: function () {
+                    this.repository = this.repository || 'treidspa/api.mydot.app'
+                    return `${location.protocol}//${location.host}/${this.repository || 'treidspa/api.mydot.app'}`
                 },
                 gotoURL: function () {
-                    var repo = this.repository || 'ffflabs/cf-badger'
 
-                    return 'https://actions-badge.atrox.dev/' + repo + '/goto' + this.params()
+                    return `${this.endpointUrl}/goto`
                 },
                 markdownSource: function () {
-                    return '[![Build Status](' + this.badgeURL + ')](' + this.gotoURL + ')'
+                    return `[![${this.workflow.name || 'N/A'}](${this.badgeURL})](${this.gotoURL})`
                 },
                 htmlSource: function () {
                     return '<a href="' + this.gotoURL + '">' +
@@ -204,15 +260,26 @@
                         '</a>'
                 }
             },
+            mounted: function () {
+                const theURL = new URL(location.href), queryParams = theURL.searchParams,
+                    owner = queryParams.get('owner'),
+                    repo = queryParams.get('repo'),
+                    workflow_id = queryParams.get('workflow_id')
+                if (owner && repo) {
+                    this.repository = [owner, repo].join('/')
+                    if (workflow_id) {
+
+                    }
+                }
+            },
             methods: {
                 getWorkFlows: function () {
-                    this.repository = this.repository || 'treidspa/api.mydot.app'
 
-                    return fetch(`${location.protocol}//${location.host}/${this.repository}`).then(res => res.json()).then(wflows => this.workflows = wflows);
+
+                    return fetch(this.repoUrl).then(res => res.json()).then(wflows => this.workflows = wflows);
                 },
                 pickWorkFlow: function () {
-                    var repo = this.repository || 'treidspa/api.mydot.app'
-                    return fetch(`${location.protocol}//${location.host}/${this.repository}/${this.workflow}`).then(res => res.json()).then(branches => this.branches = branches);
+                    return fetch(`${this.repoUrl}/${this.workflow.id}`).then(res => res.json()).then(branches => this.branches = branches);
                 },
                 copy(element) {
                     element.select()
@@ -235,7 +302,7 @@
                     return '?' + paramsString
                 },
                 openNewTokenPage() {
-                    var url = 'https://github.com/settings/tokens/new?scopes=repo&description=actions-badge.atrox.dev+-+' + new Date().toISOString()
+                    var url = 'https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.ctohm.com+-+' + new Date().toISOString()
                     window.open(url, '_blank').focus()
                 }
             }

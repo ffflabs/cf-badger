@@ -2,10 +2,10 @@
 <svg
    id="svg926"
    version="1.1"
-   viewBox="0 0 50.799995 50.8"
-   height="50.799999mm"
-   width="50.799995mm"
-   sodipodi:docname="cf-badger.svg"
+   viewBox="0 0 394.29942 50.8"
+   height="192"
+   width="1490.2656"
+   sodipodi:docname="cf-badger-extended-title-round-corners.svg"
    inkscape:version="1.1 (1:1.1+202106031931+af4d65493e)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,15 +25,20 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.35355339"
-     inkscape:cx="1572.6055"
-     inkscape:cy="91.923881"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="905.09668"
+     inkscape:cy="219.91021"
      inkscape:window-width="2560"
      inkscape:window-height="1396"
      inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg926" />
+     inkscape:current-layer="layer6"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="px" />
   <defs
      id="defs920">
     <linearGradient
@@ -467,17 +472,47 @@
        x2="36.091114"
        y2="72.842644"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.0251028,0,0,1,-42.768074,-71.699489)" />
+       gradientTransform="matrix(1.0247689,0,0,1.0003085,139.29461,-71.721608)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient11018"
        id="linearGradient9313"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.33226599,0,0,1,75.610307,-71.69949)"
+       gradientTransform="matrix(0.89012674,0,0,1.0003085,328.61683,-71.721609)"
        x1="-88.762787"
        y1="120.51055"
        x2="-105.38187"
        y2="83.324287" />
+    <linearGradient
+       id="workflow-fill-6"
+       x1="0.5"
+       y1="0"
+       x2="0.5"
+       y2="1">
+      <stop
+         stop-color="#444D56"
+         offset="0%"
+         id="stop6252" />
+      <stop
+         stop-color="#24292E"
+         offset="100%"
+         id="stop6254" />
+    </linearGradient>
+    <linearGradient
+       id="state-fill-4"
+       x1="0.5"
+       y1="0"
+       x2="0.5"
+       y2="1">
+      <stop
+         stop-color="#34D058"
+         offset="0%"
+         id="stop6257" />
+      <stop
+         stop-color="#28A745"
+         offset="100%"
+         id="stop6259" />
+    </linearGradient>
   </defs>
   <metadata
      id="metadata923">
@@ -490,74 +525,146 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <rect
-     style="fill:url(#linearGradient3069);fill-opacity:1;stroke:none;stroke-width:1.1117;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="rect2163"
-     width="214.98248"
-     height="50.784332"
-     x="-182.10806"
-     y="0" />
-  <rect
-     style="display:inline;fill:url(#linearGradient9313);fill-opacity:1;stroke:none;stroke-width:0.632915;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="rect2163-1"
-     width="69.682144"
-     height="50.784332"
-     x="30.446117"
-     y="-7.1054274e-15" />
   <g
-     transform="translate(-44.303624,4.80014)"
+     transform="translate(137.80444,4.80014)"
      style="display:none"
      id="layer3">
     <path
-       style="font-size:11px;font-family:'DejaVu Sans', Verdana, Geneva, sans-serif;fill:url(#linearGradient1812);fill-opacity:1;fill-rule:nonzero;stroke-width:1.00742519"
+       style="font-size:11px;font-family:'DejaVu Sans', Verdana, Geneva, sans-serif;fill:url(#linearGradient1812);fill-opacity:1;fill-rule:nonzero;stroke-width:1.00743"
        id="state-bg-9"
        d="m 0,-1.9973677 h 46.939 c 1.69,0 3.061,1.36301804 3.061,3.0447164 V 130.95524 c 0,1.6817 -1.371533,3.11778 -3.061,3.04472 H 0 Z"
        transform="matrix(0.37352941,0,0,0.37352941,78.543819,-4.1701199)" />
   </g>
   <g
-     style="display:inline"
-     transform="translate(-76.972553,-187.90598)"
-     id="layer1">
-    <path
-       id="path52-1"
-       d="m 93.897446,188.63731 6.760604,11.97205 -6.208719,10.96987 a 3.5872557,3.5211945 0 0 0 0,3.4264 l 6.208719,10.99697 -6.760604,11.97206 a 7.174511,7.0423889 0 0 1 -3.035371,-2.80341 L 80.100308,216.8204 a 7.2021056,7.0694753 0 0 1 0,-7.04238 l 10.761767,-18.35085 a 7.174511,7.0423889 0 0 1 3.035371,-2.78986 z"
-       style="fill:url(#linearGradient1814);stroke-width:0.13669506" />
-    <path
-       id="path54-2"
-       d="m 94.449331,211.59277 a 3.5872557,3.5211945 0 0 0 0,3.41286 l 6.208719,10.99697 -6.760604,11.97206 a 7.174511,7.0423889 0 0 1 -3.035371,-2.80341 L 80.100308,216.8204 c -0.855423,-1.4491 3.932184,-3.18262 14.349023,-5.21407 z"
-       style="opacity:0.7;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-b-4);stroke-width:0.13669506" />
-    <path
-       id="path56-8"
-       d="m 94.587302,189.84263 6.070748,10.76673 -1.007198,1.71997 -5.35329,-8.89778 c -1.545279,-2.47839 -3.90459,-1.19179 -6.857177,3.81914 l 0.441508,-0.74487 2.980182,-5.07865 a 7.174511,7.0423889 0 0 1 3.007777,-2.78986 l 0.703653,1.20532 z"
-       style="opacity:0.5;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-c-9);stroke-width:0.13669506" />
-    <path
-       id="path60-3"
-       d="m 118.04247,238.61118 -10.6238,0.0948 12.85893,-23.80869 a 3.725227,3.656625 0 0 0 0,-3.43994 l -12.85893,-23.55137 h 2.4283 l 13.49359,23.44303 a 3.725227,3.656625 0 0 1 -0.0138,3.62953 2155.6647,2115.967 0 0 0 -8.6508,14.89737 c -2.62146,4.52338 -1.49009,7.43514 3.3665,8.73527 z"
-       style="fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-e-5);stroke-width:0.13669506" />
-    <path
-       id="path62-6"
-       d="m 97.070787,238.69244 c -1.103771,0 -2.207541,-0.25732 -3.173341,-0.71778 l 13.272874,-23.49721 c 0.41392,-0.73132 0.41392,-1.62516 0,-2.35648 L 93.897446,188.63731 a 7.174511,7.0423889 0 0 1 3.173341,-0.73133 h 10.761793 l 13.38322,23.68679 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.38322,23.68681 z"
-       style="fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-f-0);stroke-width:0.13669506" />
-    <path
-       id="path64-8"
-       d="m 120.2776,212.12097 -13.68676,-24.21499 h 1.24174 l 13.38322,23.68679 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.38322,23.68681 h -1.24174 l 13.68676,-24.21499 c 0.41392,-0.73132 0.41392,-1.62516 0,-2.35648 z"
-       style="opacity:0.6;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-g-3);stroke-width:0.13669506" />
-    <path
-       id="path66-0"
-       d="M 107.17032,212.12097 93.897446,188.63731 c 0.413914,-0.2167 0.910611,-0.37921 1.379713,-0.51463 2.924993,5.15989 7.243491,12.98778 12.969341,23.47009 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.176297,23.41595 c -0.469104,-0.13543 -0.717452,-0.23022 -1.158961,-0.43338 l 13.245278,-23.49721 c 0.41391,-0.73132 0.41391,-1.62516 0,-2.35648 z"
-       style="opacity:0.6;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-h-7);stroke-width:0.13669506" />
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="normal"
+     style="display:inline">
+    <rect
+       style="display:inline;fill:url(#linearGradient9313);fill-opacity:1;stroke:none;stroke-width:1.03609;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2163-1"
+       width="186.67555"
+       height="50.799999"
+       x="207.62389"
+       y="0"
+       ry="5.9029622"
+       rx="5.9029622" />
+    <rect
+       style="fill:url(#linearGradient3069);fill-opacity:1;stroke:none;stroke-width:1.11169;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2163"
+       width="214.91246"
+       height="50.799999"
+       x="0"
+       y="7.1076195e-15"
+       ry="6.5738487"
+       rx="6.5738487" />
+    <g
+       style="display:inline"
+       transform="translate(105.13551,-187.90598)"
+       id="layer1">
+      <path
+         id="path52-1"
+         d="m 93.897446,188.63731 6.760604,11.97205 -6.208719,10.96987 a 3.5872557,3.5211945 0 0 0 0,3.4264 l 6.208719,10.99697 -6.760604,11.97206 a 7.174511,7.0423889 0 0 1 -3.035371,-2.80341 L 80.100308,216.8204 a 7.2021056,7.0694753 0 0 1 0,-7.04238 l 10.761767,-18.35085 a 7.174511,7.0423889 0 0 1 3.035371,-2.78986 z"
+         style="fill:url(#linearGradient1814);stroke-width:0.136695" />
+      <path
+         id="path54-2"
+         d="m 94.449331,211.59277 a 3.5872557,3.5211945 0 0 0 0,3.41286 l 6.208719,10.99697 -6.760604,11.97206 a 7.174511,7.0423889 0 0 1 -3.035371,-2.80341 L 80.100308,216.8204 c -0.855423,-1.4491 3.932184,-3.18262 14.349023,-5.21407 z"
+         style="opacity:0.7;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-b-4);stroke-width:0.136695" />
+      <path
+         id="path56-8"
+         d="m 94.587302,189.84263 6.070748,10.76673 -1.007198,1.71997 -5.35329,-8.89778 c -1.545279,-2.47839 -3.90459,-1.19179 -6.857177,3.81914 l 0.441508,-0.74487 2.980182,-5.07865 a 7.174511,7.0423889 0 0 1 3.007777,-2.78986 l 0.703653,1.20532 z"
+         style="opacity:0.5;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-c-9);stroke-width:0.136695" />
+      <path
+         id="path60-3"
+         d="m 118.04247,238.61118 -10.6238,0.0948 12.85893,-23.80869 a 3.725227,3.656625 0 0 0 0,-3.43994 l -12.85893,-23.55137 h 2.4283 l 13.49359,23.44303 a 3.725227,3.656625 0 0 1 -0.0138,3.62953 2155.6647,2115.967 0 0 0 -8.6508,14.89737 c -2.62146,4.52338 -1.49009,7.43514 3.3665,8.73527 z"
+         style="fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-e-5);stroke-width:0.136695" />
+      <path
+         id="path62-6"
+         d="m 97.070787,238.69244 c -1.103771,0 -2.207541,-0.25732 -3.173341,-0.71778 l 13.272874,-23.49721 c 0.41392,-0.73132 0.41392,-1.62516 0,-2.35648 L 93.897446,188.63731 a 7.174511,7.0423889 0 0 1 3.173341,-0.73133 h 10.761793 l 13.38322,23.68679 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.38322,23.68681 z"
+         style="fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-f-0);stroke-width:0.136695" />
+      <path
+         id="path64-8"
+         d="m 120.2776,212.12097 -13.68676,-24.21499 h 1.24174 l 13.38322,23.68679 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.38322,23.68681 h -1.24174 l 13.68676,-24.21499 c 0.41392,-0.73132 0.41392,-1.62516 0,-2.35648 z"
+         style="opacity:0.6;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-g-3);stroke-width:0.136695" />
+      <path
+         id="path66-0"
+         d="M 107.17032,212.12097 93.897446,188.63731 c 0.413914,-0.2167 0.910611,-0.37921 1.379713,-0.51463 2.924993,5.15989 7.243491,12.98778 12.969341,23.47009 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.176297,23.41595 c -0.469104,-0.13543 -0.717452,-0.23022 -1.158961,-0.43338 l 13.245278,-23.49721 c 0.41391,-0.73132 0.41391,-1.62516 0,-2.35648 z"
+         style="opacity:0.6;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-h-7);stroke-width:0.136695" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer7"
+       inkscape:label="current-text"
+       style="display:inline" />
   </g>
-  <flowRoot
-     xml:space="preserve"
-     id="flowRoot2495"
-     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-     transform="matrix(0.37349158,0,0,0.37349158,66.876389,-9.4257266)"><flowRegion
-       id="flowRegion2497"><rect
-         id="rect2499"
-         width="623.1864"
-         height="126.91525"
-         x="-650.84747"
-         y="35.796608" /></flowRegion><flowPara
-       id="flowPara2501"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:96px;font-family:FreeSans;-inkscape-font-specification:'FreeSans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1">CF-Badger</flowPara></flowRoot>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="texto"
+     transform="matrix(0.26458333,0,0,0.26458333,158.22083,-183.09167)"
+     style="display:inline">
+    <g
+       inkscape:groupmode="layer"
+       id="layer4"
+       inkscape:label="bg_text 1"
+       style="display:none" />
+    <g
+       inkscape:groupmode="layer"
+       id="layer2"
+       inkscape:label="fg_text"
+       style="display:inline">
+      <text
+         fill="#010101"
+         fill-opacity="0.3"
+         id="text6267-9"
+         x="-602.88568"
+         y="811.7782"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:128px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"
+         transform="translate(2.5984251e-6)"><tspan
+           x="-580.6875"
+           y="826.7782"
+           id="tspan6265-2"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:128px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">CF-Badger</tspan></text>
+      <text
+         fill="#ffffff"
+         id="text6271-5"
+         x="-603.98651"
+         y="811.7782"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:128px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"
+         transform="translate(2.5984251e-6)"><tspan
+           x="-581.78833"
+           y="825.7782"
+           id="tspan6269-4"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:128px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">CF-Badger</tspan></text>
+      <text
+         fill="#010101"
+         fill-opacity="0.3"
+         id="text6267-9-2"
+         x="264.50629"
+         y="774.80511"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+           sodipodi:role="line"
+           x="264.50629"
+           y="774.80511"
+           id="tspan28649">Safe Status Badges</tspan><tspan
+           sodipodi:role="line"
+           x="264.50629"
+           y="854.80511"
+           id="tspan41036">for Private Repos</tspan></text>
+      <text
+         fill="#ffffff"
+         id="text6271-5-0"
+         x="263.40546"
+         y="774.80511"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+           sodipodi:role="line"
+           id="tspan36124"
+           x="263.40546"
+           y="774.80511">Safe Status Badges</tspan><tspan
+           sodipodi:role="line"
+           x="263.40546"
+           y="854.80511"
+           id="tspan36126">for Private Repos</tspan></text>
+    </g>
+  </g>
 </svg>
