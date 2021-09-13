@@ -59,7 +59,16 @@ export type RequestWithParams = Request & {
     [s: string]: string;
   };
 };
+async function computeEndpointSvgRequest(
+  request: RequestWithParams
+): Promise<Response> {
+  const { url, params: { owner, repo, workflow_id: wf_id, branch } } = request, requestURL = new URL(url),
+    endpoint = `https://cf-badger.ctohm.com/${owner}/${repo}/${wf_id}/${branch}`, style = requestURL.searchParams.get('style') || 'flat', cf: RequestInitCfProperties = {
+      cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
+    };
+  return fetch(`https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`, { cf });
 
+}
 const possibleColors = {
   'critical': 'critical',
   'inactive': 'inactive',
@@ -119,14 +128,5 @@ addEventListener('fetch', async (event: FetchEvent) => {
 });
 
 
-async function computeEndpointSvgRequest(
-  request: RequestWithParams
-): Promise<Response> {
-  const { url, params: { owner, repo, workflow_id: wf_id, branch } } = request, requestURL = new URL(url),
-    endpoint = `https://cf-badger.ctohm.com/${owner}/${repo}/${wf_id}/${branch}`, style = requestURL.searchParams.get('style') || 'flat', cf: RequestInitCfProperties = {
-      cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
-    };
-  return fetch(`https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`, { cf });
 
-}
 
