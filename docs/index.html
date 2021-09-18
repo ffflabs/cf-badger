@@ -7,10 +7,27 @@
       name="description"
       content="CF-Badger is a Cloudflare Worker offering Status Badges for any workflow in your private Github Repos."
     />
-<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="/images/android-icon-192x192.png">
-<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/images/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/images/android-icon-192x192.png"
+    />
+    <meta
+      name="msapplication-TileImage"
+      content="/images/ms-icon-144x144.png"
+    />
 
     <meta name="author" content="Felipe Figueroa" />
     <title>CF-Badger</title>
@@ -19,68 +36,98 @@
       href="https://unpkg.com/bulma@0.7.5/css/bulma.min.css"
     />
     <style>
-    .card-header-icon .media {flex-direction:column;align-items:center}
-    .card-header-icon .media .image {margin-bottom:0;padding-bottom:0}
-    .columns .column {margin: 0 auto;}
-       .select {
-           width:100%;
-       }
+      .card-header-icon .media {
+        flex-direction: column;
+        align-items: center;
+      }
+      .card-header-icon .media .image {
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      .columns .column {
+        margin: 0 auto;
+      }
+      .select {
+        width: 100%;
+      }
       .select select {
         font-size: 0.9em;
-            width: 100%;
-        }
-        .control input {
+        width: 100%;
+      }
+      .control input {
         font-size: 0.9em;
-        }
-
+      }
     </style>
   </head>
 
-  <body >
+  <body>
     <section class="hero is-small">
       <div class="hero-body">
         <div class="container has-text-centered">
           <header class="card-header-icon content">
-            <div class="media" >
+            <div class="media">
               <figure class="image">
                 <img
                   src="/images/cf-badger-round-corners.svg"
                   style="height: 72px"
                 />
               </figure>
-                            <h4 style="display:block">Safe status badges for private repos</h4>
-
+              <h4 style="display: block">
+                Safe status badges for private repos
+              </h4>
             </div>
-            </header>
-           
+          </header>
         </div>
       </div>
-     </section>
-     <section class="">
+    </section>
+    <section class="">
       <div class="container">
-     
-        <div class="columns" style="    justify-content: center;">
+        <div class="columns" style="justify-content: center">
+          <div
+            class="column is-four-fifths-mobile is-three-quarters-tablet"
+            style="text-align: center"
+          >
+            <p
+              style="
+                text-align: justify;
+                padding: 0 2em 1em;
+                font-size: 0.9em;
+                margin-top: -1em;
+              "
+            >
+              Previewing the README.md file of private repos (like, in your IDE)
+              will show up as a broken image. How are we supposed to check the
+              resulting layout?
+              <br />
+
+              <figure class="image">
+                <img
+                  src="/images/before_and_after200.svg"
+                  width="350"
+                  style="width: 350px; margin: 0 auto"
+                />
+              </figure>
+              <small style="color: #999; display: block; font-size: 0.9em"
+                >From
+                broken&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to
+                flawless</small
+              >
+              <br />
+              CF-Badger creates public urls displaying workflow statuses for
+              your private repos without exposing your personal access token.
+            </p>
+          </div>
+        </div>
+        <div class="columns" style="justify-content: center">
           <div
             class="
               column
-         
+              is-two-thirds-desktop
               is-four-fifths-mobile
               is-three-quarters-tablet
             "
           >
-          CF-Badger creates public urls displaying workflow statuses for your private repos. ¿Why? At least in my case, it's annoying to see broken images when previewing README.md on vscode.
-          </div>
-          </div>
-          <div class="columns" style="    justify-content: center;">
-          <div
-            class="
-              column
-              
-              is-four-fifths-mobile
-              is-three-quarters-tablet
-            "
-          >
-           
             <div class="card">
               <div class="card-content">
                 <div id="app">
@@ -103,25 +150,30 @@
                         >)</label
                       >
                       <div class="field has-addons">
-                        <div class="control" style="width: calc(100% - 35px);">
+                        <div class="control" style="width: calc(100% - 35px)">
                           <input
                             class="input"
                             type="password"
-                            placeholder="Only needed for private repos"
                             v-model="token"
+                            ref="tokenInput"
                             v-on:change="getWorkFlows"
-                           />
-                          </div>
-                                                <div class="control">
-
-                        <button
-                          class="button is-info"   style="    padding-bottom: 0.2em;    padding-top: 0.2em;    height: 2em;"                     
-                        >
-                          <span class="icon">
-  <i class="fas fa-eye"></i>
-</span>
-                        </button>
-                      </div>
+                          />
+                        </div>
+                        <div class="control">
+                          <button
+                            class="button is-info"
+                            style="
+                              padding-bottom: 0.2em;
+                              padding-top: 0.2em;
+                              height: 2em;
+                            "
+                            v-on:click="showToken"
+                          >
+                            <span class="icon">
+                              <i class="fas fa-eye"></i>
+                            </span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -188,11 +240,11 @@
                       </div>
                       <div class="control">
                         <div class="select">
-                          <select v-model="style">
+                          <select v-model="style" v-bind:disabled="!hashHex">
+                            <option>for-the-badge</option>
                             <option>flat</option>
                             <option>flat-square</option>
                             <option>plastic</option>
-                            <option>for-the-badge</option>
                             <option>popout</option>
                             <option>popout-square</option>
                             <option>social</option>
@@ -219,17 +271,19 @@
                           rows="2"
                           placeholder="e.g. Hello world"
                           ref="markdownTA"
-                        >{{markdownSource}}</textarea
+                        >
+{{markdownSource}}</textarea
                         >
                       </div>
                       <div class="control">
                         <button
-                          class="button is-info"  style="    height: 3.2em;"
+                          class="button is-info"
+                          style="height: 3.2em"
                           v-on:click="copy($refs.markdownTA)"
                         >
                           <span class="icon">
-  <i class="fas fa-copy"></i>
-</span>
+                            <i class="fas fa-copy"></i>
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -248,12 +302,13 @@
                       </div>
                       <div class="control">
                         <button
-                          class="button is-info" style="    height: 3.2em;"
+                          class="button is-info"
+                          style="height: 3.2em"
                           v-on:click="copy($refs.htmlInput)"
                         >
-                         <span class="icon">
-  <i class="fas fa-copy"></i>
-</span>
+                          <span class="icon">
+                            <i class="fas fa-copy"></i>
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -267,27 +322,34 @@
     </section>
 
     <footer class="footer">
-       <div class="container has-text-centered">
-        <div class="columns" style="    justify-content: center;">
+      <div class="container has-text-centered">
+        <div class="columns" style="justify-content: center">
           <div
             class="
               column
+              is-half-widescreen
               is-two-thirds-desktop
               is-four-fifths-mobile
               is-three-quarters-tablet
             "
           >
-     <p style="text-align:justify;padding:0 2em 1em;font-size:0.9em">
-          Please note that, if you intend to display workflow status badges for public repos, you can use Shields.io direcly. Just look in their <a href="https://shields.io/category/build">Builds Category</a> for Github Workflows section.
-          </p>
-        <p>
-          <strong>CF-Badger</strong>'s' source code is available on
-          <a href="https://github.com/ffflabs/cf-badge"
-            ><i class="fab fa-github"></i> GitHub</a
-          >
-        </p>
-      </div>
-      </div>
+            <p
+              style="text-align: justify; padding-bottom: 1em; font-size: 0.9em"
+            >
+              Please note that, if you intend to display workflow status badges
+              for public repos, you can use Shields.io direcly. Just look in
+              their
+              <a href="https://shields.io/category/build">Builds Category</a>
+              for Github Workflows section.
+            </p>
+            <p>
+              <strong>CF-Badger</strong>'s' source code is available on
+              <a href="https://github.com/ffflabs/cf-badge"
+                ><i class="fab fa-github"></i> GitHub</a
+              >
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
 
@@ -298,7 +360,7 @@
         data: {
           showHtml: false,
           repository: '',
-          style: 'flat',
+          style: 'for-the-badge',
           branch: '',
           privateRepo: false,
           token: '',
@@ -325,9 +387,12 @@
                 };
           },
           badgeURL: function () {
-            var style = this.style || '';
+            let style = this.style || '';
 
-            return `${this.endpointUrl}/endpoint.svg?branch=${
+            let badgeBaseUrl = this.hashHex
+              ? this.endpointUrl
+              : `${location.protocol}//${location.host}/images`;
+            return `${badgeBaseUrl}/endpoint.svg?branch=${
               this.branch || 'master'
             }&style=${style}`;
           },
@@ -375,12 +440,15 @@
             if (workflow_id) {
             }
           }
-          if(token) {
-              this.token=token
-              this.$nextTick(()=>this.getWorkFlows())
+          if (token) {
+            this.token = token;
+            this.$nextTick(() => this.getWorkFlows());
           }
         },
         methods: {
+          showToken: function () {
+            this.$refs.tokenInput.type = 'text';
+          },
           getWorkFlows: function () {
             if (!this.token) {
               return;
@@ -388,10 +456,10 @@
 
             return fetch(`${this.repoUrl}?token=${this.token}`)
               .then((res) => res.json())
-              .then((wflows) =>{
-                    this.workflow=wflows[0]
-                    this.$nextTick(()=>this.pickWorkFlow())
-                    return     (this.workflows = wflows)
+              .then((wflows) => {
+                this.workflow = wflows[0];
+                this.$nextTick(() => this.pickWorkFlow());
+                return (this.workflows = wflows);
               });
           },
           pickWorkFlow: function () {
@@ -401,6 +469,8 @@
               .then((res) => res.json())
               .then(({ branches, hashHex }) => {
                 this.branches = branches;
+
+                this.$nextTick(() => (this.branch = branches[0].head_branch));
                 this.hashHex = hashHex;
                 return;
               });

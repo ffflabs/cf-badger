@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="202.75" height="28" role="img" aria-label="CUSTOM BADGE: INVALID">
+    <title>CUSTOM BADGE: INVALID</title>
+    <g shape-rendering="crispEdges">
+        <rect width="121" height="28" fill="#555"/>
+        <rect x="121" width="81.75" height="28" fill="#9f9f9f"/>
+    </g>
+    <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="100">
+        <text transform="scale(.1)" x="605" y="175" textLength="970" fill="#fff">CUSTOM BADGE</text>
+        <text transform="scale(.1)" x="1618.75" y="175" textLength="577.5" fill="#fff" font-weight="bold">INVALID</text>
+    </g>
+</svg>
