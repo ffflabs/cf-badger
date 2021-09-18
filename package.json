@@ -5,7 +5,7 @@
   "main": "dist/worker.js",
   "types": "types/main.d.ts",
   "scripts": {
-    "deploy": "yarn yt &&  yarn write_commit && yarn transpile && wrangler publish",
+    "deploy": "yarn yt &&  yarn write_commit && yarn eslint && yarn transpile && wrangler publish",
     "tail":"wrangler tail --format=pretty",
     "dev": "wrangler dev --env=dev",
     "format": "prettier --write '**/*.{ts,js,css,json,md}'",
