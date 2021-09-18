@@ -75,47 +75,35 @@
               <h4 style="display: block">
                 Safe status badges for private repos
               </h4>
+             
             </div>
+               
           </header>
+                 <div >
+           <span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span> <a href="https://workers.cloudflare.com"><img style="display:inline" src="https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e"></a>
+           </div>
         </div>
       </div>
     </section>
     <section class="">
       <div class="container">
-        <div class="columns" style="justify-content: center">
+        <div class="columns" style="justify-content: center;">
           <div
-            class="column is-four-fifths-mobile is-three-quarters-tablet"
+            class="column   is-two-thirds-desktop is-four-fifths-mobile is-three-quarters-tablet"
             style="text-align: center"
           >
+
             <p
-              style="
+              style="    max-width: 760px;
+    margin: 0 auto;
                 text-align: justify;
                 padding: 0 2em 1em;
                 font-size: 0.9em;
                 margin-top: -1em;
               "
             >
-              Previewing the README.md file of private repos (like, in your IDE)
-              will show up as a broken image. How are we supposed to check the
-              resulting layout?
-              <br />
-
-              <figure class="image">
-                <img
-                  src="/images/before_and_after200.svg"
-                  width="350"
-                  style="width: 350px; margin: 0 auto"
-                />
-              </figure>
-              <small style="color: #999; display: block; font-size: 0.9em"
-                >From
-                broken&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to
-                flawless</small
-              >
-              <br />
-              CF-Badger creates public urls displaying workflow statuses for
-              your private repos without exposing your personal access token.
+                       CF-Badger creates public urls displaying workflow statuses for
+              your private repos without exposing your personal access token, preventing annoying broken badge images.
             </p>
           </div>
         </div>
@@ -123,12 +111,13 @@
           <div
             class="
               column
+              
               is-two-thirds-desktop
               is-four-fifths-mobile
               is-three-quarters-tablet
             "
           >
-            <div class="card">
+            <div class="card" style="    max-width: 760px;    margin: 0 auto;">
               <div class="card-content">
                 <div id="app">
                   <div class="field-body columns">
@@ -324,17 +313,45 @@
     <footer class="footer">
       <div class="container has-text-centered">
         <div class="columns" style="justify-content: center">
-          <div
+          <div style="max-width:760px"
             class="
               column
-              is-half-widescreen
+              
               is-two-thirds-desktop
               is-four-fifths-mobile
               is-three-quarters-tablet
             "
           >
-            <p
+          <p
               style="text-align: justify; padding-bottom: 1em; font-size: 0.9em"
+            >
+              Previewing the README.md file of private repos (like, in your IDE)
+              will show up as a broken image. How are we supposed to check the
+              resulting layout?
+              <br />
+
+              <figure class="image">
+                <img
+                  src="/images/before_and_after200.svg"
+                  width="350"
+                  style="width: 350px; margin: 0 auto"
+                />
+              </figure>
+              <small style="color: #999; display: block; font-size: 0.9em"
+                >From
+                broken&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to
+                flawless</small
+              >
+              <br />
+              <span style="text-align: justify; padding-bottom: 1em; font-size: 0.9em">
+              CF-Badger creates public urls displaying workflow statuses for
+              your private repos without exposing your personal access token.
+              </span>
+            </p>
+            
+            <p
+              style="text-align: justify; padding:1em 0; font-size: 0.9em"
             >
               Please note that, if you intend to display workflow status badges
               for public repos, you can use Shields.io direcly. Just look in
@@ -342,6 +359,7 @@
               <a href="https://shields.io/category/build">Builds Category</a>
               for Github Workflows section.
             </p>
+
             <p>
               <strong>CF-Badger</strong>'s' source code is available on
               <a href="https://github.com/ffflabs/cf-badge"

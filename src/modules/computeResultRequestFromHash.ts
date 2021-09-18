@@ -14,7 +14,7 @@ export async function computeResultRequestFromHash(
 ): Promise<Response> {
 
     const requestURL = new URL(request.url), { owner, repo, workflow_id, GITHUB_TOKEN } = (await env.BADGER_KV.get(`hash:${request.params.hash}`, 'json') || {}) as { owner: string; repo: string; workflow_id: string; GITHUB_TOKEN: string; }, branch = requestURL.searchParams.get('branch') || 'master';
-    console.log('BADGER_KV', { owner, repo, workflow_id, GITHUB_TOKEN });
+    console.log('BADGER_KV', { owner, repo, workflow_id });
     const ghRequest = computeGithubRequest({ owner, repo, workflow_id, branch }, { GITHUB_TOKEN });
 
     ctx.sentry.addBreadcrumb({ data: { requestURL, ghRequest } });

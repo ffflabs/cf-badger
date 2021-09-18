@@ -1,6 +1,6 @@
 import type { RequestWithParams, TctxWithSentry, EnvWithBindings } from '../index';
 
-export async function computeEndpointSvgRequest(
+export async function computeSVGEndpointRequest(
     request: RequestWithParams,
     env: EnvWithBindings
     , ctx: TctxWithSentry
@@ -20,14 +20,28 @@ export async function computeEndpointSvgRequest(
     if (cachedResponse) {
         console.log(cachedResponse)
     }
-    let res = await fetch(endpointRequest, { cf })
-    if (res.ok) {
-        let resClone = res.clone()
-        resClone.headers.set('cached_on', String(Date.now()))
-        resClone.headers.set("cache-control", "max-age=300, s-maxage=300")
+    let response = await fetch(endpointRequest, { cf })
 
-        ctx.waitUntil(cache.put(endpointRequest, resClone));
+    if (response.ok && response.headers.get('content-type') === 'image/svg') {
+        // Reconstruct the Response object to make its headers mutable.
+        //  debug(response);
+        ctx.sentry.addBreadcrumb({
+            data: Object.fromEntries(response.headers.entries()),
+        });
+        response = new Response(response.body, response);
+
+        response.headers.set('Vary', 'Viewport-Width, Width');
+        response.headers.set('cached_on', String(Date.now()))
+        response.headers.set('Cache-Control', 'public, max-age=300');
+
+        //response.headers.set('Content-Disposition', `inline; filename=image.webp`);
+        ctx.waitUntil(cache.put(endpointRequest, response.clone()));
     }
-    return res;
+    return response;
+
+    //metadata = this.getMetadata(metadata)
+
+
+
 
 }

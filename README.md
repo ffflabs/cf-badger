@@ -16,9 +16,11 @@ Cf-Badger generates short urls displaying current status (actually, delayed up t
 Because, unless you're logged in github, it isn't trivial to display current statuses. And it grinds my gears when I see broken images in README's preview.
 
 <center>
+&nbsp;
 
-![](docs/images/before_and_after200.svg)
+![From broken to leet](docs/images/before_and_after200.svg)
 
+&nbsp;
 </center>
 
 Also, CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**

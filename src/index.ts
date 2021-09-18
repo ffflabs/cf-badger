@@ -14,7 +14,7 @@ import { computeAssetRequest } from './modules/computeAssetRequest';
 import { computeResultRequest } from './modules/computeResultRequest';
 import { computeResultRequestFromHash } from "./modules/computeResultRequestFromHash";
 import { getSentryInstance } from './modules/getSentryInstance';
-import { computeEndpointSvgRequest } from './modules/computeEndpointSvgRequest';
+import { computeSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
 import { computeFallbackSvg } from './images/fallback_svg';
 
 
@@ -64,10 +64,10 @@ const router = ThrowableRouter<RequestWithParams>({
 router
   .get('/images/*', computeAssetRequest)
   // .get('/fallback/endpoint.svg', computeFallbackSvg)
-  .get('/:hash/endpoint.svg', computeEndpointSvgRequest)
+  .get('/:hash/endpoint.svg', computeSVGEndpointRequest)
 
   .get('/:owner/:repo', computeAvailableWorkflowsRequest)
-  .get('/:owner/:repo/:workflow_id/endpoint.svg', computeEndpointSvgRequest)
+  .get('/:owner/:repo/:workflow_id/endpoint.svg', computeSVGEndpointRequest)
   .get('/:owner/:repo/:workflow_id', computeResultRequest)
 
   .get('*', computeAssetRequest)
