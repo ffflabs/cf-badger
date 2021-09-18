@@ -15,7 +15,7 @@ import { computeResultRequest } from './modules/computeResultRequest';
 import { computeResultRequestFromHash } from "./modules/computeResultRequestFromHash";
 import { getSentryInstance } from './modules/getSentryInstance';
 import { computeSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
-import { computeFallbackSvg } from './images/fallback_svg';
+
 
 
 

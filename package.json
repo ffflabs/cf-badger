@@ -9,7 +9,7 @@
     "tail":"wrangler tail --format=pretty",
     "dev": "wrangler dev --env=dev",
     "format": "prettier --write '**/*.{ts,js,css,json,md}'",
-    "eslint": "eslint --ext js --ext ts --ignore-path .eslintignore {src,test}/*.{js,ts}",
+    "eslint": "eslint --ext js --ext ts --ignore-path .eslintignore src/*.ts src/modules/*.ts",
     "allexport": " set -o allexport; source .env.local; set +o allexport",
     "localtest":"yarn allexport;yarn test",
     "test": "cp wrangler.example.toml wrangler.toml; wrangler build ; node  --experimental-vm-modules `yarn bin`/ava test/handler.test.mjs ",
