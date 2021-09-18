@@ -6,4 +6,5 @@ declare global {
   const SENTRY_CONNSTRING: string;
   const WORKER_ENV: string;
   const WORKER_URL: string
+  const BADGER_KV: KVNamespace
 }

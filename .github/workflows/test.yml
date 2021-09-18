@@ -1,0 +1,55 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+env:
+  GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+  WORKER_URL: "https://cf-badger.ctohm.com/*"
+  BADGER_KV_ID: ${{ secrets.BADGER_KV_ID }}
+  BADGER_KV_PREVIEW_ID: ${{ secrets.BADGER_KV_PREVIEW_ID }}
+  CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_HEAD_REF#refs/heads/})"
+        id: extract_branch
+      - name: Prints the current branch name
+        run: echo "${GITHUB_BRANCH##*/}"
+        env:
+          RELEASE: ${{ github.ref }}
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.cache/yarn/v6
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - name: install wrangler
+        run: yarn global add @cloudflare/wrangler
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+
+      - name: Run test
+        run: yarn test
+        env:
+          WORKER_ENV: 'development'
+          SENTRY_CONNSTRING: ''
+          WORKER_URL: ${{ env.WORKER_URL }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          RELEASE: ${{ github.ref }}
+          BADGER_KV_ID: ${{env.BADGER_KV_ID}}
+          BADGER_KV_PREVIEW_ID: ${{env.BADGER_KV_PREVIEW_ID}}
+          CF_API_TOKEN: ${{env.CF_API_TOKEN}}

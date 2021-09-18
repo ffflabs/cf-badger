@@ -7,6 +7,8 @@
       "ES2020",
       "WebWorker"
     ],
+    "isolatedModules": true,
+    "importsNotUsedAsValues": "error",
     "alwaysStrict": true,
     "strict": true,
     "preserveConstEnums": true,
@@ -34,6 +36,7 @@
     "./node_modules/@cloudflare/workers-types/index.d.ts"
   ],
   "exclude": [
+    "transpiled/",
     "node_modules/",
     "dist/"
   ]
