@@ -1,13 +1,19 @@
-<center>
 
 &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;![Logo](docs/images/cf-badger-extended-title-round-corners.svg)&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
 
 Cf-Badger generates short urls displaying current status (actually, delayed up to 5 min) of your private repos workflows. 
+ 
+<p align="center">
+<a href="https://workers.cloudflare.com/">
+<img src="https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e"></a>
+&nbsp; &nbsp;
+<a href="https://github.com/ffflabs/cf-badger/actions/workflows/tests.yml">
+<img src="https://cf-badger.ctohm.com/9c6530e5f3abdb0f6247/endpoint.svg?branch=master&style=for-the-badge">
+</a>&nbsp; &nbsp;
 
+<img src="https://img.shields.io/static/v1?label=Made%20With&message=TypeScript&color=f0f0f0&labelColor=3974c0&style=for-the-badge&logo=typescript&logoColor=white&messageColor=3974c0">
 
- ![](https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e) &nbsp; &nbsp; [![Tests](https://cf-badger.ctohm.com/9c6530e5f3abdb0f6247/endpoint.svg?branch=master&style=for-the-badge)](https://github.com/ffflabs/cf-badger/actions/workflows/tests.yml) &nbsp; &nbsp; ![](https://img.shields.io/static/v1?label=Made%20With&message=TypeScript&color=f0f0f0&labelColor=3974c0&style=for-the-badge&logo=typescript&logoColor=white&messageColor=3974c0)
-
-</center>
+</p> 
 
 ## FAQ
 
@@ -15,35 +21,37 @@ Cf-Badger generates short urls displaying current status (actually, delayed up t
 
 Because, unless you're logged in github, it isn't trivial to display current statuses. And it grinds my gears when I see broken images in README's preview.
 
-<center>
-&nbsp;
+<p align="center" style="text-align:center">
 
-![From broken to leet](docs/images/before_and_after200.svg)
 
-&nbsp;
-</center>
+<img src="docs/images/before_and_after200.svg">
+
+
+</p>
 
 Also, CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**
 ### How?
 
 We request your workflows run outcome directly to Github's API, on your behalf, so you'll need to enter a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.ctohm.com) with 'repo' privileges for CF-Badger to access said info.
 
-<center>
+<p align="center">
 
-![](docs/images/screenshot.png)
 
-</center>
+<img src="docs/images/screenshot.png">
+
+</p>
 
 We compute and expose the last run outcome as JSON to [Shields.io endpoint API](https://shields.io/endpoint), without which CF-Badger wouldn't work.
 ### Security Concerns
 
 Your token token won't be part of the generated URL. Instead, we'll store it internally, and provide an url you can safely share without exposing your token.
 
-<center>
+<p align="center">
 
-![](docs/images/markdown.png)
 
-</center>
+<img src="docs/images/markdown.png">
+
+</p>
 
 
 ### Do I need a token for public repos?
