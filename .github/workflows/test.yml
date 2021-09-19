@@ -6,7 +6,7 @@ on:
       - master
 env:
   GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-  WORKER_URL: "https://cf-badger.ctohm.com/*"
+  WORKER_URL: "https://cf-badger.com/*"
   BADGER_KV_ID: ${{ secrets.BADGER_KV_ID }}
   BADGER_KV_PREVIEW_ID: ${{ secrets.BADGER_KV_PREVIEW_ID }}
   CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
         run: yarn test
         env:
           WORKER_ENV: 'development'
-          SENTRY_CONNSTRING: ''
+          SENTRY_DSN: ''
           WORKER_URL: ${{ env.WORKER_URL }}
           GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
           RELEASE: ${{ github.ref }}

@@ -1,5 +1,5 @@
-import type { RequestWithParams, EnvWithBindings } from '../index';
-export declare function computeRunStatusParameters(request: RequestWithParams, env: EnvWithBindings): Promise<{
+import type { TRequestWithParams, EnvWithDurableObject } from 'itty-router-extras';
+export declare function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<{
     hashHex: string;
     owner: string;
     repo: string;

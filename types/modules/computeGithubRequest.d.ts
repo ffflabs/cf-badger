@@ -4,7 +4,7 @@ export declare type TWorkflowParams = {
     workflow_id?: string;
     branch?: string;
 };
-declare class ModifiableRequest {
+export declare class ModifiableRequest {
     url: URL;
     init: RequestInit;
     request: Request;
@@ -13,10 +13,9 @@ declare class ModifiableRequest {
     get searchParams(): URLSearchParams;
     get headers(): Headers;
     fetch({ method }: {
-        method?: string | undefined;
+        method: string;
     }): Promise<Response>;
 }
 export declare function computeGithubRequest(workflowParams: TWorkflowParams, { GITHUB_TOKEN }: {
     GITHUB_TOKEN: string;
 }): ModifiableRequest;
-export {};

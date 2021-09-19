@@ -10,23 +10,23 @@
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="/images/apple-icon-180x180.png"
+      href="https://cf-badger.com/images/apple-icon-180x180.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="96x96"
-      href="/images/favicon-96x96.png"
+      href="https://cf-badger.com/images/favicon-96x96.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="192x192"
-      href="/images/android-icon-192x192.png"
+      href="https://cf-badger.com/images/android-icon-192x192.png"
     />
     <meta
       name="msapplication-TileImage"
-      content="/images/ms-icon-144x144.png"
+      content="https://cf-badger.com/images/ms-icon-144x144.png"
     />
 
     <meta name="author" content="Felipe Figueroa" />
@@ -57,10 +57,61 @@
       .control input {
         font-size: 0.9em;
       }
+      .modal {
+        opacity:0
+      }
+      .modal.is-active {
+        opacity:1;
+          transition: opacity 0.3s;
+  -webkit-transition: opacity 0.3s;
+transition-delay:1s
+      }
     </style>
   </head>
 
   <body>
+<nav class="navbar is-transparent">
+  <div class="navbar-brand">
+        <div class="navbar-item ">
+                <p class="control">  <a class="button" href="https://workers.cloudflare.com"><span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span><img style="display:inline" src="https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e"></a></p>
+      </div>
+  </div>
+
+  <div id="navbarExampleTransparentExample" class="navbar-menu">
+    <div class="navbar-start">
+      
+   
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="field is-grouped">
+          <p class="control">
+            <a class="bd-tw-button button" data-social-network="Twitter" data-social-action="tweet" data-social-target="https://cf-badger.com" target="_blank" href="https://twitter.com/intent/tweet?text=cf-badger: a cloudflare worker that makes safe workflow status badges for Github private repos https://cf-badger.com #CloudflareSummerChallenge @CloudflareDev">
+              <span class="icon">
+                <i class="fab fa-twitter"></i>
+              </span>
+              <span>
+                Tweet
+              </span>
+            </a>
+          </p>
+          <p class="control">
+            <a class="bd-gh-button button" data-social-network="Github"  data-social-target="https://cf-badger.com" target="_blank" href="https://github.com/ffflabs/cf-badger">
+              <span class="icon">
+                <i class="fab fa-github"></i>
+              </span>
+              <span>
+                Github
+              </span>
+            </a>
+          </p>
+ 
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
     <section class="hero is-small">
       <div class="hero-body">
         <div class="container has-text-centered">
@@ -68,7 +119,7 @@
             <div class="media">
               <figure class="image">
                 <img
-                  src="/images/cf-badger-round-corners.svg"
+                  src="https://cf-badger.com/images/cf-badger-round-corners.svg"
                   style="height: 72px"
                 />
               </figure>
@@ -80,12 +131,12 @@
                
           </header>
                  <div >
-           <span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span> <a href="https://workers.cloudflare.com"><img style="display:inline" src="https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e"></a>
+          
            </div>
         </div>
       </div>
     </section>
-    <section class="">
+    <section  id="app">
       <div class="container">
         <div class="columns" style="justify-content: center;">
           <div
@@ -93,7 +144,7 @@
             style="text-align: center"
           >
 
-            <p
+            <div
               style="    max-width: 760px;
     margin: 0 auto;
                 text-align: justify;
@@ -103,8 +154,8 @@
               "
             >
                        CF-Badger creates public urls displaying workflow statuses for
-              your private repos without exposing your personal access token, preventing annoying broken badge images.
-            </p>
+              your private repos without exposing your personal access token, preventing <a v-on:click="toggleModal(true)">those annoying broken badge images</a>.
+            </div>
           </div>
         </div>
         <div class="columns" style="justify-content: center">
@@ -119,7 +170,7 @@
           >
             <div class="card" style="    max-width: 760px;    margin: 0 auto;">
               <div class="card-content">
-                <div id="app">
+                <div>
                   <div class="field-body columns">
                     <div class="field column is-half">
                       <label class="label">Repository</label>
@@ -308,6 +359,49 @@
           </div>
         </div>
       </div>
+       <div class="modal" v-bind:class="{'is-active':modalActive}">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">What is this worker for?</p>
+      <button class="delete" v-on:click="toggleModal" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <p
+              style="text-align: justify; padding-bottom: 1em; font-size: 0.9em"
+            >
+              Previewing the README.md file of private repos (like, in your IDE)
+              will show your status badges as a broken image. How are we supposed to check the
+              resulting layout?
+              <br />
+
+              <figure class="image">
+                <img
+                  src="https://cf-badger.com/images/before_and_after200.svg"
+                  width="350"
+                  style="width: 350px; margin: 0 auto"
+                />
+              </figure>
+              <small style="width: 95%;color: #999; display: block; font-size: 0.9em;text-align:center"
+                >From
+                broken<span style="display:inline-block;width:10em">&nbsp;</span>to
+                flawless&nbsp;&nbsp;&nbsp;</small
+              >
+              <br />
+              <p style="text-align: justify; padding-bottom: 1em; font-size: 0.9em">
+              CF-Badger creates public short-urls displaying workflow statuses for
+              your private repos. Your  personal access token is stored on our side and isn't ever exposed.
+              </p>
+              
+            </p>
+    </section>
+    <footer class="modal-card-foot">
+     <span class="icon">
+                            <i style="color:green" class="fas fa-lightbulb"></i>
+                          </span>&nbsp;&nbsp; CF-Badger is also my project for &nbsp;<a href="https://blog.cloudflare.com/developer-summer-challenge/">Cloudflare's Developer Summer Challenge</a> 
+    </footer>
+  </div>
+</div>
     </section>
 
     <footer class="footer">
@@ -322,36 +416,9 @@
               is-three-quarters-tablet
             "
           >
-          <p
-              style="text-align: justify; padding-bottom: 1em; font-size: 0.9em"
-            >
-              Previewing the README.md file of private repos (like, in your IDE)
-              will show up as a broken image. How are we supposed to check the
-              resulting layout?
-              <br />
-
-              <figure class="image">
-                <img
-                  src="/images/before_and_after200.svg"
-                  width="350"
-                  style="width: 350px; margin: 0 auto"
-                />
-              </figure>
-              <small style="color: #999; display: block; font-size: 0.9em"
-                >From
-                broken&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to
-                flawless</small
-              >
-              <br />
-              <span style="text-align: justify; padding-bottom: 1em; font-size: 0.9em">
-              CF-Badger creates public urls displaying workflow statuses for
-              your private repos without exposing your personal access token.
-              </span>
-            </p>
-            
+         
             <p
-              style="text-align: justify; padding:1em 0; font-size: 0.9em"
+              style="text-align: justify; margin-top:-1em; font-size: 0.9em"
             >
               Please note that, if you intend to display workflow status badges
               for public repos, you can use Shields.io direcly. Just look in
@@ -359,18 +426,18 @@
               <a href="https://shields.io/category/build">Builds Category</a>
               for Github Workflows section.
             </p>
-
-            <p>
-              <strong>CF-Badger</strong>'s' source code is available on
-              <a href="https://github.com/ffflabs/cf-badge"
-                ><i class="fab fa-github"></i> GitHub</a
-              >
+            <p
+              style="text-align: center; padding-top:2em; font-size: 0.9em"
+            >
+            <strong>CF-Badger</strong>'s was inspired by <a href="https://actions-badge.atrox.dev/">Atrox's Actions Badge</a>. 
             </p>
           </div>
         </div>
       </div>
     </footer>
+   
 
+  
     <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
     <script>
       window.app = new Vue({
@@ -378,6 +445,7 @@
         data: {
           showHtml: false,
           repository: '',
+          modalActive:false,
           style: 'for-the-badge',
           branch: '',
           privateRepo: false,
@@ -416,7 +484,7 @@
           },
           endpointUrl: function () {
             return this.hashHex
-              ? `${location.protocol}//${location.host}/${this.hashHex}`
+              ? `${location.protocol}//${location.host}/badger/${this.hashHex}`
               : `${this.repoUrl}/${this.workflow.id || 0}`;
           },
           repoUrl: function () {
@@ -424,7 +492,7 @@
               this.repository ||
               location.hash.replace('#', '') ||
               'ffflabs/cf-badger';
-            return `${location.protocol}//${location.host}/${this.repository}`;
+            return `${location.protocol}//${location.host}/badger/${this.repository}`;
           },
           gotoURL: function () {
             return this.workflow.filename_url || '';
@@ -464,6 +532,10 @@
           }
         },
         methods: {
+          toggleModal:function(flag) {
+            console.log('toggled',flag)
+            document.querySelector('.modal').classList.toggle('is-active')
+          },
           showToken: function () {
             this.$refs.tokenInput.type = 'text';
           },
@@ -475,8 +547,8 @@
             return fetch(`${this.repoUrl}?token=${this.token}`)
               .then((res) => res.json())
               .then((wflows) => {
-                this.workflow = wflows[0];
-                this.$nextTick(() => this.pickWorkFlow());
+              //  this.workflow = wflows[0];
+              //  this.$nextTick(() => this.pickWorkFlow());
                 return (this.workflows = wflows);
               });
           },
@@ -516,7 +588,7 @@
           },
           openNewTokenPage() {
             var url =
-              'https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.ctohm.com+-+' +
+              'https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com+-+' +
               new Date().toISOString();
             window.open(url, '_blank').focus();
           },
