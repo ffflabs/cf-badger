@@ -8,7 +8,7 @@ Cf-Badger generates short urls displaying current status (actually, delayed up t
 <img src="https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e"></a>
 &nbsp; &nbsp;
 <a href="https://github.com/ffflabs/cf-badger/actions/workflows/tests.yml">
-<img src="https://cf-badger.ctohm.com/9c6530e5f3abdb0f6247/endpoint.svg?branch=master&style=for-the-badge">
+<img src="https://cf-badger.com/9c6530e5f3abdb0f6247/endpoint.svg?branch=master&style=for-the-badge">
 </a>&nbsp; &nbsp;
 
 <img src="https://img.shields.io/static/v1?label=Made%20With&message=TypeScript&color=f0f0f0&labelColor=3974c0&style=for-the-badge&logo=typescript&logoColor=white&messageColor=3974c0">
@@ -32,7 +32,7 @@ Because, unless you're logged in github, it isn't trivial to display current sta
 Also, CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**
 ### How?
 
-We request your workflows run outcome directly to Github's API, on your behalf, so you'll need to enter a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.ctohm.com) with 'repo' privileges for CF-Badger to access said info.
+We request your workflows run outcome directly to Github's API, on your behalf, so you'll need to enter a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com) with 'repo' privileges for CF-Badger to access said info.
 
 <p align="center">
 

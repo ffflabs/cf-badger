@@ -1,8 +1,8 @@
-import type { RequestWithParams, TctxWithSentry, EnvWithBindings } from '../index';
-
+import type { TctxWithSentry } from '../index';
+import type { TRequestWithParams, EnvWithDurableObject } from 'itty-router-extras';
 export async function computeSVGEndpointRequest(
-    request: RequestWithParams,
-    env: EnvWithBindings
+    request: TRequestWithParams,
+    env: EnvWithDurableObject
     , ctx: TctxWithSentry
 ): Promise<Response> {
 

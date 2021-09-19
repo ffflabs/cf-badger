@@ -5,9 +5,10 @@ esbuild
   .build({
     entryPoints: ['src/index.ts'],
     bundle: true,
-    outfile: 'dist/worker.js',
+    format:'esm',
+    outfile: 'dist/index.mjs',
     sourcemap: 'inline',
-
+    outExtension: { '.js': '.mjs' },
     minify: mode === 'production',
   })
   .catch(() => process.exit(1));

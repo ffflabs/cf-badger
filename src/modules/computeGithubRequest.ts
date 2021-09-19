@@ -5,7 +5,7 @@ export type TWorkflowParams = {
     workflow_id?: string;
     branch?: string;
 };
-class ModifiableRequest {
+export class ModifiableRequest {
     url: URL;
     init: RequestInit
     request: Request
@@ -16,13 +16,13 @@ class ModifiableRequest {
         this.request = new Request(this.url.toString(), this.init)
         this.params = params
     }
-    get searchParams() {
+    get searchParams(): URLSearchParams {
         return this.url.searchParams
     }
-    get headers() {
+    get headers(): Headers {
         return this.request.headers
     }
-    async fetch({ method = 'GET' }): Promise<Response> {
+    async fetch({ method = 'GET' }: { method: string }): Promise<Response> {
         const request = new Request(this.url.toString(), { ...this.init, method })
         for (let [key, value] of this.request.headers.entries()) {
             request.headers.set(key, value)

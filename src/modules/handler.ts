@@ -92,24 +92,7 @@ type ShieldsAttributes = { color: string; message: string, isError?: boolean }
 
 export type WorkflowRunPart = Pick<WorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>
 
-export function computeColorAndMessage(runs: WorkflowRunPart[], workflow_id: number, branch?: string | null | undefined): ShieldsAttributes {
-  const wfRun = runs.find(run => run.workflow_id === workflow_id && (!branch || run.head_branch === branch))
 
-  const payload = (label: string) => ({
-    "schemaVersion": 1,
-    label,
-    "namedLogo": "github",
-    "cacheSeconds": 300
-  })
-  if (!wfRun) {
-    return { ...payload('Unknown workflow'), ...Errors.no_runs() }
-  }
-
-  if (wfRun.status === 'completed') {
-    return { ...payload(wfRun.name), ...Conclusion[wfRun.conclusion]() }
-  }
-  return { ...payload(wfRun.name), ...Status[wfRun.status]() }
-}
 
 export const Errors = {
 
@@ -130,4 +113,23 @@ export const Errors = {
     message: "repository not found",
     isError: true
   })
+}
+
+export function computeColorAndMessage(runs: WorkflowRunPart[], workflow_id: number, branch?: string | null | undefined): ShieldsAttributes {
+  const wfRun = runs.find(run => run.workflow_id === workflow_id && (!branch || run.head_branch === branch))
+
+  const payload = (label: string) => ({
+    "schemaVersion": 1,
+    label,
+    "namedLogo": "github",
+    "cacheSeconds": 300
+  })
+  if (!wfRun) {
+    return { ...payload('Unknown workflow'), ...Errors.no_runs() }
+  }
+
+  if (wfRun.status === 'completed') {
+    return { ...payload(wfRun.name), ...Conclusion[wfRun.conclusion]() }
+  }
+  return { ...payload(wfRun.name), ...Status[wfRun.status]() }
 }

@@ -58,10 +58,10 @@ declare type ShieldsAttributes = {
     isError?: boolean;
 };
 export declare type WorkflowRunPart = Pick<WorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>;
-export declare function computeColorAndMessage(runs: WorkflowRunPart[], workflow_id: number, branch?: string | null | undefined): ShieldsAttributes;
 export declare const Errors: {
     server_error: () => ShieldsAttributes;
     no_runs: () => ShieldsAttributes;
     repository_not_found: () => ShieldsAttributes;
 };
+export declare function computeColorAndMessage(runs: WorkflowRunPart[], workflow_id: number, branch?: string | null | undefined): ShieldsAttributes;
 export {};

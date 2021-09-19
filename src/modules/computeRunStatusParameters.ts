@@ -1,8 +1,9 @@
-import type { RequestWithParams, EnvWithBindings } from '../index';
 
 
+import type { TRequestWithParams, EnvWithDurableObject } from 'itty-router-extras';
 
-export async function computeRunStatusParameters(request: RequestWithParams, env: EnvWithBindings): Promise<{ hashHex: string; owner: string; repo: string; workflow_id: string; requestURL: URL; GITHUB_TOKEN: string; }> {
+
+export async function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<{ hashHex: string; owner: string; repo: string; workflow_id: string; requestURL: URL; GITHUB_TOKEN: string; }> {
     let { url: originalUrl, params } = request, { owner, repo, workflow_id, } = params, requestURL = new URL(originalUrl), GITHUB_TOKEN = requestURL.searchParams.get('token') || env.GITHUB_TOKEN;
     const hashHex = await computeHash({ owner, repo, workflow_id, GITHUB_TOKEN }); // convert bytes to hex string
     return { owner, repo, workflow_id, GITHUB_TOKEN, requestURL, hashHex };

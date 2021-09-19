@@ -1,28 +1,19 @@
-/// <reference types="@cloudflare/workers-types" />
-interface IWaitableObject {
-    waitUntil: (promise: Promise<any>) => void;
-}
+import { TRequestWithParams, EnvWithDurableObject } from 'itty-router-extras';
+import { Badger } from './Badger';
 import type Toucan from 'toucan-js';
-export interface EnvWithBindings {
-    GITHUB_TOKEN: string;
-    SENTRY_CONNSTRING: string;
-    WORKER_ENV: string;
-    WORKER_URL: string;
-    RELEASE: string;
-    BADGER_KV: KVNamespace;
+export interface IWaitableObject {
+    waitUntil: (promise: Promise<unknown>) => void;
 }
 export declare type TctxWithSentry = {
     request: Request;
     sentry: Toucan;
 } & IWaitableObject;
+export { Badger };
 export declare function computeErroredResponse({ owner, repo }: {
     owner: string;
     repo: string;
 }, res: Response): Error;
-export declare type RequestWithParams = Request & {
-    color?: string;
-    params: {
-        [s: string]: string;
-    };
+declare const exportDefault: {
+    fetch: (request: TRequestWithParams, env: EnvWithDurableObject, { waitUntil }: IWaitableObject) => Promise<Response>;
 };
-export {};
+export default exportDefault;

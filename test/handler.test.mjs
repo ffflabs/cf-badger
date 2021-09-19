@@ -4,29 +4,35 @@ import { ConsoleLog, Miniflare } from "miniflare";
 import test from "ava";
 const owner = "huasofoundries",
   repo = "jpgraph",
-  wflow_id=8501839
+  wflow_id = 8501839
 
 test.beforeEach((t) => {
   // Create a new Miniflare environment for each test
   const mf = new Miniflare({
-    scriptPath: "./dist/worker.js",
+    scriptPath: "./dist/index.mjs",
     // Some options omitted, see src/options/index.ts for the full list
     sourceMap: true,
     log: new ConsoleLog(), // Defaults to no-op logger
     wranglerConfigPath: "./wrangler.toml",
     watch: true,
-    kvNamespaces: ["BADGER_KV"],
-    upstream:'https://cf-worker.ctohm.com',
+    kvNamespaces: ["BADGER_KV","__STATIC_CONTENT"],
+    upstream: 'https://cf-worker.com',
     cachePersist: false,
-    port:8989,
-    host:'http://127.0.0.1',
-bindings:{
-  WORKER_ENV:process.env.WORKER_ENV,
-SENTRY_CONNSTRING:process.env.SENTRY_CONNSTRING,
-WORKER_URL:process.env.WORKER_URL,
-GITHUB_TOKEN:process.env.GITHUB_TOKEN,
-RELEASE:process.env.RELEASE,
-}
+    port: 8989,
+    host: 'http://127.0.0.1',
+    bindings: {
+      WORKER_ENV: process.env.WORKER_ENV,
+      SENTRY_DSN: process.env.SENTRY_DSN,
+      WORKER_URL: process.env.WORKER_URL,
+      GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+      RELEASE: process.env.RELEASE,
+    },
+    durableObjects:{Badger:{className:'Badger'}},
+    durableObjectsPersist: true,
+    cachePersist: false,
+    modules: true,
+    modulesRules: [
+      { type: "ESModule", include: ["**/*.mjs"], fallthrough: true }]
   });
   t.context = { mf };
 });
@@ -65,9 +71,9 @@ test("lists workflow runs for each branch",
 
     t.assert(Array.isArray(branchesObj.branches));
     t.assert(branchesObj.branches.every(workflow => {
-      let { id,  name, head_branch,workflow_id } = workflow
-      t.is(workflow_id,wflow_id)
-   
+      let { id, name, head_branch, workflow_id } = workflow
+      t.is(workflow_id, wflow_id)
+
       return typeof id === 'number'
         && typeof workflow_id === 'number'
         && typeof name === 'string'
