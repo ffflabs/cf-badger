@@ -1,6 +1,6 @@
 {
   "name": "@ffflabs/cf-badger",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Safe status badges for private repos, running on Cloudflare Workers",
   "module": "dist/index.mjs",
   "main": "dist/index.mjs",
@@ -15,10 +15,9 @@
     "allexport": " set -o allexport; source .env; set +o allexport",
     "localtest": "yarn allexport;yarn test",
     "test": "cp wrangler.example.toml wrangler.toml && wrangler build && node  --experimental-vm-modules `yarn bin`/ava --verbose test/handler.test.mjs ",
-    "start":"node  --experimental-vm-modules mf.mjs ",
-    
+    "start": "node  --experimental-vm-modules mf.mjs ",
     "build": "rm -rf dist/* && esbuild src/index.ts --sourcemap --format=esm --bundle --outfile=dist/index.mjs",
-    "build:pre":"yarn yt &&  yarn write_commit",
+    "build:pre": "yarn yt &&  yarn write_commit",
     "ty": "echo 'cat wrangler.toml | yj -ty > wrangler.yaml'",
     "write_commit": "COMMIT=`git rev-parse --short HEAD` sed -i \"s/_RELEASE_/$COMMIT/g\" wrangler.toml",
     "yt": "cat wrangler.yaml | yj -yt -i > wrangler.toml",
