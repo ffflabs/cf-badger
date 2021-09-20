@@ -22,7 +22,7 @@ const defaultCacheControl: CacheControl = {
 const parseStringAsObject = <T>(maybeString: string | T): T =>
     typeof maybeString === 'string' ? (JSON.parse(maybeString) as T) : maybeString
 
-export const getAssetFromKVDefaultOptions = (env: EnvWithDurableObject) => {
+export const getAssetFromKVDefaultOptions = (env: EnvWithDurableObject): Partial<Options> & { defaultDocument: string; } => {
     return {
         ASSET_NAMESPACE: typeof env.__STATIC_CONTENT !== 'undefined' ? env.__STATIC_CONTENT : undefined,
         ASSET_MANIFEST:

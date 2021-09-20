@@ -120,7 +120,7 @@ export class Badger extends IttyDurable implements DurableObject {
       })
     let { value: storedRuns, metadata } = await this.state.BADGER_KV.getWithMetadata<IWorkflowRuns>(`runs:${hashHex}`, 'json')
     console.log({
-      owner, repo, workflow_id, GITHUB_TOKEN
+      owner, repo, workflow_id, metadata
     })
     if (!storedRuns) {
       const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN)

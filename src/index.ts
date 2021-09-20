@@ -3,7 +3,7 @@ import type { IttyDurable } from 'itty-durable';
 import { withDurables } from 'itty-durable';
 import { DurableStubGetter, error, ThrowableRouter, TRequestWithParams, EnvWithDurableObject, json } from 'itty-router-extras';
 
-import { computeAssetRequest, getAssetFromKVDefaultOptions } from './modules/computeAssetRequest';
+import { computeAssetRequest } from './modules/computeAssetRequest';
 import { computeSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
 import { Badger, TOutputResults } from './Badger';
 

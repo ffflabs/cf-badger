@@ -48,6 +48,7 @@ Enter **CF-Badger**. It will present you with a brief form (which, by the way, i
 
 </p>
 ----
+
 ### 🎯 How?
 
  We request the outcome of your workflows directly to Github's API, on your behalf. To do this, we'll need you to provide a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com) with 'repo' privileges.  
@@ -81,9 +82,4 @@ It kinda makes the project sound like a serious initiative.
 
 **[Shields.io](https://shields.io)**, whose service renders actual badges and without which CF-Badger would generate broken images, which would be ironic.
 
-**[Atrox's Github Actions Badge](https://actions-badge.atrox.dev/)**, on which CF-Badger was inspired. Albeit I used (and loved) its functionality, I wanted to improve it by:
-
-- Avoid exposing your personal access token in the badge's URL
-- Allowing you to pick which action to display, given a repo might have several relevant workflows in place
-- Enumerating available workflows and request their status by ID under the hood
-
+**[Atrox's Github Actions Badge](https://actions-badge.atrox.dev/)**, on which CF-Badger was inspired. Albeit I used (and loved) its functionality, I didn't feel comfortable having my token displayed in the badge's URL query parameters, and I also needed to track several workflows for each repo.
