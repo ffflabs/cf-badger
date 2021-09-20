@@ -11,16 +11,16 @@ export async function computeSVGEndpointRequest(
 
 
 
-        requestURL = new URL(url), style = requestURL.searchParams.get('style') || 'flat', branch = requestURL.searchParams.get('branch') || 'master', endpoint = `${env.WORKER_URL}/${hash}?branch=${branch}`, cf: RequestInitCfProperties = {
+        requestURL = new URL(url), style = requestURL.searchParams.get('style') || 'flat', branch = requestURL.searchParams.get('branch') || 'master', endpoint = `${env.WORKER_URL}/badger/${hash}?branch=${branch}`, cf: RequestInitCfProperties = {
             cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
         };
     console.log({ url })
-    let endpointRequest = `https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`;
-    const cachedResponse = await cache.match(endpointRequest)
-    if (cachedResponse) {
-        console.log(cachedResponse)
+    let endpointUrl = `https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`;
+    const cachedResponse = await cache.match(endpointUrl)
+    if (cachedResponse && Number(cachedResponse.headers.get('cached_on')) > (Date.now() - 300000)) {
+        return cachedResponse
     }
-    let response = await fetch(endpointRequest, { cf })
+    let response = await fetch(endpointUrl, { cf })
 
     if (response.ok && response.headers.get('content-type') === 'image/svg') {
         // Reconstruct the Response object to make its headers mutable.
@@ -35,7 +35,7 @@ export async function computeSVGEndpointRequest(
         response.headers.set('Cache-Control', 'public, max-age=300');
 
         //response.headers.set('Content-Disposition', `inline; filename=image.webp`);
-        ctx.waitUntil(cache.put(endpointRequest, response.clone()));
+        ctx.waitUntil(cache.put(endpointUrl, response.clone()));
     }
     return response;
 

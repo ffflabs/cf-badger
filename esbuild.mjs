@@ -1,14 +1,29 @@
 import esbuild from 'esbuild';
+//import fs from 'fs/promises'
+
 const mode = process.env.NODE_ENV || 'production';
-console.log({ mode });
+const buildOptions={
+  splitting: mode === "production",
+
+  entryPoints: ['src/index.ts','src/Badger.ts','src/modules/computeAssetRequest.ts','src/modules/GithubRequest.ts'],
+  outdir:'dist',
+  bundle: true,
+  format:'esm',
+  write: true,
+  metafile: true,
+  sourcemap: 'inline',
+  outExtension: { '.js': '.mjs' },
+  minify: mode === 'production',
+}
 esbuild
-  .build({
-    entryPoints: ['src/index.ts'],
-    bundle: true,
-    format:'esm',
-    outfile: 'dist/index.mjs',
-    sourcemap: 'inline',
-    outExtension: { '.js': '.mjs' },
-    minify: mode === 'production',
+  .build(buildOptions)
+ 
+  .then(result => {
+      console.log({ ...buildOptions, mode, resultkeys: Object.keys(result) })
+      //if (result.metafile) return fs.writeFile('meta.json', JSON.stringify(result.metafile,null,2))
+      return
   })
-  .catch(() => process.exit(1));
+  .catch((err) => {
+      console.error(err)
+      return process.exit(1)
+  })

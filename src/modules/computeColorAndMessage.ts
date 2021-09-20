@@ -1,10 +1,10 @@
 
 export interface IWorkflowList {
   total_count: number;
-  workflows: Workflow[];
+  workflows: IWorkflow[];
 }
 
-export interface Workflow {
+export interface IWorkflow {
   id: number;
   node_id: string;
   name: string;
@@ -17,7 +17,7 @@ export interface Workflow {
   badge_url: string;
 }
 
-export interface WorkflowRun {
+export interface IWorkflowRun {
   id: number;
   name: string;
   node_id: string;
@@ -86,11 +86,11 @@ export const Status = {
 }
 export interface IWorkflowRuns {
   total_count: number;
-  workflow_runs: WorkflowRun[];
+  workflow_runs: IWorkflowRun[];
 }
 type ShieldsAttributes = { color: string; message: string, isError?: boolean }
 
-export type WorkflowRunPart = Pick<WorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>
+export type WorkflowRunPart = Pick<IWorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>
 
 
 

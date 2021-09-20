@@ -21,4 +21,6 @@ compatibility_date = "2021-09-18"
   command = "yarn build "
 
   [build.upload]
-    format = "service-worker"
+    format = "modules"
+    dir = "dist"
+    main = "./index.mjs"

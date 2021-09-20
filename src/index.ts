@@ -1,17 +1,39 @@
 
 import type { IttyDurable } from 'itty-durable';
 import { withDurables } from 'itty-durable';
-import { DurableStubGetter, error, ThrowableRouter, TRequestWithParams, EnvWithDurableObject } from 'itty-router-extras';
+import { DurableStubGetter, error, ThrowableRouter, TRequestWithParams, EnvWithDurableObject, json } from 'itty-router-extras';
 
-import { computeAssetRequest } from './modules/computeAssetRequest';
-import { computeRunStatusParameters } from './modules/computeRunStatusParameters';
+import { computeAssetRequest, getAssetFromKVDefaultOptions } from './modules/computeAssetRequest';
 import { computeSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
-import { getSentryInstance } from './modules/getSentryInstance';
 import { Badger, TOutputResults } from './Badger';
 
 import type { IRequestParams } from './Badger'
-import type Toucan from 'toucan-js';
+import Toucan from 'toucan-js';
+import type { Context } from 'toucan-js/dist/types';
+import type { EnvWithBindings } from 'itty-router-extras';
 
+
+
+
+export async function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<Omit<IRequestParams, 'env'>> {
+  let { url: originalUrl, params } = request, { owner, repo, workflow_id, } = params, requestURL = new URL(originalUrl), GITHUB_TOKEN = requestURL.searchParams.get('token') || env.GITHUB_TOKEN;
+  const hashHex = await computeHash({ owner, repo, workflow_id, GITHUB_TOKEN }); // convert bytes to hex string
+  return { owner, repo, workflow_id, GITHUB_TOKEN, requestURL, hashHex };
+
+}
+async function computeHash({ owner, repo, workflow_id, GITHUB_TOKEN }: { owner: string; repo: string; workflow_id: string; GITHUB_TOKEN: string; }): Promise<string> {
+  const linkParams = new TextEncoder().encode(JSON.stringify({ owner, repo, workflow_id, GITHUB_TOKEN }));
+
+  const hashBuffer = await crypto.subtle.digest(
+    {
+      name: "SHA-1",
+    },
+    linkParams
+  );
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substr(0, 20); // convert bytes to hex string. Use first 20 chars as slug
+  return hashHex;
+}
 
 export interface IWaitableObject {
   waitUntil: (promise: Promise<unknown>) => void
@@ -27,10 +49,38 @@ export type TctxWithSentry = {
 export { Badger }
 
 
-export function computeErroredResponse({ owner, repo }: { owner: string, repo: string }, res: Response): Error {
-  const err = new Error(`Request to ${owner}/${repo} failed with status: ${res.status} ${res.statusText}`) as Error & { status: number }
-  err.status = res.status;
-  return err
+function getSentryInstance(ctx: Context, env: EnvWithBindings): Toucan {
+  /**
+   * Only instance Toucan when we have a valid DSN in the environment
+   */
+  if (env.SENTRY_DSN) {
+    return new Toucan({
+      context: ctx,
+      request: ctx.request,
+      dsn: String(env.SENTRY_DSN),
+      environment: String(env.WORKER_ENV),
+      release: env.RELEASE,
+      debug: false
+    });
+  }
+  let breadCrumbs = [] as { [s: string]: unknown; }[];
+  /**
+   * Otherwise, return a dummy
+   */
+  return {
+    captureException: (err: Error) => {
+      console.error(err);
+      return Date.now();
+    },
+    addBreadcrumb: (args: { [s: string]: unknown; }) => {
+      breadCrumbs.push(args);
+    },
+    captureMessage: (msg: string) => {
+      console.log(msg);
+      return Date.now();
+    }
+  } as unknown as Toucan;
+
 }
 // eslint-disable-next-line @typescript-eslint/ban-types
 type TBadgerMethod<TMethodName extends string> = Badger[TMethodName] extends Function ? Badger[TMethodName] : { (args: IRequestParams): Promise<Response> }
@@ -68,6 +118,13 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
     ]
   })
   return router
+    .get('/badger',
+      async (
+        request: TRequestWithParams,
+        env: EnvWithDurableObject
+      ): Promise<Response> => {
+        return json(getAssetFromKVDefaultOptions(env))
+      })
 
     .get('/images/*', computeAssetRequest)
     .all('*', withDurables())
@@ -75,7 +132,6 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
     .get(
       '/badger/:hash/endpoint.svg',
       computeSVGEndpointRequest)
-
     .get(
       '/badger/:owner/:repo',
       async (
@@ -119,7 +175,7 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
       })
 }
 
-const exportDefault = {
+export default {
   fetch:
 
     async (
@@ -143,27 +199,4 @@ const exportDefault = {
         });
     }
 }
-/*
-CF-Badger was originally deployed as a non-module service-worker
-addEventListener('fetch', async (event: FetchEvent) => {
 
-  const env: EnvWithDurableObject = {
-    GITHUB_TOKEN,
-    SENTRY_DSN,
-    WORKER_ENV,
-    WORKER_URL,
-    BADGER_KV,
-    RELEASE
-  },
-    { request } = event,
-    waitUntil = event.waitUntil.bind(event)
-
-
-  event.respondWith(exportDefault.fetch(request, env, { waitUntil }))
-});
-
-
-
-
-*/
-export default exportDefault

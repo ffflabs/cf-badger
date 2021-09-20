@@ -10,6 +10,7 @@ env:
   BADGER_KV_ID: ${{ secrets.BADGER_KV_ID }}
   BADGER_KV_PREVIEW_ID: ${{ secrets.BADGER_KV_PREVIEW_ID }}
   CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -40,8 +41,8 @@ jobs:
         run: yarn global add @cloudflare/wrangler
       - name: Install dependencies
         run: yarn --frozen-lockfile
-
-
+      - run: cp wrangler.example.toml wrangler.toml
+      - run: yarn build
       - name: Run test
         run: yarn test
         env:

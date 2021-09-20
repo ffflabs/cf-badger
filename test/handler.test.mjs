@@ -7,33 +7,32 @@ const owner = "huasofoundries",
   wflow_id = 8501839
 
 test.beforeEach((t) => {
-  // Create a new Miniflare environment for each test
-  const mf = new Miniflare({
-    scriptPath: "./dist/index.mjs",
-    // Some options omitted, see src/options/index.ts for the full list
-    sourceMap: true,
-    log: new ConsoleLog(), // Defaults to no-op logger
-    wranglerConfigPath: "./wrangler.toml",
-    watch: true,
-    kvNamespaces: ["BADGER_KV","__STATIC_CONTENT"],
-    upstream: 'https://cf-worker.com',
-    cachePersist: false,
-    port: 8989,
-    host: 'http://127.0.0.1',
-    bindings: {
-      WORKER_ENV: process.env.WORKER_ENV,
-      SENTRY_DSN: process.env.SENTRY_DSN,
-      WORKER_URL: process.env.WORKER_URL,
-      GITHUB_TOKEN: process.env.GITHUB_TOKEN,
-      RELEASE: process.env.RELEASE,
-    },
-    durableObjects:{Badger:{className:'Badger'}},
-    durableObjectsPersist: true,
-    cachePersist: false,
-    modules: true,
-    modulesRules: [
-      { type: "ESModule", include: ["**/*.mjs"], fallthrough: true }]
-  });
+    // Create a new Miniflare environment for each test
+    const mf = new Miniflare({
+      scriptPath: "./dist/index.mjs",
+      // Some options omitted, see src/options/index.ts for the full list
+      sourceMap: true,
+      log: new ConsoleLog(), // Defaults to no-op logger
+      wranglerConfigPath: "./wrangler.toml",
+      watch: true,
+      kvNamespaces: ["BADGER_KV"],
+      upstream: 'https://cf-worker.com',
+      cachePersist: false,
+      
+      port: 8989,
+      wranglerConfigEnv:'dev',
+      //host: 'http://127.0.0.1',
+      
+          
+      durableObjects:{Badger:{className:'Badger'}},
+      
+      durableObjectsPersist: true,
+      cachePersist: false,
+      modules: true,
+      modulesRules: [
+        { type: "ESModule", include: ["**/*.mjs"], fallthrough: true }]
+    });
+    
   t.context = { mf };
 });
 
@@ -43,9 +42,12 @@ test("lists available workflows",
   */
   async (t) => {
     // Get the Miniflare instance
-    const { mf } = t.context;
+    const { mf } = t.context,
+    availableWorkflowsLink=`http://localhost:8989/badger/${owner}/${repo}`
+    console.log(availableWorkflowsLink)
     // Dispatch a fetch event to our worker
-    const result = await mf.dispatchFetch(`http://localhost:8989/${owner}/${repo}`);
+     let result = await mf.dispatchFetch(availableWorkflowsLink);
+     
     t.is(result.status, 200)
     const workflows = await result.json()
     t.assert(Array.isArray(workflows));
@@ -57,7 +59,7 @@ test("lists available workflows",
         && typeof filename_url === 'string'
     }))
   });
-test("lists workflow runs for each branch",
+  test("lists workflow runs for each branch",
   /**
   * @param {import('ava').t}
   */
@@ -65,7 +67,7 @@ test("lists workflow runs for each branch",
     // Get the Miniflare instance
     const { mf } = t.context;
     // Dispatch a fetch event to our worker
-    const result = await mf.dispatchFetch(`http://localhost:8989/${owner}/${repo}/${wflow_id}`);
+    const result = await mf.dispatchFetch(`http://localhost:8989/badger/${owner}/${repo}/${wflow_id}`);
     t.is(result.status, 200)
     const branchesObj = await result.json()
 

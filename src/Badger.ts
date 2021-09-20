@@ -2,11 +2,10 @@ import { IttyDurable } from 'itty-durable';
 import { json, EnvWithDurableObject } from 'itty-router-extras';
 import Toucan from 'toucan-js';
 
-import type { TWorkflowParams } from "./modules/computeGithubRequest";
-import { computeGithubRequest, ModifiableRequest } from "./modules/computeGithubRequest";
-import type { IWorkflowRuns, WorkflowRun, WorkflowRunPart } from './modules/handler';
-import { computeColorAndMessage, IWorkflowList } from './modules/handler';
 
+import { GithubRequest } from "./modules/GithubRequest";
+import type { IWorkflowRuns, IWorkflowRun, WorkflowRunPart } from './modules/computeColorAndMessage';
+import { computeColorAndMessage, IWorkflowList } from './modules/computeColorAndMessage';
 
 type ErrorObject = {
   name: string;
@@ -14,6 +13,7 @@ type ErrorObject = {
   url?: string;
   stack: string[];
 };
+
 
 export interface IRequestParams {
   env: EnvWithDurableObject,
@@ -26,7 +26,6 @@ export interface IRequestParams {
   branch?: string
 
 }
-
 
 type TRunResults = {
   id: number;
@@ -61,11 +60,6 @@ export class Badger extends IttyDurable implements DurableObject {
 
 
   }
-  computeGithubRequest(workflowParams: TWorkflowParams,
-    { GITHUB_TOKEN }: { GITHUB_TOKEN: string }
-  ): ModifiableRequest {
-    return computeGithubRequest(workflowParams, { GITHUB_TOKEN })
-  }
 
 
 
@@ -81,7 +75,7 @@ export class Badger extends IttyDurable implements DurableObject {
       repo: string,
       GITHUB_TOKEN: string
     }): Promise<{ id: number; id_url: string; name: string; filename_url: string; }[]> {
-    let ghRequest = computeGithubRequest({ owner, repo }, { GITHUB_TOKEN });
+    let ghRequest = new GithubRequest({ owner, repo }, { GITHUB_TOKEN });
 
     const res = await ghRequest.fetch({ method: 'GET' });
 
@@ -113,7 +107,7 @@ export class Badger extends IttyDurable implements DurableObject {
   }): Promise<TOutputResults> {
     const storedPromise = this.state.BADGER_KV.put(`hash:${hashHex}`, JSON.stringify({ owner, repo, workflow_id, GITHUB_TOKEN }))
 
-    const ghRequest = computeGithubRequest({ owner, repo, workflow_id, branch }, { GITHUB_TOKEN })
+    const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, { GITHUB_TOKEN })
     //console.log(ghRequest)
     //ctx.sentry.addBreadcrumb({ data: { requestURL, ghRequest: ghRequest.url } });
     const res = await ghRequest.fetch({ method: 'GET' })
@@ -141,7 +135,7 @@ export class Badger extends IttyDurable implements DurableObject {
     const { owner, repo, workflow_id, GITHUB_TOKEN } = (await this.state.BADGER_KV.get(`hash:${hashHex}`, 'json') || {}) as {
       owner: string; repo: string; workflow_id: string; GITHUB_TOKEN: string;
     },
-      ghRequest = computeGithubRequest({ owner, repo, workflow_id, branch }, { GITHUB_TOKEN }),
+      ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, { GITHUB_TOKEN }),
       res = await ghRequest.fetch({ method: 'GET' });
     if (!res.ok) {
       throw this.computeErroredResponse({ owner, repo }, res);
@@ -153,7 +147,7 @@ export class Badger extends IttyDurable implements DurableObject {
     });
 
 
-    return { ...computeColorAndMessage(runs as WorkflowRun[], Number(workflow_id), branch) }
+    return { ...computeColorAndMessage(runs as IWorkflowRun[], Number(workflow_id), branch) }
 
 
   }

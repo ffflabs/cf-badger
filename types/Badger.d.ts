@@ -2,9 +2,7 @@
 import { IttyDurable } from 'itty-durable';
 import { EnvWithDurableObject } from 'itty-router-extras';
 import Toucan from 'toucan-js';
-import type { TWorkflowParams } from "./modules/computeGithubRequest";
-import { ModifiableRequest } from "./modules/computeGithubRequest";
-import { computeColorAndMessage } from './modules/handler';
+import { computeColorAndMessage } from './modules/computeColorAndMessage';
 export interface IRequestParams {
     env: EnvWithDurableObject;
     owner: string;
@@ -33,9 +31,6 @@ export declare class Badger extends IttyDurable implements DurableObject {
     state: DurableObjectState & EnvWithDurableObject;
     [s: string]: unknown;
     constructor(state: DurableObjectState, env: EnvWithDurableObject);
-    computeGithubRequest(workflowParams: TWorkflowParams, { GITHUB_TOKEN }: {
-        GITHUB_TOKEN: string;
-    }): ModifiableRequest;
     computeAvailableWorkflowsRequest({ requestURL, owner, repo, GITHUB_TOKEN }: {
         requestURL: URL;
         owner: string;

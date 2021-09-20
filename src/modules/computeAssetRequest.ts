@@ -22,7 +22,7 @@ const defaultCacheControl: CacheControl = {
 const parseStringAsObject = <T>(maybeString: string | T): T =>
     typeof maybeString === 'string' ? (JSON.parse(maybeString) as T) : maybeString
 
-const getAssetFromKVDefaultOptions = (env: EnvWithDurableObject) => {
+export const getAssetFromKVDefaultOptions = (env: EnvWithDurableObject) => {
     return {
         ASSET_NAMESPACE: typeof env.__STATIC_CONTENT !== 'undefined' ? env.__STATIC_CONTENT : undefined,
         ASSET_MANIFEST:
@@ -73,8 +73,8 @@ const mapRequestToAsset = (request: Request, env: EnvWithDurableObject, options?
  * This is just an adaptation of the real @cloudflare/kv-asset-handler to work on modules format
 */
 const getAssetFromKV = async (request: TRequestWithParams, env: EnvWithDurableObject, options: Partial<Options>): Promise<Response> => {
-    console.info({ env })
     options = assignOptions(env, options)
+
 
     const ASSET_NAMESPACE = options.ASSET_NAMESPACE
     const ASSET_MANIFEST = parseStringAsObject<AssetManifestType>(options.ASSET_MANIFEST as string)
@@ -106,7 +106,7 @@ const getAssetFromKV = async (request: TRequestWithParams, env: EnvWithDurableOb
             requestKey = mapRequestToAsset(request, env, options)
         }
     }
-
+    console.info({ rawPathKey, requestKey })
     const SUPPORTED_METHODS = ['GET', 'HEAD']
     if (!SUPPORTED_METHODS.includes(requestKey.method)) {
         throw new MethodNotAllowedError(`${requestKey.method} is not a valid request method`)
@@ -210,27 +210,29 @@ const getAssetFromKV = async (request: TRequestWithParams, env: EnvWithDurableOb
     return response
 }
 export async function computeAssetRequest(request: TRequestWithParams, env: EnvWithDurableObject, ctx: TctxWithSentry): Promise<Response> {
-    console.info({ env })
-    try {
+    // console.info({ env })
+    return getAssetFromKV(request, env, { cacheControl: { bypassCache: true } })
+        .then((page) => {
 
-        const page = await getAssetFromKV(request, env, { cacheControl: { bypassCache: true } });
 
-        // allow headers to be altered
-        const response = new Response(page.body, page);
+            // allow headers to be altered
+            const response = new Response(page.body, page);
 
-        response.headers.set('X-XSS-Protection', '1; mode=block');
-        response.headers.set('X-Content-Type-Options', 'nosniff');
-        response.headers.set('X-Frame-Options', 'DENY');
-        response.headers.set('Referrer-Policy', 'unsafe-url');
-        response.headers.set('Feature-Policy', 'none');
+            response.headers.set('X-XSS-Protection', '1; mode=block');
+            response.headers.set('X-Content-Type-Options', 'nosniff');
+            response.headers.set('X-Frame-Options', 'DENY');
+            response.headers.set('Referrer-Policy', 'unsafe-url');
+            response.headers.set('Feature-Policy', 'none');
 
-        return response;
+            return response;
 
-    } catch (e) {
-        console.error(e)
-        ctx.sentry.captureException(e)
-        // if an error is thrown try to serve the asset at 404.html
-        return missing('not found: ' + request.url);
+        }).catch(e => {
 
-    }
+            console.error(e.stack)
+            ctx.sentry.captureException(e)
+            // if an error is thrown try to serve the asset at 404.html
+            return missing('not found: ' + request.url);
+        })
+
+
 }

@@ -1,6 +1,8 @@
 import { TRequestWithParams, EnvWithDurableObject } from 'itty-router-extras';
 import { Badger } from './Badger';
-import type Toucan from 'toucan-js';
+import type { IRequestParams } from './Badger';
+import Toucan from 'toucan-js';
+export declare function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<Omit<IRequestParams, 'env'>>;
 export interface IWaitableObject {
     waitUntil: (promise: Promise<unknown>) => void;
 }
@@ -9,11 +11,7 @@ export declare type TctxWithSentry = {
     sentry: Toucan;
 } & IWaitableObject;
 export { Badger };
-export declare function computeErroredResponse({ owner, repo }: {
-    owner: string;
-    repo: string;
-}, res: Response): Error;
-declare const exportDefault: {
+declare const _default: {
     fetch: (request: TRequestWithParams, env: EnvWithDurableObject, { waitUntil }: IWaitableObject) => Promise<Response>;
 };
-export default exportDefault;
+export default _default;
