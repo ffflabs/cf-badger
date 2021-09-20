@@ -37,6 +37,11 @@
       font-size: 0.9em;
       width: 100%;
     }
+    .select select option {
+      line-height: 1.2em;
+      padding:1em 2px;
+      width: 100%;
+    }
 
     .control input {
       font-size: 0.9em;
@@ -193,7 +198,7 @@
                               height: 2em;
                             " v-on:click="showToken">
                           <span class="icon">
-                            <i class="fas fa-eye"></i>
+                            <i v-bind:class="{'fas':true, 'fa-eye':tokenInputType==='password','fa-eye-slash':tokenInputType!=='password'}" :rel="tokenInputType"></i>
                           </span>
                         </button>
                       </div>
@@ -409,6 +414,7 @@
         workflow: {},
         hashHex: '',
         branches: [],
+        tokenInputType:'password'
       },
       computed: {
         WorkflowTitle: function () {
@@ -466,6 +472,7 @@
             '</a>'
           );
         },
+       
       },
       mounted: function () {
         const theURL = new URL(location.href),
@@ -490,7 +497,8 @@
           document.querySelector('.modal').classList.toggle('is-active')
         },
         showToken: function () {
-          this.$refs.tokenInput.type = 'text';
+          this.$refs.tokenInput.type =(this.tokenInputType==='password')? 'text':'password';
+          this.tokenInputType=this.$refs.tokenInput.type
         },
         getWorkFlows: function () {
           if (!this.token) {

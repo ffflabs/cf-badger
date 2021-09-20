@@ -59,13 +59,8 @@ export declare class Badger extends IttyDurable implements DurableObject {
     }): Promise<TOutputResults>;
     computeResultRequestFromHash({ hashHex, branch }: {
         hashHex: string;
-        requestURL: URL;
         branch?: string;
-    }): Promise<{
-        color: string;
-        message: string;
-        isError?: boolean | undefined;
-    }>;
+    }): Promise<Response>;
     /**
      * Even if {IttyDurable} does already take care of handling the fetch method by default, we need to
      * inject our Sentry client here, so we override it.
