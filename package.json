@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Safe status badges for private repos, running on Cloudflare Workers",
   "module": "dist/index.mjs",
+  "main": "dist/index.mjs",
   "types": "types/main.d.ts",
   "type": "module",
   "scripts": {
