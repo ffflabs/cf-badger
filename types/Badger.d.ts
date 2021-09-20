@@ -42,6 +42,13 @@ export declare class Badger extends IttyDurable implements DurableObject {
         name: string;
         filename_url: string;
     }[]>;
+    /**
+     * This operation retrieves at most 100 run results for a given workflow.
+     * Given the potential size of the response we store it on a KVNamespace instead
+     * of bloating the Durable Object's storage
+     * @param param0
+     * @returns
+     */
     computeResultRequest({ owner, repo, workflow_id, GITHUB_TOKEN, hashHex, branch }: {
         owner: string;
         repo: string;

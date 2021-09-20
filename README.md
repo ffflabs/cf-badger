@@ -3,7 +3,7 @@
 
 Cf-Badger generates short urls displaying current status (actually, delayed up to 5 min) of your private repos workflows. 
  
-<p align="center">
+<p align="center" style="text-align:center">
 <a href="https://workers.cloudflare.com/">
 <img src="docs/images/cf-workers-badge.svg"></a>
 &nbsp; 
@@ -14,32 +14,32 @@ Cf-Badger generates short urls displaying current status (actually, delayed up t
 <img src="docs/images/cf-pages-badge.svg"></a>
 <img src="https://img.shields.io/static/v1?label=Made%20With&message=TypeScript&color=f0f0f0&labelColor=3974c0&style=for-the-badge&logo=typescript&logoColor=white&messageColor=3974c0">
 
+<div align="center" style="text-align:center">CF-Badger is my project for the <a href="https://challenge.developers.cloudflare.com/">Cloudflare Developer Summer Challenge</a></div>
+
 </p> 
 
 ## FAQ
 
-### Why? 
+### :shield: Private Repos vs Public Badges
 
-⛨ Albeit it covers most bases, Shields.io's excellent service doesn't cover private repos. 
+Sometimes you might want to display status badges for a private repo's workflows. Wether it's for Github Pages, public repo wikis, custom health dashboards or even for previewing your README contents in your ide, you'll discover it's not really straightforward.
 
-:octocat: Github provides badges for workflows on these repos, but unless you have read permissions on it, and you're currently logged on GH, only a broken image is displayed. 
+Albeit it covers most bases, Shields.io's excellent service doesn't cover private repos. 
+
+:octocat: Github provides badges for workflows on these repos, but but unless you have read permissions on it, and you're currently logged on GH, only a broken image is displayed. 
 
 <p align="center" style="text-align:center">
 
 
 <img src="docs/images/before_and_after200.svg">
 
-<small align="center" style="text-align:center">How to get from broken to flawless?</small>
+<div align="center" style="font-size:0.8em;text-align:center">How to get from broken to flawless?</div>
 
 </p>
 
-🌐	 I wanted to enable publicly displayed status badges to use in Github Pages, healthchecks dashboards, repo wikis and, even simpler, to see the real output of my README when previewing it on my IDE.
+Enter **CF-Badger**. It will present you with a brief form (which, by the way, is hosted on [Cloudflare Pages](https://pages.cloudflare.com)) whose final output is a short url to the status badge, updated every 5 minutes.
 
 
-Also, CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**
-### How?
-
-🎯 We request your workflows run outcome directly to Github's API, on your behalf. Because of this, you'll need to enter a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com) with 'repo' privileges for CF-Badger to access said info.
 
 <p align="center">
 
@@ -47,11 +47,15 @@ Also, CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](
 <img src="docs/images/screenshot.png">
 
 </p>
+----
+### 🎯 How?
 
-🗃️ We compute and expose the last run outcome as JSON to [Shields.io endpoint API](https://shields.io/endpoint), without which CF-Badger wouldn't work.
-### Security Concerns 🔐
+ We request the outcome of your workflows directly to Github's API, on your behalf. To do this, we'll need you to provide a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com) with 'repo' privileges.  
 
-Your token won't be part of the generated URL. Instead, we'll store it internally, and provide an url you can safely share without exposing your token.
+
+This result is formatted in compliance to Shields.io schema, and provided as parameter to [Shields.io endpoint API](https://shields.io/endpoint), (🙌 without which CF-Badger wouldn't work). 
+
+Finally, we'll generate and provide you with a shortened URL to the computed status badge
 
 <p align="center">
 
@@ -60,19 +64,18 @@ Your token won't be part of the generated URL. Instead, we'll store it internall
 
 </p>
 
+**🔐 Security wise**, this token is stored internally on the persistent storage of a [Durable Object](https://blog.cloudflare.com/introducing-workers-durable-objects/) and it's never exposed to third parties nor used other than to query Github's API on your behalf. 
 
-### Do I need a token for public repos? 🔓
-
-👍 Yes, because we still query Github's API. However, if you intend to display workflow status badges for public repos, you can use Shields.io direcly. Just look in their [Builds Category](https://shields.io/category/build) for "Github Workflows" section.
+If your use case for CF-Badger involves public repos, we still need you to enter a token, albeit with the much narrower and harmless `public_repo` scope. **However**, for that use case, you might want to use Shields.io direcly. Just look in their [Builds Category](https://shields.io/category/build) for "Github Workflows" section.
 
 
-### Why do you address yourself as "we" if you're the only contributor? 🤷
+### 🤷 Why do you address yourself as "we" if you're the only contributor? 
 
 
 It kinda makes the project sound like a serious initiative. 
 
 --------------
-## Acknowledgements 🏆
+## 🏆 Acknowledgements 
 
 **[Cloudflare Workers](https://www.cloudflare.com/products/workers)**, along with [Workers KV](https://www.cloudflare.com/products/workers-kv/), [Cloudflare Pages](https://pages.cloudflare.com/) and [Durable Objects](https://blog.cloudflare.com/introducing-workers-durable-objects/). This is the blazing fast platform on which CF-Badger runs and replicates over 200+ locations worldwide. Did I mention CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**?
 

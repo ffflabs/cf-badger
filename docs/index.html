@@ -1,371 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="CF-Badger is a Cloudflare Worker offering Status Badges for any workflow in your private Github Repos."
-    />
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="https://cf-badger.com/images/apple-icon-180x180.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="96x96"
-      href="https://cf-badger.com/images/favicon-96x96.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="192x192"
-      href="https://cf-badger.com/images/android-icon-192x192.png"
-    />
-    <meta
-      name="msapplication-TileImage"
-      content="https://cf-badger.com/images/ms-icon-144x144.png"
-    />
 
-    <meta name="author" content="Felipe Figueroa" />
-    <title>CF-Badger</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/bulma@0.7.5/css/bulma.min.css"
-    />
-    <style>
-      .card-header-icon .media {
-        flex-direction: column;
-        align-items: center;
-      }
-      .card-header-icon .media .image {
-        margin-bottom: 0;
-        padding-bottom: 0;
-      }
-      .columns .column {
-        margin: 0 auto;
-      }
-      .select {
-        width: 100%;
-      }
-      .select select {
-        font-size: 0.9em;
-        width: 100%;
-      }
-      .control input {
-        font-size: 0.9em;
-      }
-      .modal {
-        opacity:0
-      }
-      .modal.is-active {
-        opacity:1;
-          transition: opacity 0.3s;
-  -webkit-transition: opacity 0.3s;
-transition-delay:1s
-      }
-      .button.is-badger {
-        background: linear-gradient(180deg, rgb(67 76 84) 0%, rgb(57 65 72) 35%, rgb(37 42 48) 100%);
-        border-color: transparent;
-    color: #fff;
-      }
-      section a,footer a {
-        color:#d26404;
-      }
-    </style>
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="CF-Badger is a Cloudflare Worker offering Status Badges for any workflow in your private Github Repos." />
+  <link rel="apple-touch-icon" sizes="180x180" href="https://cf-badger.com/images/apple-icon-180x180.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="https://cf-badger.com/images/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="https://cf-badger.com/images/android-icon-192x192.png" />
+  <meta name="msapplication-TileImage" content="https://cf-badger.com/images/ms-icon-144x144.png" />
 
-  <body>
-<nav class="navbar is-transparent">
-  <div class="navbar-brand">
-        <div class="navbar-item ">
-                <p class="control">  
-                <a class="button" href="https://workers.cloudflare.com">
-                <span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span>
-                <img style="display:inline" src="/images/cf-workers-badge.svg"></a>
-                <a class="button" href="https://pages.cloudflare.com">
-                <span style="vertical-align: super;font-weight:bold">&nbsp;and&nbsp;&nbsp;&nbsp;</span>
-                <img style="display:inline" src="/images/cf-pages-badge.svg"></a>
-                </p>
+  <meta name="author" content="Felipe Figueroa" />
+  <title>CF-Badger</title>
+  <link rel="stylesheet" href="https://unpkg.com/bulma@0.7.5/css/bulma.min.css" />
+  <style>
+    .card-header-icon .media {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-header-icon .media .image {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .columns .column {
+      margin: 0 auto;
+    }
+
+    .select {
+      width: 100%;
+    }
+
+    .select select {
+      font-size: 0.9em;
+      width: 100%;
+    }
+
+    .control input {
+      font-size: 0.9em;
+    }
+
+    .modal {
+      opacity: 0
+    }
+
+    .modal.is-active {
+      opacity: 1;
+      transition: opacity 0.3s;
+      -webkit-transition: opacity 0.3s;
+      transition-delay: 1s
+    }
+
+    .button.is-badger {
+      background: linear-gradient(180deg, rgb(67 76 84) 0%, rgb(57 65 72) 35%, rgb(37 42 48) 100%);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    section a,
+    footer a {
+      color: #d26404;
+    }
+
+    .modal-cart-foot,
+    .modal-card-head {
+      padding: 15px;
+    }
+
+    .modal-card-title {
+      font-size: 1.35em;
+    }
+
+    .select select[disabled] {
+      background-color: #ebebeb;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar is-transparent">
+
+    <div id="navbarExampleTransparentExample" class="navbar-menu">
+      <div class="navbar-start">
+
+
       </div>
-  </div>
 
-  <div id="navbarExampleTransparentExample" class="navbar-menu">
-    <div class="navbar-start">
-      
-   
-    </div>
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="field is-grouped">
+            <p class="control">
+              <a class="bd-tw-button button" data-social-network="Twitter" data-social-action="tweet"
+                data-social-target="https://cf-badger.com" target="_blank"
+                href="https://twitter.com/intent/tweet?text=cf-badger: a cloudflare worker that makes safe workflow status badges for Github private repos https://cf-badger.com #CloudflareSummerChallenge @CloudflareDev">
+                <span class="icon">
+                  <i class="fab fa-twitter"></i>
+                </span>
+                <span>
+                  Tweet
+                </span>
+              </a>
+            </p>
+            <p class="control">
+              <a class="bd-gh-button button" data-social-network="Github" data-social-target="https://cf-badger.com"
+                target="_blank" href="https://github.com/ffflabs/cf-badger">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>
+                  Github
+                </span>
+              </a>
+            </p>
 
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="field is-grouped">
-          <p class="control">
-            <a class="bd-tw-button button" data-social-network="Twitter" data-social-action="tweet" data-social-target="https://cf-badger.com" target="_blank" href="https://twitter.com/intent/tweet?text=cf-badger: a cloudflare worker that makes safe workflow status badges for Github private repos https://cf-badger.com #CloudflareSummerChallenge @CloudflareDev">
-              <span class="icon">
-                <i class="fab fa-twitter"></i>
-              </span>
-              <span>
-                Tweet
-              </span>
-            </a>
-          </p>
-          <p class="control">
-            <a class="bd-gh-button button" data-social-network="Github"  data-social-target="https://cf-badger.com" target="_blank" href="https://github.com/ffflabs/cf-badger">
-              <span class="icon">
-                <i class="fab fa-github"></i>
-              </span>
-              <span>
-                Github
-              </span>
-            </a>
-          </p>
- 
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</nav>
-    <section class="hero is-small">
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <header class="card-header-icon content">
-            <div class="media">
-              <figure class="image">
-                <img
-                  src="https://cf-badger.com/images/cf-badger-round-corners.svg"
-                  style="height: 72px"
-                />
-              </figure>
-              <h4 style="display: block">
-                Safe status badges for private repos
-              </h4>
-             
-            </div>
-               
-          </header>
-                 <div >
-          
-           </div>
+  </nav>
+  <section class="hero is-small">
+    <div class="hero-body" style="padding-top:0">
+      <div class="container has-text-centered">
+        <header class="card-header-icon content">
+          <div class="media">
+            <figure class="image">
+              <img src="https://cf-badger.com/images/cf-badger-round-corners.svg" style="height: 72px" />
+            </figure>
+            <h4 style="display: block">
+              Safe status badges for private repos
+            </h4>
+
+          </div>
+
+        </header>
+        <div>
+
         </div>
       </div>
-    </section>
-    <section  id="app">
-      <div class="container">
-        <div class="columns" style="justify-content: center;">
-          <div
-            class="column   is-two-thirds-desktop is-four-fifths-mobile is-three-quarters-tablet"
-            style="text-align: center"
-          >
+    </div>
+  </section>
+  <section id="app">
+    <div class="container">
+      <div class="columns" style="justify-content: center;">
+        <div class="column   is-two-thirds-desktop is-four-fifths-mobile is-three-quarters-tablet"
+          style="text-align: center">
 
-            <div
-              style="    max-width: 760px;
+          <div style="    max-width: 760px;
     margin: 0 auto;
                 text-align: justify;
                 padding: 0 2em 1em;
                 font-size: 0.9em;
                 margin-top: -1em;
-              "
-            >
-                       CF-Badger creates public urls displaying workflow statuses for
-              your private repos without exposing your personal access token, preventing <a v-on:click="toggleModal(true)">those annoying broken badge images</a>.
-            </div>
+              ">
+            CF-Badger creates public urls displaying workflow statuses for
+            your private repos without exposing your personal access token, preventing <a
+              v-on:click="toggleModal(true)">those annoying broken badge images</a>.
           </div>
         </div>
-        <div class="columns" style="justify-content: center">
-          <div
-            class="
+      </div>
+      <div class="columns" style="justify-content: center">
+        <div class="
               column
               
               is-two-thirds-desktop
               is-four-fifths-mobile
               is-three-quarters-tablet
-            "
-          >
-            <div class="card" style="    max-width: 760px;    margin: 0 auto;">
-              <div class="card-content">
-                <div>
-                  <div class="field-body columns">
-                    <div class="field column is-half">
-                      <label class="label">Repository</label>
-                      <div class="control">
-                        <input
-                          class="input"
-                          type="text"
-                          placeholder="ffflabs/cf-badger"
-                          v-model="repository"
-                        />
-                      </div>
+            ">
+          <div class="card" style="    max-width: 760px;    margin: 0 auto;">
+            <div class="card-content">
+              <div>
+                <div class="field-body columns">
+                  <div class="field column is-half">
+                    <label class="label">Repository</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="ffflabs/cf-badger" v-model="repository"
+                        v-on:change="getWorkFlows" />
                     </div>
-                    <div class="field column is-half">
-                      <label class="label"
-                        >Github Token (<a v-on:click="openNewTokenPage"
-                          >create</a
-                        >)</label
-                      >
-                      <div class="field has-addons">
-                        <div class="control" style="width: calc(100% - 35px)">
-                          <input
-                            class="input"
-                            type="password"
-                            v-model="token"
-                            ref="tokenInput"
-                            v-on:change="getWorkFlows"
-                          />
-                        </div>
-                        <div class="control">
-                          <button
-                            class="button is-badger"
-                            style="
+                  </div>
+                  <div class="field column is-half">
+                    <label class="label">Github Token (<a v-on:click="openNewTokenPage">create</a>)</label>
+                    <div class="field has-addons">
+                      <div class="control" style="width: calc(100% - 35px)">
+                        <input class="input" type="password" v-model="token" ref="tokenInput"
+                          v-on:change="getWorkFlows" />
+                      </div>
+                      <div class="control">
+                        <button class="button is-badger" style="
                               padding-bottom: 0.2em;
                               padding-top: 0.2em;
                               height: 2em;
-                            "
-                            v-on:click="showToken"
-                          >
-                            <span class="icon">
-                              <i class="fas fa-eye"></i>
-                            </span>
-                          </button>
-                        </div>
+                            " v-on:click="showToken">
+                          <span class="icon">
+                            <i class="fas fa-eye"></i>
+                          </span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div class="field-body columns" style="margin-bottom: 2em">
-                    <div class="field column is-half">
-                      <label class="label" :style="WorkflowTitle.color"
-                        >{{WorkflowTitle.content}}</label
-                      >
+                </div>
+                <div class="field-body columns" style="margin-bottom: 2em">
+                  <div class="field column is-half">
+                    <label class="label" :style="WorkflowTitle.color">{{WorkflowTitle.content}}</label>
 
+                    <div class="control">
+                      <div class="select">
+                        <select v-model="workflow" v-bind:disabled="!workflows.length" v-on:change="pickWorkFlow">
+                          <option v-if="!workflows.length">
+                            No workflows discovered yet
+                          </option>
+                          <option v-for="workflow in workflows" :key="workflow.id" v-bind:title="workflow.name"
+                            :value="workflow">
+                            {{workflow.name}}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field column is-half">
+                    <label class="label" :style="BranchesTitle.color">{{BranchesTitle.content}}</label>
+                    <div class="field">
                       <div class="control">
                         <div class="select">
-                          <select
-                            v-model="workflow"
-                            v-bind:disabled="!workflows.length"
-                            v-on:change="pickWorkFlow"
-                          >
-                            <option v-if="!workflows.length">
-                              No workflows discovered yet
+                          <select v-model="branch" v-bind:disabled="!branches.length">
+                            <option v-if="!branches.length">
+                              No branches discovered yet
                             </option>
-                            <option
-                              v-for="workflow in workflows"
-                              :key="workflow.id"
-                              v-bind:title="workflow.name"
-                              :value="workflow"
-                            >
-                              {{workflow.name}}
+                            <option v-for="branch in branches" :key="branch.id" :value="branch.head_branch">
+                              {{branch.head_branch}}
                             </option>
                           </select>
                         </div>
                       </div>
                     </div>
-                    <div class="field column is-half">
-                      <label class="label" :style="BranchesTitle.color"
-                        >{{BranchesTitle.content}}</label
-                      >
-                      <div class="field">
-                        <div class="control">
-                          <div class="select">
-                            <select
-                              v-model="branch"
-                              v-bind:disabled="!branches.length"
-                            >
-                              <option v-if="!branches.length">
-                                No branches discovered yet
-                              </option>
-                              <option
-                                v-for="branch in branches"
-                                :key="branch.id"
-                                :value="branch.head_branch"
-                              >
-                                {{branch.head_branch}}
-                              </option>
-                            </select>
-                          </div>
-                        </div>
+                  </div>
+                </div>
+
+                <div class="field-body columns">
+                  <div class="field column is-5 is-horizontal">
+                    <div class="field-label is-normal">
+                      <label class="label">Style</label>
+                    </div>
+                    <div class="control">
+                      <div class="select">
+                        <select v-model="style" v-bind:disabled="!hashHex">
+                          <option>for-the-badge</option>
+                          <option>flat</option>
+                          <option>flat-square</option>
+                          <option>plastic</option>
+                          <option>popout</option>
+                          <option>popout-square</option>
+                          <option>social</option>
+                        </select>
                       </div>
                     </div>
                   </div>
 
-                  <div class="field-body columns">
-                    <div class="field column is-5 is-horizontal">
-                      <div class="field-label is-normal">
-                        <label class="label">Style</label>
-                      </div>
-                      <div class="control">
-                        <div class="select">
-                          <select v-model="style" v-bind:disabled="!hashHex">
-                            <option>for-the-badge</option>
-                            <option>flat</option>
-                            <option>flat-square</option>
-                            <option>plastic</option>
-                            <option>popout</option>
-                            <option>popout-square</option>
-                            <option>social</option>
-                          </select>
-                        </div>
-                      </div>
+                  <div class="field column is-5 is-offset-1">
+                    <div class="field">
+                      <a v-bind:href="gotoURL" target="_blank">
+                        <img alt="Build Status" v-bind:src="badgeURL" />
+                      </a>
                     </div>
+                  </div>
+                </div>
 
-                    <div class="field column is-5 is-offset-1">
-                      <div class="field">
-                        <a v-bind:href="gotoURL" target="_blank">
-                          <img alt="Build Status" v-bind:src="badgeURL" />
-                        </a>
-                      </div>
+                <div class="has-text-centered">
+                  <label class="label">Markdown</label>
+                  <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <textarea class="is-small textarea" rows="2" placeholder="e.g. Hello world" ref="markdownTA">
+{{markdownSource}}</textarea>
+                    </div>
+                    <div class="control">
+                      <button class="button is-badger" style="height: 3.2em" v-on:click="copy($refs.markdownTA)">
+                        <span class="icon">
+                          <i class="fas fa-copy"></i>
+                        </span>
+                      </button>
                     </div>
                   </div>
 
-                  <div class="has-text-centered">
-                    <label class="label">Markdown</label>
-                    <div class="field has-addons">
-                      <div class="control is-expanded">
-                        <textarea
-                          class="is-small textarea"
-                          rows="2"
-                          placeholder="e.g. Hello world"
-                          ref="markdownTA"
-                        >
-{{markdownSource}}</textarea
-                        >
-                      </div>
-                      <div class="control">
-                        <button
-                          class="button is-badger"
-                          style="height: 3.2em"
-                          v-on:click="copy($refs.markdownTA)"
-                        >
-                          <span class="icon">
-                            <i class="fas fa-copy"></i>
-                          </span>
-                        </button>
-                      </div>
+                  <label v-if="showHtml" class="label">HTML</label>
+                  <div v-if="showHtml" class="field has-addons">
+                    <div class="control is-expanded">
+                      <input class="input" type="text" readonly="readonly" v-bind:value="htmlSource"
+                        v-on:focus="$event.target.select()" ref="htmlInput" />
                     </div>
-
-                    <label v-if="showHtml" class="label">HTML</label>
-                    <div v-if="showHtml" class="field has-addons">
-                      <div class="control is-expanded">
-                        <input
-                          class="input"
-                          type="text"
-                          readonly="readonly"
-                          v-bind:value="htmlSource"
-                          v-on:focus="$event.target.select()"
-                          ref="htmlInput"
-                        />
-                      </div>
-                      <div class="control">
-                        <button
-                          class="button is-badger"
-                          style="height: 3.2em"
-                          v-on:click="copy($refs.htmlInput)"
-                        >
-                          <span class="icon">
-                            <i class="fas fa-copy"></i>
-                          </span>
-                        </button>
-                      </div>
+                    <div class="control">
+                      <button class="button is-badger" style="height: 3.2em" v-on:click="copy($refs.htmlInput)">
+                        <span class="icon">
+                          <i class="fas fa-copy"></i>
+                        </span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -374,245 +302,253 @@ transition-delay:1s
           </div>
         </div>
       </div>
-       <div class="modal" v-bind:class="{'is-active':modalActive}">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">What is this worker for?</p>
-      <button class="delete" v-on:click="toggleModal" aria-label="close"></button>
-    </header>
-    <section class="modal-card-body">
-      <p
-              style="text-align: justify; padding-bottom: 1em; font-size: 0.9em"
-            >
-              Previewing the README.md file of private repos (like, in your IDE)
-              will show your status badges as a broken image. How are we supposed to check the
-              resulting layout?
-              <br />
+    </div>
+    <div class="modal" v-bind:class="{'is-active':modalActive}">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
 
-              <figure class="image">
-                <img
-                  src="https://cf-badger.com/images/before_and_after200.svg"
-                  width="350"
-                  style="width: 350px; margin: 0 auto"
-                />
-              </figure>
-              <small style="width: 95%;color: #999; display: block; font-size: 0.9em;text-align:center"
-                >From
-                broken<span style="display:inline-block;width:10em">&nbsp;</span>to
-                flawless&nbsp;&nbsp;&nbsp;</small
-              >
-              <br />
-              <p style="text-align: justify; padding-bottom: 1em; font-size: 0.9em">
-              CF-Badger creates public short-urls displaying workflow statuses for
-              your private repos. Your  personal access token is stored on our side and isn't ever exposed.
-              </p>
-              
-            </p>
-    </section>
-    <footer class="modal-card-foot">
-     <span class="icon">
-                            <i style="color:green" class="fas fa-lightbulb"></i>
-                          </span>&nbsp;&nbsp; CF-Badger is also my project for &nbsp;<a href="https://blog.cloudflare.com/developer-summer-challenge/">Cloudflare's Developer Summer Challenge</a> 
-    </footer>
-  </div>
-</div>
-    </section>
+          <p class="modal-card-title">
 
-    <footer class="footer">
-      <div class="container has-text-centered">
-        <div class="columns" style="justify-content: center">
-          <div style="max-width:760px"
-            class="
+            <span class="icon">
+              <i class="fas fa-code-branch"></i></span> Workflow Status Badges on <span class="icon">
+              <i class="fab fa-github"></i>
+            </span> Private Repos = <img src="/images/broken.svg" style="height: 32px;margin: 0 0 -0.35em 0.1em;" />
+          </p>
+          <button class="delete" v-on:click="toggleModal" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <p style="text-align: justify; padding-bottom: 1em; font-size: 0.9em">Unless requested by a logged in user,
+            status badges for Github private repos will
+            show up as broken images. What if you need to display them publicly,
+            eg: for Github Pages, public wikis, custom health dashboards or even for
+            previewing your README contents in your IDE?
+            <br />
+
+          <figure class="image">
+            <img src="https://cf-badger.com/images/before_and_after200.svg" width="350"
+              style="width: 350px; margin: 0 auto" />
+          </figure>
+          <small style="width: 95%;color: #999; display: block; font-size: 0.9em;text-align:center">From
+            broken<span style="display:inline-block;width:10em">&nbsp;</span>to
+            flawless&nbsp;&nbsp;&nbsp;</small>
+          <br />
+          <p style="text-align: justify; padding-bottom: 1em; font-size: 0.9em">
+            CF-Badger creates public short-urls displaying workflow statuses for
+            your private repos. Your personal access token is stored on our side and isn't ever exposed.
+          </p>
+
+          </p>
+        </section>
+        <footer class="modal-card-foot">
+          <span class="icon">
+            <i style="        color:#d26404;" class="fas fa-lightbulb"></i>
+          </span>&nbsp;&nbsp; CF-Badger is also my project for &nbsp;<a
+            href="https://blog.cloudflare.com/developer-summer-challenge/">Cloudflare's Developer Summer Challenge</a>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container has-text-centered">
+      <div class="columns" style="justify-content: center">
+        <div class="
               column
               
               is-two-thirds-desktop
               is-four-fifths-mobile
               is-three-quarters-tablet
-            "
-          >
-         
-            <p
-              style="text-align: justify; margin-top:-1em; font-size: 0.9em"
-            >
-              Please note that, if you intend to display workflow status badges
-              for public repos, you can use Shields.io direcly. Just look in
-              their
-              <a href="https://shields.io/category/build">Builds Category</a>
-              for Github Workflows section.
-            </p>
-            <p
-              style="text-align: center; padding-top:2em; font-size: 0.9em"
-            >
-            <strong>CF-Badger</strong>'s was inspired by <a href="https://actions-badge.atrox.dev/">Atrox's Actions Badge</a>. 
-            </p>
-          </div>
-        </div>
-      </div>
-    </footer>
+            ">
+
+          <p style="text-align: justify; margin-top:-1em; font-size: 0.9em">
+            Please note that, if you intend to display workflow status badges
+            for public repos, you can use Shields.io direcly. Just look in
+            their
+            <a href="https://shields.io/category/build">Builds Category</a>
+            for Github Workflows section.
+          </p>
    
+        
+        
+        
+        <div class="column ">
+          <p class="control" style="text-align: center;">
+            <a class="button" href="https://workers.cloudflare.com">
+              <span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span>
+              <img style="display:inline" src="/images/cf-workers-badge.svg"></a>
+        
+          <a class="button" href="https://pages.cloudflare.com">
+            <span style="vertical-align: super;font-weight:bold">&nbsp;and&nbsp;&nbsp;&nbsp;</span>
+            <img style="display:inline" src="/images/cf-pages-badge.svg"></a>
+          </p>
+        </div>
+        <p style="text-align: center; padding-top:2em; font-size: 0.9em">
+          <strong>CF-Badger</strong>'s was inspired by <a href="https://actions-badge.atrox.dev/">Atrox's Actions
+            Badge</a>.
+        </p></div>
+      </div>
+    </div>
+  </footer>
 
-  
-    <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
-    <script>
-      window.app = new Vue({
-        el: '#app',
-        data: {
-          showHtml: false,
-          repository: '',
-          modalActive:false,
-          style: 'for-the-badge',
-          branch: '',
-          privateRepo: false,
-          token: '',
-          workflows: [],
-          workflow: {},
-          hashHex: '',
-          branches: [],
+
+
+  <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+  <script>
+    window.app = new Vue({
+      el: '#app',
+      data: {
+        showHtml: false,
+        repository: '',
+        modalActive: false,
+        style: 'for-the-badge',
+        branch: '',
+        privateRepo: false,
+        token: '',
+        workflows: [],
+        workflow: {},
+        hashHex: '',
+        branches: [],
+      },
+      computed: {
+        WorkflowTitle: function () {
+          return this.workflows.length
+            ? { content: 'WorkFlow', color: 'color:black' }
+            : {
+              content: 'Enter token to enable selection',
+              color: 'color:#aaa',
+            };
         },
-        computed: {
-          WorkflowTitle: function () {
-            return this.workflows.length
-              ? { content: 'WorkFlow', color: 'color:black' }
-              : {
-                  content: 'Enter token to enable selection',
-                  color: 'color:#aaa',
-                };
-          },
-          BranchesTitle: function () {
-            return this.branches.length
-              ? { content: 'Branch', color: 'color:black' }
-              : {
-                  content: 'Pick a Workflow to enable selection',
-                  color: 'color:#aaa',
-                };
-          },
-          badgeURL: function () {
-            let style = this.style || '';
+        BranchesTitle: function () {
+          return this.branches.length
+            ? { content: 'Branch', color: 'color:black' }
+            : {
+              content: 'Pick a Workflow to enable selection',
+              color: 'color:#aaa',
+            };
+        },
+        badgeURL: function () {
+          let style = this.style || '';
 
-            let badgeBaseUrl = this.hashHex
-              ? this.endpointUrl
-              : `${location.protocol}//${location.host}/images`;
-            return `${badgeBaseUrl}/endpoint.svg?branch=${
-              this.branch || 'master'
+          let badgeBaseUrl = this.hashHex
+            ? this.endpointUrl
+            : `${location.protocol}//${location.host}/images`;
+          return `${badgeBaseUrl}/endpoint.svg?branch=${this.branch || 'master'
             }&style=${style}`;
-          },
-          endpointUrl: function () {
-            return this.hashHex
-              ? `${location.protocol}//${location.host}/badger/${this.hashHex}`
-              : `${this.repoUrl}/${this.workflow.id || 0}`;
-          },
-          repoUrl: function () {
-            this.repository =
-              this.repository ||
-              location.hash.replace('#', '') ||
-              'ffflabs/cf-badger';
-            return `${location.protocol}//${location.host}/badger/${this.repository}`;
-          },
-          gotoURL: function () {
-            return this.workflow.filename_url || '';
-          },
-          markdownSource: function () {
-            return `[![${this.workflow.name || 'N/A'}](${this.badgeURL})](${
-              this.gotoURL
+        },
+        endpointUrl: function () {
+          return this.hashHex
+            ? `${location.protocol}//${location.host}/badger/${this.hashHex}`
+            : `${this.repoUrl}/${this.workflow.id || 0}`;
+        },
+        repoUrl: function () {
+          this.repository =
+            this.repository ||
+            location.hash.replace('#', '') ||
+            'ffflabs/cf-badger';
+          return `${location.protocol}//${location.host}/badger/${this.repository}`;
+        },
+        gotoURL: function () {
+          return this.workflow.filename_url || '';
+        },
+        markdownSource: function () {
+          return `[![${this.workflow.name || 'N/A'}](${this.badgeURL})](${this.gotoURL
             })`;
-          },
-          htmlSource: function () {
-            return (
-              '<a href="' +
-              this.gotoURL +
-              '">' +
-              '<img alt="Build Status" src="' +
-              this.badgeURL +
-              '" />' +
-              '</a>'
-            );
-          },
         },
-        mounted: function () {
-          const theURL = new URL(location.href),
-            queryParams = theURL.searchParams,
-            owner = queryParams.get('owner'),
-            repo = queryParams.get('repo'),
-            token = queryParams.get('token'),
-            workflow_id = queryParams.get('workflow_id');
-          if (owner && repo) {
-            this.repository = [owner, repo].join('/');
-            if (workflow_id) {
-            }
-          }
-          if (token) {
-            this.token = token;
-            this.$nextTick(() => this.getWorkFlows());
-          }
+        htmlSource: function () {
+          return (
+            '<a href="' +
+            this.gotoURL +
+            '">' +
+            '<img alt="Build Status" src="' +
+            this.badgeURL +
+            '" />' +
+            '</a>'
+          );
         },
-        methods: {
-          toggleModal:function(flag) {
-            console.log('toggled',flag)
-            document.querySelector('.modal').classList.toggle('is-active')
-          },
-          showToken: function () {
-            this.$refs.tokenInput.type = 'text';
-          },
-          getWorkFlows: function () {
-            if (!this.token) {
-              return;
-            }
+      },
+      mounted: function () {
+        const theURL = new URL(location.href),
+          queryParams = theURL.searchParams,
+          owner = queryParams.get('owner'),
+          repo = queryParams.get('repo'),
+          token = queryParams.get('token'),
+          workflow_id = queryParams.get('workflow_id');
+        if (owner && repo) {
+          this.repository = [owner, repo].join('/');
+          if (workflow_id) {
+          }
+        }
+        if (token) {
+          this.token = token;
+          this.$nextTick(() => this.getWorkFlows());
+        }
+      },
+      methods: {
+        toggleModal: function (flag) {
+          console.log('toggled', flag)
+          document.querySelector('.modal').classList.toggle('is-active')
+        },
+        showToken: function () {
+          this.$refs.tokenInput.type = 'text';
+        },
+        getWorkFlows: function () {
+          if (!this.token) {
+            return;
+          }
 
-            return fetch(`${this.repoUrl}?token=${this.token}`)
-              .then((res) => res.json())
-              .then((wflows) => {
+          return fetch(`${this.repoUrl}?token=${this.token}`)
+            .then((res) => res.json())
+            .then((wflows) => {
               //  this.workflow = wflows[0];
               //  this.$nextTick(() => this.pickWorkFlow());
-                return (this.workflows = wflows);
-              });
-          },
-          pickWorkFlow: function () {
-            return fetch(
-              `${this.repoUrl}/${this.workflow.id}?token=${this.token}`,
-            )
-              .then((res) => res.json())
-              .then(({ branches, hashHex }) => {
-                this.branches = branches;
-
-                this.$nextTick(() => (this.branch = branches[0].head_branch));
-                this.hashHex = hashHex;
-                return;
-              });
-          },
-          copy(element) {
-            element.select();
-
-            try {
-              document.execCommand('copy');
-            } catch (err) {
-              alert('Oops, unable to copy');
-            }
-          },
-          params() {
-            var params = new URLSearchParams();
-
-            if (this.ref) params.append('ref', this.ref);
-            if (this.privateRepo && this.token)
-              params.append('token', this.token);
-
-            var paramsString = params.toString();
-            if (!paramsString) return '';
-
-            return '?' + paramsString;
-          },
-          openNewTokenPage() {
-            var url =
-              'https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com+-+' +
-              new Date().toISOString();
-            window.open(url, '_blank').focus();
-          },
+              return (this.workflows = wflows);
+            });
         },
-      });
-    </script>
-    <script
-      src="https://kit.fontawesome.com/7b556a77d1.js"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+        pickWorkFlow: function () {
+          return fetch(
+            `${this.repoUrl}/${this.workflow.id}?token=${this.token}`,
+          )
+            .then((res) => res.json())
+            .then(({ branches, hashHex }) => {
+              this.branches = branches;
+
+              this.$nextTick(() => (this.branch = branches[0].head_branch));
+              this.hashHex = hashHex;
+              return;
+            });
+        },
+        copy(element) {
+          element.select();
+
+          try {
+            document.execCommand('copy');
+          } catch (err) {
+            alert('Oops, unable to copy');
+          }
+        },
+        params() {
+          var params = new URLSearchParams();
+
+          if (this.ref) params.append('ref', this.ref);
+          if (this.privateRepo && this.token)
+            params.append('token', this.token);
+
+          var paramsString = params.toString();
+          if (!paramsString) return '';
+
+          return '?' + paramsString;
+        },
+        openNewTokenPage() {
+          var url =
+            'https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com+-+' +
+            new Date().toISOString();
+          window.open(url, '_blank').focus();
+        },
+      },
+    });
+  </script>
+  <script src="https://kit.fontawesome.com/7b556a77d1.js" crossorigin="anonymous"></script>
+</body>
+
 </html>

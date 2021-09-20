@@ -105,7 +105,7 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
             request: TRequestWithParams,
             env: EnvWithDurableObject,
 
-          ) => {
+          ): Promise<Response> => {
             withDurables()(request, env)
             const requestURL = new URL(request.url),
               hashHex = request.params.hash,
@@ -113,7 +113,7 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
               durableStub = getEnhancedIttyDurable<'computeResultRequestFromHash'>(request.Badger, 'durable_Badger')
 
 
-            return durableStub.computeResultRequestFromHash({ hashHex, requestURL, branch })
+            return durableStub.computeResultRequestFromHash({ hashHex, branch })
 
           }
         ]

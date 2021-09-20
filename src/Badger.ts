@@ -3,7 +3,7 @@ import { json, EnvWithDurableObject } from 'itty-router-extras';
 import Toucan from 'toucan-js';
 
 
-import { GithubRequest } from "./modules/GithubRequest";
+import { GithubRequest, TWorkflowParams } from "./modules/GithubRequest";
 import type { IWorkflowRuns, IWorkflowRun, WorkflowRunPart } from './modules/computeColorAndMessage';
 import { computeColorAndMessage, IWorkflowList } from './modules/computeColorAndMessage';
 
@@ -90,7 +90,13 @@ export class Badger extends IttyDurable implements DurableObject {
     });
 
   }
-
+  /**
+   * This operation retrieves at most 100 run results for a given workflow. 
+   * Given the potential size of the response we store it on a KVNamespace instead
+   * of bloating the Durable Object's storage
+   * @param param0 
+   * @returns 
+   */
   async computeResultRequest({
     owner,
     repo,
@@ -108,17 +114,25 @@ export class Badger extends IttyDurable implements DurableObject {
     hashHex: string,
     branch?: string
   }): Promise<TOutputResults> {
-    const storedPromise = this.state.BADGER_KV.put(`hash:${hashHex}`, JSON.stringify({ owner, repo, workflow_id, GITHUB_TOKEN }))
+    this.state.storage.put<TWorkflowParams & { GITHUB_TOKEN: string }>(`hash:${hashHex}`,
+      {
+        owner, repo, workflow_id, GITHUB_TOKEN
+      })
+    let { value: storedRuns, metadata } = await this.state.BADGER_KV.getWithMetadata<IWorkflowRuns>(`runs:${hashHex}`, 'json')
+    console.log({
+      owner, repo, workflow_id, GITHUB_TOKEN
+    })
+    if (!storedRuns) {
+      const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN)
 
-    const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN)
-    //console.log(ghRequest)
-    //ctx.sentry.addBreadcrumb({ data: { requestURL, ghRequest: ghRequest.url } });
-    const res = await ghRequest.fetch({ method: 'GET' })
-    if (!res.ok) {
-      throw this.computeErroredResponse({ owner, repo }, res);
+      const res = await ghRequest.fetch({ method: 'GET' }),
+        body = res.clone().body
+      if (body) {
+        this.state.waitUntil(this.state.BADGER_KV.put(`runs:${hashHex}`, body, { expirationTtl: 300, metadata: { CachedOn: Date.now() } }))
+      }
+      storedRuns = (await res.json()) as IWorkflowRuns
     }
-
-    let { workflow_runs } = (await res.json()) as IWorkflowRuns,
+    let { workflow_runs } = storedRuns,
       runs = workflow_runs.map(run => {
         let { id, name, head_branch, status, conclusion, workflow_id: wf_id } = run;
         return { id, name, head_branch, status, conclusion, workflow_id: wf_id }
@@ -131,26 +145,26 @@ export class Badger extends IttyDurable implements DurableObject {
     }, {} as { [s: string]: WorkflowRunPart; }));
 
 
-    return storedPromise.then(() => ({ branches: runs, hashHex, count: workflow_runs.length }));
+    return { branches: runs, hashHex, count: workflow_runs.length }
   }
-  async computeResultRequestFromHash({ hashHex, branch }: { hashHex: string, requestURL: URL, branch?: string }): Promise<{ color: string; message: string; isError?: boolean | undefined; }> {
+  async computeResultRequestFromHash({ hashHex, branch }: { hashHex: string, branch?: string }): Promise<Response> {
 
-    const { owner, repo, workflow_id, GITHUB_TOKEN } = (await this.state.BADGER_KV.get(`hash:${hashHex}`, 'json') || {}) as {
-      owner: string; repo: string; workflow_id: string; GITHUB_TOKEN: string;
-    },
-      ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN),
+    const { owner, repo, workflow_id, GITHUB_TOKEN } = (await this.state.storage.get(`hash:${hashHex}`) || {}) as TWorkflowParams & { GITHUB_TOKEN: string }
+
+    const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN),
       res = await ghRequest.fetch({ method: 'GET' });
-    if (!res.ok) {
-      throw this.computeErroredResponse({ owner, repo }, res);
-    }
+
 
     const { workflow_runs } = (await res.json()) as IWorkflowRuns, runs = workflow_runs.map((run) => {
       let { id, name, head_branch, status, conclusion, workflow_id: wf_id } = run;
       return { id, name, head_branch, status, conclusion, workflow_id: wf_id };
-    });
+    })
 
-
-    return { ...computeColorAndMessage(runs as IWorkflowRun[], Number(workflow_id), branch) }
+    return json(computeColorAndMessage(runs as IWorkflowRun[], Number(workflow_id), branch), {
+      headers: {
+        'cache-control': 'max-age=300, public'
+      }
+    })
 
 
   }
@@ -177,12 +191,14 @@ export class Badger extends IttyDurable implements DurableObject {
       if (typeof this[method] === 'function') {
         console.log({ method })
         // eslint-disable-next-line @typescript-eslint/ban-types
-        return (this[method] as Function)({ owner, repo, requestURL, workflow_id, GITHUB_TOKEN, hashHex, branch }).then((result: unknown) => new Response(JSON.stringify(result), {
-          headers: {
-            "content-type": "application/json",
-            "access-control-allow-origin": "*"
-          }
-        }))
+        return (this[method] as Function)({ owner, repo, requestURL, workflow_id, GITHUB_TOKEN, hashHex, branch }).then((result: unknown) => {
+          return result instanceof Response ? result : new Response(JSON.stringify(result), {
+            headers: {
+              "content-type": "application/json",
+              "access-control-allow-origin": "*"
+            }
+          })
+        })
       }
       return json(jsonReq)
     } catch (err) {

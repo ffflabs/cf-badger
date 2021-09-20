@@ -47,7 +47,7 @@ declare module "itty-router-extras" {
     };
 
     function withParams(req: Request): void;
-    function json(body: unknown, responseType?: unknown): Response
+    function json(body: unknown, responseType?: ResponseInit): Response
     function missing(message?: string): Response
     function error(header?: number, body?: unknown): Response
 }
