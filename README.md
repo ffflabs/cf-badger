@@ -47,7 +47,8 @@ Enter **CF-Badger**. It will present you with a brief form (which, by the way, i
 <img src="docs/images/screenshot.png">
 
 </p>
-----
+
+--------------
 
 ### 🎯 How?
 
