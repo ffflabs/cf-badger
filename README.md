@@ -20,20 +20,26 @@ Cf-Badger generates short urls displaying current status (actually, delayed up t
 
 ### Why? 
 
-Because, unless you're logged in github, it isn't trivial to display current statuses. And it grinds my gears when I see broken images in README's preview.
+⛨ Albeit it covers most bases, Shields.io's excellent service doesn't cover private repos. 
+
+:octocat: Github provides badges for workflows on these repos, but unless you have read permissions on it, and you're currently logged on GH, only a broken image is displayed. 
 
 <p align="center" style="text-align:center">
 
 
 <img src="docs/images/before_and_after200.svg">
 
+<small align="center" style="text-align:center">How to get from broken to flawless?</small>
 
 </p>
+
+🌐	 I wanted to enable publicly displayed status badges to use in Github Pages, healthchecks dashboards, repo wikis and, even simpler, to see the real output of my README when previewing it on my IDE.
+
 
 Also, CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**
 ### How?
 
-We request your workflows run outcome directly to Github's API, on your behalf, so you'll need to enter a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com) with 'repo' privileges for CF-Badger to access said info.
+🎯 We request your workflows run outcome directly to Github's API, on your behalf. Because of this, you'll need to enter a [personal access token](https://github.com/settings/tokens/new?scopes=repo&description=cf-badger.com) with 'repo' privileges for CF-Badger to access said info.
 
 <p align="center">
 
@@ -42,10 +48,10 @@ We request your workflows run outcome directly to Github's API, on your behalf, 
 
 </p>
 
-We compute and expose the last run outcome as JSON to [Shields.io endpoint API](https://shields.io/endpoint), without which CF-Badger wouldn't work.
-### Security Concerns
+🗃️ We compute and expose the last run outcome as JSON to [Shields.io endpoint API](https://shields.io/endpoint), without which CF-Badger wouldn't work.
+### Security Concerns 🔐
 
-Your token token won't be part of the generated URL. Instead, we'll store it internally, and provide an url you can safely share without exposing your token.
+Your token won't be part of the generated URL. Instead, we'll store it internally, and provide an url you can safely share without exposing your token.
 
 <p align="center">
 
@@ -55,20 +61,20 @@ Your token token won't be part of the generated URL. Instead, we'll store it int
 </p>
 
 
-### Do I need a token for public repos?
+### Do I need a token for public repos? 🔓
 
-Yes, because we still query Github's API. However, if you intend to display workflow status badges for public repos, you can use Shields.io direcly. Just look in their [Builds Category](https://shields.io/category/build) for "Github Workflows" section.*
+👍 Yes, because we still query Github's API. However, if you intend to display workflow status badges for public repos, you can use Shields.io direcly. Just look in their [Builds Category](https://shields.io/category/build) for "Github Workflows" section.
 
 
-### Why do you address yourself as "we" if you're the only contributor?
+### Why do you address yourself as "we" if you're the only contributor? 🤷
 
 
 It kinda makes the project sound like a serious initiative. 
 
 --------------
-## Acknowledgements
+## Acknowledgements 🏆
 
-**[Cloudflare Workers](https://www.cloudflare.com/products/workers)**, along with [Workers KV](https://www.cloudflare.com/products/workers-kv/), and [Worker Sites](https://github.com/cloudflare/worker-sites-template) and [Durable Objects](https://blog.cloudflare.com/introducing-workers-durable-objects/). This is the blazing fast platform on which CF-Badger runs and replicates over 200+ locations worldwide. Did I mention CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**?
+**[Cloudflare Workers](https://www.cloudflare.com/products/workers)**, along with [Workers KV](https://www.cloudflare.com/products/workers-kv/), [Cloudflare Pages](https://pages.cloudflare.com/) and [Durable Objects](https://blog.cloudflare.com/introducing-workers-durable-objects/). This is the blazing fast platform on which CF-Badger runs and replicates over 200+ locations worldwide. Did I mention CF-Badger is my project for the **[Cloudflare Developer Summer Challenge](https://challenge.developers.cloudflare.com/)**?
 
 **[Shields.io](https://shields.io)**, whose service renders actual badges and without which CF-Badger would generate broken images, which would be ironic.
 

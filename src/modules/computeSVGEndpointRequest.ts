@@ -15,16 +15,12 @@ export async function computeSVGEndpointRequest(
             cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
         };
     console.log({ url })
-    let endpointUrl = new URL(`https://img.shields.io/endpoint.svg`)
-    endpointUrl.searchParams.set('url', encodeURIComponent(endpoint));
-    endpointUrl.searchParams.set('style', style)
-    let endpointStr = endpointUrl.toString()
-
-    const cachedResponse = await cache.match(endpointStr)
+    let endpointUrl = `https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`;
+    const cachedResponse = await cache.match(endpointUrl)
     if (cachedResponse && Number(cachedResponse.headers.get('cached_on')) > (Date.now() - 300000)) {
         return cachedResponse
     }
-    let response = await fetch(endpointStr, { cf })
+    let response = await fetch(endpointUrl, { cf })
 
     if (response.ok && response.headers.get('content-type') === 'image/svg') {
         // Reconstruct the Response object to make its headers mutable.
@@ -39,7 +35,7 @@ export async function computeSVGEndpointRequest(
         response.headers.set('Cache-Control', 'public, max-age=300');
 
         //response.headers.set('Content-Disposition', `inline; filename=image.webp`);
-        ctx.waitUntil(cache.put(endpointStr, response.clone()));
+        ctx.waitUntil(cache.put(endpointUrl, response.clone()));
     }
     return response;
 
