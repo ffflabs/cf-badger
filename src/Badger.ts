@@ -53,8 +53,7 @@ export class Badger extends IttyDurable implements DurableObject {
     this.state.BADGER_KV = env.BADGER_KV as KVNamespace
 
     this.state.release = env.RELEASE;
-    this.state.GITHUB_TOKEN = env.GITHUB_TOKEN as string;
-    this.state.SENTRY_DSN = env.SENTRY_DSN as string;
+
     this.state.WORKER_ENV = env.WORKER_ENV as string;
     this.state.WORKER_URL = env.WORKER_URL as string;
 
@@ -75,7 +74,11 @@ export class Badger extends IttyDurable implements DurableObject {
       repo: string,
       GITHUB_TOKEN: string
     }): Promise<{ id: number; id_url: string; name: string; filename_url: string; }[]> {
-    let ghRequest = new GithubRequest({ owner, repo }, { GITHUB_TOKEN });
+    if (!GITHUB_TOKEN) {
+      throw new Error('No GITHUB_TOKEN')
+    }
+
+    let ghRequest = new GithubRequest({ owner, repo }, GITHUB_TOKEN);
 
     const res = await ghRequest.fetch({ method: 'GET' });
 
@@ -107,7 +110,7 @@ export class Badger extends IttyDurable implements DurableObject {
   }): Promise<TOutputResults> {
     const storedPromise = this.state.BADGER_KV.put(`hash:${hashHex}`, JSON.stringify({ owner, repo, workflow_id, GITHUB_TOKEN }))
 
-    const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, { GITHUB_TOKEN })
+    const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN)
     //console.log(ghRequest)
     //ctx.sentry.addBreadcrumb({ data: { requestURL, ghRequest: ghRequest.url } });
     const res = await ghRequest.fetch({ method: 'GET' })
@@ -135,7 +138,7 @@ export class Badger extends IttyDurable implements DurableObject {
     const { owner, repo, workflow_id, GITHUB_TOKEN } = (await this.state.BADGER_KV.get(`hash:${hashHex}`, 'json') || {}) as {
       owner: string; repo: string; workflow_id: string; GITHUB_TOKEN: string;
     },
-      ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, { GITHUB_TOKEN }),
+      ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN),
       res = await ghRequest.fetch({ method: 'GET' });
     if (!res.ok) {
       throw this.computeErroredResponse({ owner, repo }, res);

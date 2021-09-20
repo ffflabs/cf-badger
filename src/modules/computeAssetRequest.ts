@@ -106,7 +106,7 @@ const getAssetFromKV = async (request: TRequestWithParams, env: EnvWithDurableOb
             requestKey = mapRequestToAsset(request, env, options)
         }
     }
-    console.info({ rawPathKey, requestKey })
+
     const SUPPORTED_METHODS = ['GET', 'HEAD']
     if (!SUPPORTED_METHODS.includes(requestKey.method)) {
         throw new MethodNotAllowedError(`${requestKey.method} is not a valid request method`)

@@ -16,7 +16,10 @@ import type { EnvWithBindings } from 'itty-router-extras';
 
 
 export async function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<Omit<IRequestParams, 'env'>> {
-  let { url: originalUrl, params } = request, { owner, repo, workflow_id, } = params, requestURL = new URL(originalUrl), GITHUB_TOKEN = requestURL.searchParams.get('token') || env.GITHUB_TOKEN;
+  let { url: originalUrl, params } = request,
+    { owner, repo, workflow_id, } = params,
+    requestURL = new URL(originalUrl),
+    GITHUB_TOKEN = requestURL.searchParams.get('token') || env.GITHUB_TOKEN;
   const hashHex = await computeHash({ owner, repo, workflow_id, GITHUB_TOKEN }); // convert bytes to hex string
   return { owner, repo, workflow_id, GITHUB_TOKEN, requestURL, hashHex };
 
@@ -123,7 +126,8 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
         request: TRequestWithParams,
         env: EnvWithDurableObject
       ): Promise<Response> => {
-        return json(getAssetFromKVDefaultOptions(env))
+        console.log(env)
+        return env.WORKER_ENV === 'development' ? json(env) : json(request.params)
       })
 
     .get('/images/*', computeAssetRequest)

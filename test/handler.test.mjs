@@ -36,14 +36,14 @@ test.beforeEach((t) => {
   t.context = { mf };
 });
 
-test("lists available workflows",
+test("lists available workflows with token "+process.env.GITHUB_TOKEN,
   /**
   * @param {import('ava').t}
   */
   async (t) => {
     // Get the Miniflare instance
     const { mf } = t.context,
-    availableWorkflowsLink=`http://localhost:8989/badger/${owner}/${repo}`
+    availableWorkflowsLink=`http://localhost:8989/badger/${owner}/${repo}?token=${process.env.GITHUB_TOKEN}`
     console.log(availableWorkflowsLink)
     // Dispatch a fetch event to our worker
      let result = await mf.dispatchFetch(availableWorkflowsLink);

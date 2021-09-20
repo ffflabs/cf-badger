@@ -37,11 +37,33 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
+
       - name: install wrangler
-        run: yarn global add @cloudflare/wrangler
+        run: yarn add @cloudflare/wrangler
       - name: Install dependencies
         run: yarn --frozen-lockfile
+      
       - run: cp wrangler.example.toml wrangler.toml
+
+      - name: populate wrangler.toml vars
+        run: |
+          touch .env
+          echo "GITHUB_TOKEN=$GITHUB_TOKEN" > .env
+          echo "CF_API_TOKEN=$CF_API_TOKEN" >> .env
+          sed -i "s/_BADGER_KV_PREVIEW_ID/$BADGER_KV_PREVIEW_ID/g" wrangler.toml
+          sed -i "s/_BADGER_KV_ID/$BADGER_KV_ID/g" wrangler.toml
+          sed -i "s/_GITHUB_TOKEN/$GITHUB_TOKEN/g" wrangler.toml
+        shell: bash
+        env:
+          WORKER_ENV: 'development'
+          SENTRY_DSN: ''
+          WORKER_URL: ${{ env.WORKER_URL }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          RELEASE: ${{ github.ref }}
+          BADGER_KV_PREVIEW_ID: ${{env.BADGER_KV_PREVIEW_ID}}
+          BADGER_KV_ID: ${{env.BADGER_KV_ID}}
+          CF_API_TOKEN: ${{env.CF_API_TOKEN}}
+
       - run: yarn build
       - name: Run test
         run: yarn test

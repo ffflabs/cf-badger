@@ -66,6 +66,14 @@
   -webkit-transition: opacity 0.3s;
 transition-delay:1s
       }
+      .button.is-badger {
+        background: linear-gradient(180deg, rgb(67 76 84) 0%, rgb(57 65 72) 35%, rgb(37 42 48) 100%);
+        border-color: transparent;
+    color: #fff;
+      }
+      section a,footer a {
+        color:#d26404;
+      }
     </style>
   </head>
 
@@ -73,7 +81,14 @@ transition-delay:1s
 <nav class="navbar is-transparent">
   <div class="navbar-brand">
         <div class="navbar-item ">
-                <p class="control">  <a class="button" href="https://workers.cloudflare.com"><span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span><img style="display:inline" src="https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e"></a></p>
+                <p class="control">  
+                <a class="button" href="https://workers.cloudflare.com">
+                <span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span>
+                <img style="display:inline" src="/images/cf-workers-badge.svg"></a>
+                <a class="button" href="https://pages.cloudflare.com">
+                <span style="vertical-align: super;font-weight:bold">&nbsp;and&nbsp;</span>
+                <img style="display:inline" src="/images/cf-pages-badge.svg"></a>
+                </p>
       </div>
   </div>
 
@@ -201,7 +216,7 @@ transition-delay:1s
                         </div>
                         <div class="control">
                           <button
-                            class="button is-info"
+                            class="button is-badger"
                             style="
                               padding-bottom: 0.2em;
                               padding-top: 0.2em;
@@ -317,7 +332,7 @@ transition-delay:1s
                       </div>
                       <div class="control">
                         <button
-                          class="button is-info"
+                          class="button is-badger"
                           style="height: 3.2em"
                           v-on:click="copy($refs.markdownTA)"
                         >
@@ -342,7 +357,7 @@ transition-delay:1s
                       </div>
                       <div class="control">
                         <button
-                          class="button is-info"
+                          class="button is-badger"
                           style="height: 3.2em"
                           v-on:click="copy($refs.htmlInput)"
                         >

@@ -5,12 +5,13 @@ Cf-Badger generates short urls displaying current status (actually, delayed up t
  
 <p align="center">
 <a href="https://workers.cloudflare.com/">
-<img src="https://img.shields.io/badge/Cloudflare-Workers-orange?color=f38020&logo=cloudflare&logoColor=f38020&style=for-the-badge&labelColor=3e464e"></a>
-&nbsp; &nbsp;
+<img src="docs/images/cf-workers-badge.svg"></a>
+&nbsp; 
 <a href="https://github.com/ffflabs/cf-badger/actions/workflows/tests.yml">
-<img src="https://cf-badger.com/9c6530e5f3abdb0f6247/endpoint.svg?branch=master&style=for-the-badge">
-</a>&nbsp; &nbsp;
-
+<img src="https://cf-badger.com/badger/9c6530e5f3abdb0f6247/endpoint.svg?branch=master&style=for-the-badge">
+</a>&nbsp; 
+<a href="https://pages.cloudflare.com/">
+<img src="docs/images/cf-pages-badge.svg"></a>
 <img src="https://img.shields.io/static/v1?label=Made%20With&message=TypeScript&color=f0f0f0&labelColor=3974c0&style=for-the-badge&logo=typescript&logoColor=white&messageColor=3974c0">
 
 </p> 

@@ -2,10 +2,10 @@
 <svg
    id="svg926"
    version="1.1"
-   viewBox="-40 0 564.5608 50.8"
+   viewBox="0 0 277.37365 50.8"
    height="192"
-   width="1755.821"
-   sodipodi:docname="cf-badger-extended-title-round-corners.svg"
+   width="1048.3414"
+   sodipodi:docname="cf-badger-round-corners.svg"
    inkscape:version="1.1 (1:1.1+202106031931+af4d65493e)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -16,30 +16,23 @@
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sodipodi:namedview
-     id="namedview628"
+     id="namedview102"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
-     inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="1"
-     inkscape:cx="770"
-     inkscape:cy="-36.5"
+     inkscape:zoom="1.0740776"
+     inkscape:cx="584.68776"
+     inkscape:cy="-27.465428"
      inkscape:window-width="2560"
      inkscape:window-height="1396"
      inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     width="1608.85px" />
+     inkscape:current-layer="svg926" />
   <defs
      id="defs920">
     <linearGradient
@@ -61,16 +54,6 @@
          id="stop11016"
          style="stop-color:#f7a735;stop-opacity:1" />
     </linearGradient>
-    <inkscape:path-effect
-       effect="join_type"
-       id="path-effect710"
-       is_visible="true"
-       lpeversion="1"
-       linecap_type="butt"
-       line_width="1"
-       linejoin_type="bevel"
-       miter_limit="100"
-       attempt_force_join="true" />
     <linearGradient
        y2="93.069389"
        y1="208.83029"
@@ -465,7 +448,6 @@
        id="linearGradient1826"
        xlink:href="#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-a-5" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#workflow-fill"
        id="linearGradient3069"
        x1="36.091114"
@@ -473,23 +455,22 @@
        x2="36.091114"
        y2="72.842644"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3240695,0,0,1.0003085,158.36254,-71.721608)" />
+       gradientTransform="matrix(1.0247689,0,0,1.0003085,139.29461,-71.721608)" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient11018"
        id="linearGradient9313"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.86086789,0,0,1.0003085,365.72313,-71.721609)"
+       gradientTransform="matrix(0.33242006,0,0,1.0003085,252.80901,-71.721609)"
        x1="-88.762787"
        y1="120.51055"
        x2="-105.38187"
        y2="83.324287" />
     <linearGradient
        id="workflow-fill-6"
-       x1="0.5"
-       y1="0"
-       x2="0.5"
-       y2="1">
+       x1="50%"
+       y1="0%"
+       x2="50%"
+       y2="100%">
       <stop
          stop-color="#444D56"
          offset="0%"
@@ -501,10 +482,10 @@
     </linearGradient>
     <linearGradient
        id="state-fill-4"
-       x1="0.5"
-       y1="0"
-       x2="0.5"
-       y2="1">
+       x1="50%"
+       y1="0%"
+       x2="50%"
+       y2="100%">
       <stop
          stop-color="#34D058"
          offset="0%"
@@ -527,42 +508,28 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(169.81969,4.80014)"
-     style="display:none"
-     id="layer3">
-    <path
-       style="font-size:11px;font-family:'DejaVu Sans', Verdana, Geneva, sans-serif;fill:url(#linearGradient1812);fill-opacity:1;fill-rule:nonzero;stroke-width:1.00743"
-       id="state-bg-9"
-       d="m 0,-1.9973677 h 46.939 c 1.69,0 3.061,1.36301804 3.061,3.0447164 V 130.95524 c 0,1.6817 -1.371533,3.11778 -3.061,3.04472 H 0 Z"
-       transform="matrix(0.37352941,0,0,0.37352941,78.543819,-4.1701199)" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
      id="layer6"
-     inkscape:label="normal"
-     style="display:inline"
-     transform="translate(32.015255)">
+     style="display:inline">
     <rect
-       style="display:inline;fill:url(#linearGradient9313);fill-opacity:1;stroke:none;stroke-width:1.01892;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="display:inline;fill:url(#linearGradient9313);fill-opacity:1;stroke:none;stroke-width:0.63316;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2163-1"
-       width="180.53944"
+       width="69.714455"
        height="50.799999"
-       x="248.70711"
+       x="207.62389"
        y="0"
        ry="5.9029622"
        rx="5.9029622" />
     <rect
-       style="fill:url(#linearGradient3069);fill-opacity:1;stroke:none;stroke-width:1.26365;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:url(#linearGradient3069);fill-opacity:1;stroke:none;stroke-width:1.11169;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2163"
-       width="277.68121"
+       width="214.91246"
        height="50.799999"
-       x="-21.615255"
+       x="0"
        y="7.1076195e-15"
-       ry="6.5738487"
-       rx="6.5738487" />
+       ry="6.5738487" />
     <g
        style="display:inline"
-       transform="translate(146.21891,-187.90598)"
+       transform="translate(105.13551,-187.90598)"
        id="layer1">
       <path
          id="path52-1"
@@ -594,80 +561,49 @@
          style="opacity:0.6;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-h-7);stroke-width:0.136695" />
     </g>
     <g
-       inkscape:groupmode="layer"
        id="layer7"
-       inkscape:label="current-text"
        style="display:inline" />
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer5"
-     inkscape:label="texto"
-     transform="matrix(0.26458333,0,0,0.26458333,190.23608,-183.09167)"
+     id="layer9"
+     inkscape:label="bg_text">
+    <text
+       fill="#010101"
+       fill-opacity="0.3"
+       id="text6267-9-9"
+       x="0.55480617"
+       y="34.693554"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.3514px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;fill:#010101;fill-opacity:0.3;stroke-width:0.217718"><tspan
+         x="5.3877382"
+         y="37.959324"
+         id="tspan6265-2-6"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:33.8667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.217718">CF-Badger</tspan></text>
+  </g>
+  <g
+     transform="translate(137.80444,4.80014)"
+     style="display:none"
+     id="layer3">
+    <path
+       style="font-size:11px;font-family:'DejaVu Sans', Verdana, Geneva, sans-serif;fill:url(#linearGradient1812);fill-opacity:1;fill-rule:nonzero;stroke-width:1.00743"
+       id="state-bg-9"
+       d="m 0,-1.9973677 h 46.939 c 1.69,0 3.061,1.36301804 3.061,3.0447164 V 130.95524 c 0,1.6817 -1.371533,3.11778 -3.061,3.04472 H 0 Z"
+       transform="matrix(0.37352941,0,0,0.37352941,78.543819,-4.1701199)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer8"
+     inkscape:label="fg_text"
      style="display:inline">
-    <g
-       inkscape:groupmode="layer"
-       id="layer2"
-       inkscape:label="texto_sombra"
-       style="display:inline">
-      <text
-         fill="#010101"
-         fill-opacity="0.3"
-         id="text6267-9"
-         x="-654.98279"
-         y="820.43878"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:144px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;fill:#010101;fill-opacity:0.3"><tspan
-           x="-632.78467"
-           y="835.43878"
-           id="tspan6265-2"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:144px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">CF-Badger</tspan></text>
-      <text
-         fill="#010101"
-         fill-opacity="0.3"
-         id="text6267-9-2"
-         x="434.21243"
-         y="777.23566"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
-           sodipodi:role="line"
-           x="434.21243"
-           y="777.23566"
-           id="tspan28649">Safe Status Badges</tspan><tspan
-           sodipodi:role="line"
-           x="434.21243"
-           y="857.23566"
-           id="tspan41036">for Private Repos</tspan></text>
-    </g>
-    <g
-       inkscape:groupmode="layer"
-       id="layer4"
-       inkscape:label="texto"
-       style="display:inline"
-       sodipodi:insensitive="true">
-      <text
-         fill="#ffffff"
-         id="text6271-5"
-         x="-660.9447"
-         y="815.5777"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:144px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;fill:#ffffff"><tspan
-           x="-638.74658"
-           y="829.5777"
-           id="tspan6269-4"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:144px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">CF-Badger</tspan></text>
-      <text
-         fill="#ffffff"
-         id="text6271-5-0"
-         x="430.68109"
-         y="774.80511"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"
-         transform="translate(-2.4753066e-5)"><tspan
-           sodipodi:role="line"
-           id="tspan36124"
-           x="430.68109"
-           y="774.80511">Safe Status Badges</tspan><tspan
-           sodipodi:role="line"
-           x="430.68109"
-           y="854.80511"
-           id="tspan36126">for Private Repos</tspan></text>
-    </g>
+    <text
+       fill="#ffffff"
+       id="text6271-5-4"
+       x="-0.74321026"
+       y="33.635204"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.3514px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;fill:#ffffff;stroke-width:0.217718"><tspan
+         x="4.0897217"
+         y="36.683262"
+         id="tspan6269-4-3"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:33.8667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.217718">CF-Badger</tspan></text>
   </g>
 </svg>

@@ -1,13 +1,27 @@
 name = "cf-badger"
+route = "https://cf-badger.com/badger/*"
+account_id = "_ACCOUNT_ID_"
+zone_id = "_ZONE_ID_"
+api_token = "_API_TOKEN_"
 type = "javascript"
-compatibility_date = "2021-09-18"
+compatibility_date = "2021-09-09"
 
+[vars]
+  WORKER_ENV = "production"
+  WORKER_URL = "https://cf-badger.com/badger/*"
+  RELEASE = "_RELEASE_"
+  GITHUB_TOKEN = "_GITHUB_TOKEN"
 
-[site]
-  bucket = "./docs"
-  entry-point = "."
+[durable_objects]
 
+  [[durable_objects.bindings]]
+    name = "Badger"
+    class_name = "Badger"
 
+[[kv_namespaces]]
+  binding = "BADGER_KV"
+  preview_id = "_BADGER_KV_PREVIEW_ID"
+  id = "_BADGER_KV_ID"
 
 
 [env]
@@ -15,7 +29,16 @@ compatibility_date = "2021-09-18"
   [env.dev]
     workers_dev = true
 
+    [env.dev.vars]
+      WORKER_ENV = "development"
+      GITHUB_TOKEN = "_GITHUB_TOKEN"
+      WORKER_URL = "https://cf-badger.com/badger/*"
+      RELEASE = "_RELEASE_"
 
+    [[env.dev.kv_namespaces]]
+      binding = "BADGER_KV"
+      preview_id = "_BADGER_KV_PREVIEW_ID"
+      id = "_BADGER_KV_ID"
 
 [build]
   command = "yarn build "

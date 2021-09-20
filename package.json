@@ -14,7 +14,7 @@
     "eslint": "eslint --ext js --ext ts --ignore-path .eslintignore src/*.ts src/modules/*.ts",
     "allexport": " set -o allexport; source .env; set +o allexport",
     "localtest": "yarn allexport;yarn test",
-    "test": "cp wrangler.example.toml wrangler.toml && wrangler build && node  --experimental-vm-modules `yarn bin`/ava test/handler.test.mjs ",
+    "test": "cp wrangler.example.toml wrangler.toml && wrangler build && node  --experimental-vm-modules `yarn bin`/ava --verbose test/handler.test.mjs ",
     "start":"node  --experimental-vm-modules mf.mjs ",
     
     "build": "rm -rf dist/* && esbuild src/index.ts --sourcemap --format=esm --bundle --outfile=dist/index.mjs",
@@ -24,7 +24,7 @@
     "yt": "cat wrangler.yaml | yj -yt -i > wrangler.toml",
     "miniflare": "  NODE_ENV=development miniflare dist/index.mjs -c ./wrangler.toml -w  -d -o Badger=Badger --wrangler-env=dev ",
     "transpile": "tsc --project ./tsconfig.json",
-    "act": "yarn allexport; act push -s PERSONAL_GITHUB_TOKEN=$GITHUB_TOKEN"
+    "act": "yarn allexport; act push -s PERSONAL_GITHUB_TOKEN=$GITHUB_TOKEN -j test --reuse"
   },
   "author": "author",
   "license": "MIT OR Apache-2.0",

@@ -16,3 +16,5 @@ wrangler.toml
 .env.local
 src/images/*
 meta.json
+*.pem
+
