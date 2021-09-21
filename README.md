@@ -1,5 +1,5 @@
 
-&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;![Logo](docs/images/cf-badger-extended-title-round-corners.svg)&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;[![Logo](docs/images/cf-badger-extended-title-round-corners.svg)](https://cf-badger.com/) &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
 
 Cf-Badger generates short urls displaying current status (actually, delayed up to 5 min) of your private repos workflows. 
  
@@ -22,11 +22,9 @@ Cf-Badger generates short urls displaying current status (actually, delayed up t
 
 ### :shield: Private Repos vs Public Badges
 
-Sometimes you might want to display status badges for a private repo's workflows. Wether it's for Github Pages, public repo wikis, custom health dashboards or even for previewing your README contents in your ide, you'll discover it's not really straightforward.
+Status badges are awesome. What's not to love about a self contained, colorful piece of relevant info? You could build a tiny dashboard displaying the status of your company integration pipelines and give it to the sales team so they can go and perform their act :money_mouth_face: !! ...except you cant :cry:. Not when it's **private repos** we're talking about, *unless you give them access to the code*. 
 
-Albeit it covers most bases, Shields.io's excellent service doesn't cover private repos. 
-
-:octocat: Github provides badges for workflows on these repos, but but unless you have read permissions on it, and you're currently logged on GH, only a broken image is displayed. 
+Even for something as simple as previewing your README.md on your IDE of choice, it turns out you will end up seeing broken images.
 
 <p align="center" style="text-align:center">
 
@@ -37,7 +35,13 @@ Albeit it covers most bases, Shields.io's excellent service doesn't cover privat
 
 </p>
 
-Enter **CF-Badger**. It will present you with a brief form (which, by the way, is hosted on [Cloudflare Pages](https://pages.cloudflare.com)) whose final output is a short url to the status badge, updated every 5 minutes.
+You can't, for example, make use of Shields.io's excellent service. They explicitly do not support  private repos. And while :octocat: Github provides badges, only logged in users with access to the repo will receive other than a 404 error.
+
+------------
+
+##### 🎉 Enter **CF-Badger** !!
+
+It will present you with a brief form (which, by the way, is hosted on [Cloudflare Pages](https://pages.cloudflare.com)) whose final output is a short url to the status badge, updated every 5 minutes.
 
 
 
