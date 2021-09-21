@@ -4,7 +4,7 @@ import Toucan from 'toucan-js';
 
 
 import { GithubRequest, TWorkflowParams } from "./modules/GithubRequest";
-import type { IWorkflowRuns, IWorkflowRun, WorkflowRunPart } from './modules/computeColorAndMessage';
+import { IWorkflowRuns, IWorkflowRun, WorkflowRunPart, schemaPayload, OutcomeErrors, ShieldsAttributes } from './modules/computeColorAndMessage';
 import { computeColorAndMessage, IWorkflowList } from './modules/computeColorAndMessage';
 
 type ErrorObject = {
@@ -67,17 +67,29 @@ export class Badger extends IttyDurable implements DurableObject {
       requestURL,
       owner,
       repo,
+      hashHex,
       GITHUB_TOKEN
     }: {
       requestURL: URL,
       owner: string,
       repo: string,
+      hashHex: string,
       GITHUB_TOKEN: string
     }): Promise<{ id: number; id_url: string; name: string; filename_url: string; }[]> {
     if (!GITHUB_TOKEN) {
       throw new Error('No GITHUB_TOKEN')
     }
+    this.state.storage.put<TWorkflowParams & { GITHUB_TOKEN: string }>(
+      `hash:${hashHex}`,
+      {
+        owner, repo, GITHUB_TOKEN
+      })
+    return this.getWorkflows({ owner, repo, GITHUB_TOKEN }).then(workflows => {
+      return { workflows, hashHex }
+    })
 
+  }
+  private async getWorkflows({ owner, repo, GITHUB_TOKEN }) {
     let ghRequest = new GithubRequest({ owner, repo }, GITHUB_TOKEN);
 
     const res = await ghRequest.fetch({ method: 'GET' });
@@ -86,9 +98,8 @@ export class Badger extends IttyDurable implements DurableObject {
 
     return workflows.map((workflow): { id: number; id_url: string; name: string; filename_url: string; } => {
       let { id, name, path } = workflow, fileName = path.split('/').pop();
-      return { id, id_url: `${requestURL.toString()}/${id}`, name, filename_url: `https://github.com/${owner}/${repo}/actions/workflows/${fileName}` };
+      return { id, name, fileName };
     });
-
   }
   /**
    * This operation retrieves at most 100 run results for a given workflow. 
@@ -114,58 +125,68 @@ export class Badger extends IttyDurable implements DurableObject {
     hashHex: string,
     branch?: string
   }): Promise<TOutputResults> {
-    this.state.storage.put<TWorkflowParams & { GITHUB_TOKEN: string }>(`hash:${hashHex}`,
+    this.state.storage.put<TWorkflowParams & { GITHUB_TOKEN: string }>(
+      `hash:${hashHex}`,
       {
         owner, repo, workflow_id, GITHUB_TOKEN
       })
+    const { runs, count } = await this.getRuns({ hashHex, owner, repo, workflow_id, branch, GITHUB_TOKEN })
+
+    return { branches: Object.values(runs), hashHex, count }
+  }
+  private async getRuns({ hashHex, owner, repo, workflow_id, branch, GITHUB_TOKEN }) {
     let { value: storedRuns, metadata } = await this.state.BADGER_KV.getWithMetadata<IWorkflowRuns>(`runs:${hashHex}`, 'json')
     console.log({
       owner, repo, workflow_id, metadata
     })
-    if (!storedRuns) {
+    if (1 || !storedRuns) {
       const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN)
 
-      const res = await ghRequest.fetch({ method: 'GET' }),
-        body = res.clone().body
+      const res = await ghRequest.fetch({ method: 'GET' })
+
+      let body = res.clone().body
       if (body) {
         this.state.waitUntil(this.state.BADGER_KV.put(`runs:${hashHex}`, body, { expirationTtl: 300, metadata: { CachedOn: Date.now() } }))
       }
       storedRuns = (await res.json()) as IWorkflowRuns
     }
-    let { workflow_runs } = storedRuns,
-      runs = workflow_runs.map(run => {
-        let { id, name, head_branch, status, conclusion, workflow_id: wf_id } = run;
-        return { id, name, head_branch, status, conclusion, workflow_id: wf_id }
-      });
 
-    runs = Object.values(runs.reduce((accum, run) => {
+    let { workflow_runs } = storedRuns
+    const runs = workflow_runs.map(run => {
+      let { id, name, head_branch, status, conclusion, workflow_id: wf_id } = run;
+      return { id, name, head_branch, status, conclusion, workflow_id: wf_id }
+    }).reduce((accum, run) => {
       let { head_branch } = run
       accum[head_branch] = accum[head_branch] || run;
       return accum;
-    }, {} as { [s: string]: WorkflowRunPart; }));
-
-
-    return { branches: runs, hashHex, count: workflow_runs.length }
+    }, {} as { [s: string]: WorkflowRunPart; });
+    return { runs, count: workflow_runs.length }
   }
-  async computeResultRequestFromHash({ hashHex, branch }: { hashHex: string, branch?: string }): Promise<Response> {
+  async computeResultRequestFromHash({ hashHex, workflow_id, branch }: { hashHex: string, workflow_id: number | string, branch?: string }): Promise<Response> {
 
-    const { owner, repo, workflow_id, GITHUB_TOKEN } = (await this.state.storage.get(`hash:${hashHex}`) || {}) as TWorkflowParams & { GITHUB_TOKEN: string }
-
-    const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN),
-      res = await ghRequest.fetch({ method: 'GET' });
-
-
-    const { workflow_runs } = (await res.json()) as IWorkflowRuns, runs = workflow_runs.map((run) => {
-      let { id, name, head_branch, status, conclusion, workflow_id: wf_id } = run;
-      return { id, name, head_branch, status, conclusion, workflow_id: wf_id };
-    })
-
-    return json(computeColorAndMessage(runs as IWorkflowRun[], Number(workflow_id), branch), {
-      headers: {
-        'cache-control': 'max-age=300, public'
+    const { owner, repo, workflow_id: wf_id, GITHUB_TOKEN } = (await this.state.storage.get(`hash:${hashHex}`) || {}) as TWorkflowParams & { GITHUB_TOKEN: string }
+    workflow_id = workflow_id || wf_id as number | string
+    return Promise.resolve().then(async (): Promise<{
+      workflows: {
+        id: number; id_url: string; name: string; filename_url: string;
+      }[]; hashHex: string;
+    } | ShieldsAttributes> => {
+      if (!workflow_id) {
+        return this.getWorkflows({ owner, repo, GITHUB_TOKEN }).then((workflows): { workflows: { id: number; id_url: string; name: string; filename_url: string; }[]; hashHex: string; } => {
+          return { workflows, hashHex }
+        })
       }
-    })
+      let { runs, count } = await this.getRuns({ hashHex, owner, repo, workflow_id, branch, GITHUB_TOKEN })
+      let run = branch && runs[branch] ? runs[branch] : Object.values(runs)[0] as IWorkflowRun
+      if (!run) {
 
+        return { ...schemaPayload('Unkown Workflow'), ...OutcomeErrors.no_runs(branch || '') }
+      }
+      if (!branch) {
+        return { ...schemaPayload(run.name), ...OutcomeErrors.no_runs() }
+      }
+      return computeColorAndMessage([run] as IWorkflowRun[], Number(run.workflow_id), branch)
+    }).then(res => json(res))
 
   }
 

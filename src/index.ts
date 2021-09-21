@@ -100,7 +100,7 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
     routes: [
 
       [
-        'GET', new RegExp(`badger/(?<hash>([a-f0-9]{20}))$`), [
+        'GET', new RegExp(`bdg/(?<hash>([a-f0-9]{20}))$`), [
           async (
             request: TRequestWithParams,
             env: EnvWithDurableObject,
@@ -114,6 +114,26 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
 
 
             return durableStub.computeResultRequestFromHash({ hashHex, branch })
+
+          }
+        ]
+      ],
+      [
+        'GET', new RegExp(`bdg/(?<hash>([a-f0-9]{20}))/(?<workflow_id>([a-zA-Z0-9-_.]+))$`), [
+          async (
+            request: TRequestWithParams,
+            env: EnvWithDurableObject,
+
+          ): Promise<Response> => {
+            withDurables()(request, env)
+            const requestURL = new URL(request.url),
+              hashHex = request.params.hash,
+              workflow_id = request.params.workflow_id,
+              branch = requestURL.searchParams.get('branch') || undefined,
+              durableStub = getEnhancedIttyDurable<'computeResultRequestFromHash'>(request.Badger, 'durable_Badger')
+
+
+            return durableStub.computeResultRequestFromHash({ hashHex, workflow_id, branch })
 
           }
         ]

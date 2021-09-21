@@ -507,10 +507,11 @@
 
           return fetch(`${this.repoUrl}?token=${this.token}`)
             .then((res) => res.json())
-            .then((wflows) => {
+            .then(({workflows,hashHex}) => {
               //  this.workflow = wflows[0];
               //  this.$nextTick(() => this.pickWorkFlow());
-              return (this.workflows = wflows);
+              this.hashHex=hashHex
+              return (this.workflows = workflows);
             });
         },
         pickWorkFlow: function () {

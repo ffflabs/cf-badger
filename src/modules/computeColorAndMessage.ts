@@ -88,13 +88,13 @@ export interface IWorkflowRuns {
   total_count: number;
   workflow_runs: IWorkflowRun[];
 }
-type ShieldsAttributes = { color: string; message: string, isError?: boolean }
+export type ShieldsAttributes = { color: string; message: string, isError?: boolean }
 
 export type WorkflowRunPart = Pick<IWorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>
 
 
 
-export const Errors = {
+export const OutcomeErrors = {
 
   server_error: (): ShieldsAttributes => ({
     color: "inactive",
@@ -102,9 +102,9 @@ export const Errors = {
     isError: true
   })
 
-  , no_runs: (): ShieldsAttributes => ({
+  , no_runs: (branch?: string): ShieldsAttributes => ({
     color: "inactive",
-    message: "no runs",
+    message: "no runs" + (branch ? ` on branch ${branch}` : ``),
     isError: true
   })
 
@@ -114,22 +114,22 @@ export const Errors = {
     isError: true
   })
 }
-
+export const schemaPayload = (label: string): { schemaVersion: number; label: string; namedLogo: string; cacheSeconds: number } => ({
+  "schemaVersion": 1,
+  label,
+  "namedLogo": "github",
+  "cacheSeconds": 300
+})
 export function computeColorAndMessage(runs: WorkflowRunPart[], workflow_id: number, branch?: string | null | undefined): ShieldsAttributes {
-  const wfRun = runs.find(run => run.workflow_id === workflow_id && (!branch || run.head_branch === branch))
+  const wfRun = runs.length === 1 ? runs[0] : runs.find(run => run.workflow_id === workflow_id && (!branch || run.head_branch === branch))
 
-  const payload = (label: string) => ({
-    "schemaVersion": 1,
-    label,
-    "namedLogo": "github",
-    "cacheSeconds": 300
-  })
+
   if (!wfRun) {
-    return { ...payload('Unknown workflow'), ...Errors.no_runs() }
+    return { ...schemaPayload('Unknown workflow'), ...OutcomeErrors.no_runs() }
   }
 
   if (wfRun.status === 'completed') {
-    return { ...payload(wfRun.name), ...Conclusion[wfRun.conclusion]() }
+    return { ...schemaPayload(wfRun.name), ...Conclusion[wfRun.conclusion]() }
   }
-  return { ...payload(wfRun.name), ...Status[wfRun.status]() }
+  return { ...schemaPayload(wfRun.name), ...Status[wfRun.status]() }
 }
