@@ -152,7 +152,7 @@ export function dataItemToInstallationInfo(data: TInstallationItem, WORKER_URL: 
         // created_at,
         // updated_at,
         // suspended_at,
-    } as TInstallationInfo
+    } as unknown as TInstallationInfo
 }
 
 type TRepoSlug = {
@@ -193,6 +193,9 @@ function mapSender(senderRaw: Sender) {
     let { login, id: target_id, node_id } = senderRaw
     return { login, target_id, node_id }
 }
+export type OctokitUserInstance = Octokit & {
+    token: string; code: string; login: string, userId: number
+}
 interface IInstanceEntities {
     publicCriptoKey: CryptoKey;
     privateCriptoKey: CryptoKey;
@@ -200,9 +203,7 @@ interface IInstanceEntities {
         app: Octokit;
     };
     userOctokit: {
-        [s: string]: Octokit & {
-            token: string; code: string;
-        };
+        [s: string]: OctokitUserInstance
     };
 }
 import kleur from 'kleur';
@@ -229,7 +230,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.state.GITHUB_CLIENT_SECRET = env.GITHUB_CLIENT_SECRET as string;
         this.state.appAuth = { token: '', appId: env.APP_ID, expiration: Math.floor(Date.now() / 1000) - 1000, ttl: 0 } as TghAppJWT
         this.state.octokit = {} as { app: Octokit }
-        this.state.userOctokit = {} as { [s: string]: Octokit & { token: string, code: string } }
+        this.state.userOctokit = {} as { [s: string]: OctokitUserInstance }
         this.state.octokit.app = this.getOctokit()
         this.debug = console.debug.bind(console, kleur.green('DEBUG: '))
         this.log = console.log.bind(console, kleur.blue('LOG: '))
@@ -344,9 +345,9 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         });
     }
 
-    async getInstallationsForUser(userOctokit: Octokit & { code: string }, installationId?: number): Promise<TMinimalInstallationInfo[]> {
-
-        let stored = await this.getStoredWithTtl<{ token: string, installations: { [s: number]: TMinimalInstallationInfo } }>(userOctokit.code) || {}
+    async getInstallationsForUser(userOctokit: OctokitUserInstance, installationId?: number): Promise<TMinimalInstallationInfo[]> {
+        const cacheKey = `${userOctokit.code}:installations`
+        let stored = await this.getStoredWithTtl<{ installations: { [s: number]: TMinimalInstallationInfo } }>(cacheKey) || {}
 
         if (stored && stored.ttl && stored.installations && !installationId) {
             return Object.values(stored.installations)
@@ -354,12 +355,15 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         return userOctokit.rest.apps.listInstallationsForAuthenticatedUser().then(async ({ data }): Promise<TMinimalInstallationInfo[]> => {
             if (data.installations && data.installations.length) {
 
-                stored.installations = (data.installations as TInstallationItem[]).map(i => dataItemToInstallationInfo(i, this.state.WORKER_URL)).reduce((accum, { login, installationId: iid, target_id }) => {
-                    accum[iid] = { login, installationId: iid, target_id: Number(target_id), repos: `${this.state.WORKER_URL}/badger/${login}` }
+                stored.installations = (data.installations as TInstallationItem[]).map(i => dataItemToInstallationInfo(i, this.state.WORKER_URL)).reduce((accum, installation) => {
+                    let { login, installationId: iid, target_id, repository_selection: enabledFor } = installation
+
+
+                    accum[iid] = { login, installationId: iid, target_id: Number(target_id), enabledFor, repos: `${this.state.WORKER_URL}/badger/${login}` }
                     return accum;
                 }, stored.installations || {})
                 // Cache available installations. 
-                this.storeWithExpiration(userOctokit.code, { ...stored }, 300)
+                this.storeWithExpiration(cacheKey, { ...stored }, 300)
 
                 return Object.values(stored.installations)
             }
@@ -381,7 +385,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
                     auth: options,
                 })
             }
-        })) as Octokit & { token: string, code: string }
+        })) as OctokitUserInstance
 
 
         const authObj = (await userOctokit.auth()) as { token: string }
@@ -394,18 +398,23 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         userOctokit.code = code
         return userOctokit.users.getAuthenticated().then(async ({ data: { login, id } }) => {
             const payload = { token: authObj.token, login, id }
+            userOctokit.login = login
+            userOctokit.userId = id
             this.state.storage.put(code, payload)
             const hash = await computeLoginHash(payload)
             this.state.storage.put(hash, payload)
 
             const installations = await this.getInstallationsForUser(userOctokit)
             const jsonResponse = new Response(JSON.stringify({ ...payload, hash, installations }), {
+                status: 302,
                 headers: {
                     "Access-Control-Allow-Origin": "*",
                     'set-cookie': `gh_code = ${String(hash)}; path = /; secure; HttpOnly; SameSite=Lax` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
                 },
             });
             jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; secure; HttpOnly; SameSite=Lax`)
+            jsonResponse.headers.set('Location', `${this.state.WORKER_URL}`)
+
             return jsonResponse
         })
 
@@ -413,7 +422,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
     }
 
-    protected async actingAsUser(code: string): Promise<Octokit & { token?: string, code?: string }> {
+    protected async actingAsUser(code: string): Promise<Octokit & { token: string, code: string, login: string, userId: number }> {
         let props = (await this.state.storage.get(code) || { token: '', login: '' }) as { [s: string]: unknown }
         if (!props.token) {
             throw new Error('unknown user')
@@ -439,14 +448,20 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
                     })
                 }
             }
-        }) as Octokit & { token: string, code: string }
+        }) as Octokit & { token: string, code: string, login: string, userId: number }
         this.state.userOctokit[code].token = String(props.token)
         this.state.userOctokit[code].code = code
-        this.state.userOctokit[code].users.getAuthenticated().then(({ data: { login, id } }) => {
-            this.state.storage.put(code, { token: props.token, login, id })
-        })
-        console.log(`created Octokit instance this.state.userOctokit[${code}], token ${props.token}`)
-        return this.state.userOctokit[code]
+        return this.state.userOctokit[code].users.getAuthenticated().then(({ data: { login, id } }) => {
+            this.state.storage.put(code, { token: props.token, login, id });
+            this.state.userOctokit[code].userId = id;
+            this.state.userOctokit[code].login = login;
+
+            console.log(`created Octokit instance this.state.userOctokit[${code}], token ${props.token}`);
+            return this.state.userOctokit[code];
+        }).catch(err => {
+            this.Sentry.captureException(err);
+            return this.state.userOctokit[code];
+        }) as unknown as Octokit & { token: string, code: string, login: string, userId: number }
     }
 
 

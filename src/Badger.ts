@@ -326,6 +326,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
   async user({ code, installationId }: { code: string, installationId?: number }): Promise<Response> {
 
     let props = (await this.state.storage.get(code) || { token: '', login: '' }) as { [s: string]: unknown }
+
     if (!props.token) {
       return this.actingAsOauthUser(code)
     }
@@ -344,7 +345,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
         if (installationId) {
           reposForInstallation = this.getRepositories({ installationId })
         }
-        const installations = await this.getInstallationsForUser(userOctoKit as Octokit & { code: string }, installationId)
+        const installations = await this.getInstallationsForUser(userOctoKit as Octokit & { code: string, userId: number, login: string }, installationId)
 
         let payload = {
           login: username, id: Number(databaseId), installations: installations.reduce((accum, i) => {

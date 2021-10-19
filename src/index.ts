@@ -163,6 +163,21 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
       }
 
     })
+    .post('/badger/logout', async (
+      request: TRequestWithParams,
+      env: EnvWithDurableObject
+    ): Promise<Response> => {
+      const jsonResponse = new Response('Come back soon', {
+        status: 302,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          'set-cookie': `gh_code = ; path = /; secure; HttpOnly; SameSite=Lax` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
+        },
+      });
+      jsonResponse.headers.append('set-cookie', `code =; path = /; secure; HttpOnly; SameSite=Lax`)
+      jsonResponse.headers.set('Location', `${env.WORKER_URL}`)
+      return jsonResponse
+    })
     .get('/badger',
       async (
         request: TRequestWithParams
