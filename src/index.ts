@@ -5,9 +5,9 @@ import { DurableStubGetter, error, ThrowableRouter, TRequestWithParams, EnvWithD
 
 import { computeAssetRequest } from './modules/computeAssetRequest';
 import { computeSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
-import { Badger, TOutputResults } from './Badger';
 
-import type { IRequestParams } from './Badger'
+
+
 import Toucan from 'toucan-js';
 import type { Context } from 'toucan-js/dist/types';
 import type { EnvWithBindings } from 'itty-router-extras';
@@ -15,17 +15,16 @@ import type { EnvWithBindings } from 'itty-router-extras';
 
 
 
-export async function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<Omit<IRequestParams, 'env'>> {
-  let { url: originalUrl, params } = request,
+export async function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<Omit<IRequestParams, 'payload' | 'env'>> {
+  let { url: originalUrl, params, code } = request,
     { owner, repo, workflow_id, } = params,
-    requestURL = new URL(originalUrl),
-    GITHUB_TOKEN = requestURL.searchParams.get('token') || env.GITHUB_TOKEN;
-  const hashHex = await computeHash({ owner, repo, workflow_id, GITHUB_TOKEN }); // convert bytes to hex string
-  return { owner, repo, workflow_id, GITHUB_TOKEN, requestURL, hashHex };
+    requestURL = new URL(originalUrl)
+  const hashHex = await computeHash({ owner, repo, workflow_id, code }); // convert bytes to hex string
+  return { owner, repo, workflow_id: Number(workflow_id), code, requestURL, hashHex };
 
 }
-async function computeHash({ owner, repo, workflow_id, GITHUB_TOKEN }: { owner: string; repo: string; workflow_id: string; GITHUB_TOKEN: string; }): Promise<string> {
-  const linkParams = new TextEncoder().encode(JSON.stringify({ owner, repo, workflow_id, GITHUB_TOKEN }));
+async function computeHash({ owner, repo, workflow_id, code }: { owner: string; repo: string; workflow_id: string; code: string; }): Promise<string> {
+  const linkParams = new TextEncoder().encode(JSON.stringify({ owner, repo, workflow_id, code }));
 
   const hashBuffer = await crypto.subtle.digest(
     {
@@ -46,10 +45,13 @@ export type TctxWithSentry = {
   sentry: Toucan;
 } & IWaitableObject;
 
+import { Badger, TInstallationRepos, TOutputResults, TWorkflow } from './Badger';
 
 
+import type { IRequestParams } from './GithubIntegrationDurable';
 
 export { Badger }
+
 
 
 function getSentryInstance(ctx: Context, env: EnvWithBindings): Toucan {
@@ -94,7 +96,9 @@ function getEnhancedIttyDurable<TMethodName extends string>(stubGetter: DurableS
   return stubGetter.get(nameId) as unknown as IttyDurable & ittyWithMethod<TMethodName>
 }
 
-function getParentRouter(): ThrowableRouter<TRequestWithParams> {
+function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWithParams> {
+  //const privateKey = [PRIVATE_KEY_1, PRIVATE_KEY_2, PRIVATE_KEY_3].join("\n");
+
 
   const router = ThrowableRouter<TRequestWithParams>({
     routes: [
@@ -120,31 +124,146 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
       ]
     ]
   })
+
+
   return router
+    .options('*', (
+
+
+    ): Response => {
+      // console.log(env)
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+      });
+    })
+
+
+    .get('/bdg/oauth',
+      async (
+        request: TRequestWithParams,
+        env: EnvWithDurableObject
+      ): Promise<Response> => Response.redirect(`https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&redirect_uri=${env.WORKER_URL}/bdg/code`))
+    .get('/bdg/install', (
+    ): Response => Response.redirect(`https://github.com/apps/cf-badger/installations/new`, 302))
+
+    .get('/images/*', computeAssetRequest)
+
+    .all('*', withDurables())
+    .all('*', (request: TRequestWithParams): void => {
+      let cookie = request.headers.get('cookie')
+      let cookieValue = /gh_code=([a-z0-9]+)/.exec(cookie || '')
+      if (cookieValue && cookieValue.length >= 2) {
+
+        request.code = cookieValue[1]
+
+      }
+
+    })
     .get('/badger',
+      async (
+        request: TRequestWithParams
+
+      ): Promise<Response> => {
+        if (!request.code) {
+          return json({ login: null })
+        }
+        return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
+          .user({ code: request.code }).catch(err => {
+            console.error(err);
+            return error(500, (err as { message: string }).message)
+          })
+      })
+    .all('/bdg/code',
       async (
         request: TRequestWithParams,
         env: EnvWithDurableObject
       ): Promise<Response> => {
-        console.log(env)
-        return env.WORKER_ENV === 'development' ? json(env) : json(request.params)
+        const method = request.method
+        let code: string | null = '',
+          installationId: number | undefined,
+          requestURL = new URL(request.url)
+        if (method === 'GET') {
+          code = requestURL.searchParams.get('code') || request.code
+          installationId = requestURL.searchParams.has('installation_id') ? Number(requestURL.searchParams.get('installation_id')) : undefined
+        } else {
+          let postData = await request.json()
+
+          code = (postData).code
+          installationId = (postData).code
+          console.log({ postData })
+        }
+        console.log({ code, installationId })
+        if (!code) {
+          return Response.redirect(env.WORKER_URL)
+        }
+
+        return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
+          .user({ code, installationId }).catch(err => {
+            console.error(err);
+            return error(500, (err as { message: string }).message)
+          })
+
+
       })
 
-    .get('/images/*', computeAssetRequest)
-    .all('*', withDurables())
 
     .get(
       '/badger/:hash/endpoint.svg',
       computeSVGEndpointRequest)
+
+    .get(
+      '/installations',
+      async (
+        request: TRequestWithParams
+      ): Promise<unknown> => {
+        return getEnhancedIttyDurable<'listInstallations'>(request.Badger, 'durable_Badger').listInstallations({ ...request.params, code: request.code } as IRequestParams)
+      })
+    .get(
+      '/installation/:owner',
+      async (
+        request: TRequestWithParams
+      ): Promise<unknown> => {
+        return getEnhancedIttyDurable<'getInstallation'>(request.Badger, 'durable_Badger').getInstallation({ owner: request.params.owner })
+      })
+
+
+    .post(
+      `/bdg/${envCommon.WEBHOOK_ROUTE}`,
+      async (
+        request: TRequestWithParams
+      ): Promise<{ ok: boolean }> => {
+        //console.log(env)
+        const id = request.headers.get("x-github-delivery");
+        const name = request.headers.get("x-github-event");
+        const payload = await request.json();
+
+
+
+        let durableStub = getEnhancedIttyDurable<'webhook'>(request.Badger, 'durable_Badger')
+        return durableStub.webhook({ id, name, payload })
+
+      })
+    .get(
+      '/badger/:owner',
+      async (
+        request: TRequestWithParams
+      ): Promise<TInstallationRepos> => {
+        request.params.code = request.code
+        return getEnhancedIttyDurable<'getRepositories'>(request.Badger, 'durable_Badger').getRepositories({ ...request.params } as { owner: string })
+      })
     .get(
       '/badger/:owner/:repo',
       async (
         request: TRequestWithParams,
         env: EnvWithDurableObject
-      ): Promise<{ id: number; id_url: string; name: string; filename_url: string; }[]> => {
-        let durableStub = getEnhancedIttyDurable<'computeAvailableWorkflowsRequest'>(request.Badger, 'durable_Badger')
-
-        return durableStub.computeAvailableWorkflowsRequest(await computeRunStatusParameters(request, env))
+      ): Promise<{ workflows: TWorkflow[] }> => {
+        request.params.code = request.code
+        return getEnhancedIttyDurable<'getRepoWorkflows'>(request.Badger, 'durable_Badger')
+          .getRepoWorkflows(await computeRunStatusParameters(request, env))
       })
 
     .get(
@@ -153,10 +272,10 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
         request: TRequestWithParams,
         env: EnvWithDurableObject,
       ): Promise<TOutputResults> => {
-        let durableStub = getEnhancedIttyDurable<'computeResultRequest'>(request.Badger, 'durable_Badger')
-        let { owner, repo, workflow_id, GITHUB_TOKEN, requestURL, hashHex } = await computeRunStatusParameters(request, env),
+        let durableStub = getEnhancedIttyDurable<'getWorkflowResults'>(request.Badger, 'durable_Badger')
+        let { owner, repo, workflow_id, code, requestURL } = await computeRunStatusParameters(request, env),
           branch = (request.params.branch ? decodeURIComponent(request.params.branch) : requestURL.searchParams.get('branch')) || undefined
-        return durableStub.computeResultRequest({ owner, repo, workflow_id, GITHUB_TOKEN, hashHex, branch })
+        return durableStub.getWorkflowResults({ owner, repo, workflow_id, code, branch })
       })
 
     .get(
@@ -171,11 +290,13 @@ function getParentRouter(): ThrowableRouter<TRequestWithParams> {
        */
       async (
         request: TRequestWithParams,
-        env: EnvWithDurableObject,
-        ctx: TctxWithSentry
+        env: EnvWithDurableObject
       ): Promise<Response> => {
-
-        return computeAssetRequest(request, env, ctx)
+        const newURL = new URL(request.url)
+        newURL.protocol = String(env.ASSETS_PROTOCOL || 'https')
+        newURL.hostname = String(env.ASSETS_URL || env.WORKER_URL)
+        newURL.port = String(env.ASSETS_PORT || 443)
+        return fetch(newURL.toString(), request)
       })
 }
 
@@ -187,20 +308,23 @@ export default {
       env: EnvWithDurableObject,
       { waitUntil }:
         IWaitableObject): Promise<Response> => {
+
+
       const ctx: TctxWithSentry = {
         waitUntil,
         sentry: getSentryInstance({ request, waitUntil }, env),
         request,
-      },
-        router = getParentRouter()
+      }
 
-
+      env.GH_PRIVATE_KEY = [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
+      const router = getParentRouter(env)
       return Promise.resolve(router.handle(request, env, ctx))
         .catch((err) => {
           ctx.sentry.captureException(err)
           console.error('event_id', err);
           return error(err.status || 500, err.message)
         });
+
     }
 }
 

@@ -3,7 +3,11 @@ declare module "itty-router-extras" {
     import { IttyDurable } from 'itty-durable'
 
     function ThrowableRouter<TRequest>(options?: RouterOptions<TRequest> & { stack?: boolean }): Router<TRequest>
-
+    type ThrowableRouter<TRequest> = {
+        handle: (request: Request & TRequest, ...extra: any) => any
+    } & {
+        [any: string]: Route
+    }
     export type EnvWithBindings = Record<string, unknown> & {
         GITHUB_TOKEN: string,
         SENTRY_DSN: string,
@@ -13,13 +17,16 @@ declare module "itty-router-extras" {
         BADGER_KV: KVNamespace
         __STATIC_CONTENT: KVNamespace
         __STATIC_CONTENT_MANIFEST: string
+        APP_ID: number
+        PRIVATE_KEY_1: string;
+        PRIVATE_KEY_2: string;
+        PRIVATE_KEY_3: string;
+        GH_PRIVATE_KEY: string;
+        WEBHOOK_ROUTE: string;
+        GITHUB_PUBKEY: string;
     }
 
-    type ThrowableRouter<TRequest> = {
-        handle: (request: Request & TRequest, ...extra: any) => any
-    } & {
-        [any: string]: Route
-    }
+
     type DurableStubGetter = {
         get(id: string): IttyDurable;
     };
@@ -30,7 +37,7 @@ declare module "itty-router-extras" {
     }
     type TRequestWithParams = Request & {
         color?: string;
-
+        code: string;
         env: EnvWithDurableObject,
         owner: string,
         repo: string,

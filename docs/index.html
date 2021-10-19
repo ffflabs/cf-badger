@@ -37,9 +37,10 @@
       font-size: 0.9em;
       width: 100%;
     }
+
     .select select option {
       line-height: 1.2em;
-      padding:1em 2px;
+      padding: 1em 2px;
       width: 100%;
     }
 
@@ -85,6 +86,7 @@
 </head>
 
 <body>
+  <div style="padding:10px"> 
   <nav class="navbar is-transparent">
 
     <div id="navbarExampleTransparentExample" class="navbar-menu">
@@ -157,7 +159,7 @@
                 text-align: justify;
                 padding: 0 2em 1em;
                 font-size: 0.9em;
-                margin-top: -1em;
+                margin-top: -2em;
               ">
             CF-Badger creates public urls displaying workflow statuses for
             your private repos without exposing your personal access token, preventing <a
@@ -179,29 +181,50 @@
                 <div class="field-body columns">
                   <div class="field column is-half">
                     <label class="label">Repository</label>
-                    <div class="control">
-                      <input class="input" type="text" placeholder="ffflabs/cf-badger" v-model="repository"
-                        v-on:change="getWorkFlows" />
-                    </div>
-                  </div>
-                  <div class="field column is-half">
-                    <label class="label">Github Token (<a v-on:click="openNewTokenPage">create</a>)</label>
-                    <div class="field has-addons">
-                      <div class="control" style="width: calc(100% - 35px)">
-                        <input class="input" type="password" v-model="token" ref="tokenInput"
+                    <div class="field  ">
+
+                      <div class="control">
+                        <input class="input" type="text" v-mask="mask" v-model="repository" ref="repoInput"
+                          id="repoInput" :pattern="ownerPattern" type="text" placeholder="ffflabs/cf-badger"
+                          data-placeholder="ffflabs/cf-badger" data-valid-example="ffflabs/cf-badger"
                           v-on:change="getWorkFlows" />
                       </div>
+                    </div>
+
+                  </div>
+                  <div class="field column is-half">
+                    <label class="label">Install CF-Badger on Github</label>
+                    <div class="field ">
                       <div class="control">
-                        <button class="button is-badger" style="
+
+                        <a class="button is-badger" style="
                               padding-bottom: 0.2em;
                               padding-top: 0.2em;
                               height: 2em;
-                            " v-on:click="showToken">
-                          <span class="icon">
-                            <i v-bind:class="{'fas':true, 'fa-eye':tokenInputType==='password','fa-eye-slash':tokenInputType!=='password'}" :rel="tokenInputType"></i>
+                              width:calc(50% - 3.5em)
+
+                           " href="/bdg/install">
+                          <span class="icon" style="margin-left:0.25em;padding-right:1em">
+                            <i v-bind:class="{'fab':true, 'fa-github':true}" :rel="tokenInputType"></i>
                           </span>
-                        </button>
+                          Install App
+                        </a>
+                        &nbsp; or &nbsp;
+
+                        <a class="button" style="
+                              padding-bottom: 0.3em;
+                              padding-top: 0.3em;
+                              height: 2.2em;
+                              width:calc(50% )
+                            " href="/bdg/oauth">
+                          <span class="icon" style="margin-left:0.25em;padding-right:1em">
+                            <i v-bind:class="{'fab':true, 'fa-github':true}" :rel="tokenInputType"></i>
+                          </span>
+                          Login with Github
+                        </a>
+
                       </div>
+
                     </div>
                   </div>
                 </div>
@@ -373,48 +396,67 @@
             <a href="https://shields.io/category/build">Builds Category</a>
             for Github Workflows section.
           </p>
-   
-        
-        
-        
-        <div class="column ">
-          <p class="control" style="text-align: center;">
-            <a class="button" href="https://workers.cloudflare.com">
-              <span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span>
-              <img style="display:inline" src="/images/cf-workers-badge.svg"></a>
-        
-          <a class="button" href="https://pages.cloudflare.com">
-            <span style="vertical-align: super;font-weight:bold">&nbsp;and&nbsp;&nbsp;&nbsp;</span>
-            <img style="display:inline" src="/images/cf-pages-badge.svg"></a>
+
+
+
+
+          <div class="column ">
+            <p class="control" style="text-align: center;">
+              <a class="button" href="https://workers.cloudflare.com">
+                <span style="vertical-align: super;font-weight:bold">built-with &nbsp;&nbsp;</span>
+                <img style="display:inline" src="/images/cf-workers-badge.svg"></a>
+
+              <a class="button" href="https://pages.cloudflare.com">
+                <span style="vertical-align: super;font-weight:bold">&nbsp;and&nbsp;&nbsp;&nbsp;</span>
+                <img style="display:inline" src="/images/cf-pages-badge.svg"></a>
+            </p>
+          </div>
+          <p style="text-align: center; padding-top:2em; font-size: 0.9em">
+            <strong>CF-Badger</strong>'s was inspired by <a href="https://actions-badge.atrox.dev/">Atrox's Actions
+              Badge</a>.
           </p>
         </div>
-        <p style="text-align: center; padding-top:2em; font-size: 0.9em">
-          <strong>CF-Badger</strong>'s was inspired by <a href="https://actions-badge.atrox.dev/">Atrox's Actions
-            Badge</a>.
-        </p></div>
       </div>
     </div>
   </footer>
 
+</div>
 
 
   <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/v-mask/dist/v-mask.min.js"></script>
+  <script src="masking-input2.js?1"></script>
   <script>
+    Vue.use(VueMask, {   // (!) custom placeholders support requires registration as a plugin to
+      placeholders: {
+        W: /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/,
+        R: /^[a-z0-9]+(?:(?:(?:[._]|__|[-]*)[a-z0-9]+)+)?/
+      }
+    })
+
+
     window.app = new Vue({
       el: '#app',
       data: {
+        ownerPattern: /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}\/[a-z0-9]+(?:(?:(?:[._]|__|[-]*)[a-z0-9]+)+)?$/,
         showHtml: false,
         repository: '',
         modalActive: false,
         style: 'for-the-badge',
+        mask: 'W/R',
         branch: '',
         privateRepo: false,
         token: '',
         workflows: [],
+        owner: '',
         workflow: {},
         hashHex: '',
         branches: [],
-        tokenInputType:'password'
+        tokenInputType: 'password',
+        login:'',
+        installations:[],
+        repos:[],
+         maskedInput: null
       },
       computed: {
         WorkflowTitle: function () {
@@ -447,6 +489,9 @@
             ? `${location.protocol}//${location.host}/badger/${this.hashHex}`
             : `${this.repoUrl}/${this.workflow.id || 0}`;
         },
+        viewerUrl:function() {
+          return `${location.protocol}//${location.host}/badger`
+        },
         repoUrl: function () {
           this.repository =
             this.repository ||
@@ -472,7 +517,7 @@
             '</a>'
           );
         },
-       
+
       },
       mounted: function () {
         const theURL = new URL(location.href),
@@ -490,6 +535,23 @@
           this.token = token;
           this.$nextTick(() => this.getWorkFlows());
         }
+        setTimeout(() => {
+          this.maskedInput = new window.MaskingInput({
+            onSuccess: function (val) {
+              console.log({ onSuccess: val });
+
+
+            },
+            onError: function () {
+              //rut=''
+              //$refs.hidden.value=''
+              //$refs.hidden.select()
+            },
+            masked: document.querySelectorAll('#repoInput')
+          });
+
+
+        }, 500);
       },
       methods: {
         toggleModal: function (flag) {
@@ -497,8 +559,8 @@
           document.querySelector('.modal').classList.toggle('is-active')
         },
         showToken: function () {
-          this.$refs.tokenInput.type =(this.tokenInputType==='password')? 'text':'password';
-          this.tokenInputType=this.$refs.tokenInput.type
+          this.$refs.tokenInput.type = (this.tokenInputType === 'password') ? 'text' : 'password';
+          this.tokenInputType = this.$refs.tokenInput.type
         },
         getWorkFlows: function () {
           if (!this.token) {
@@ -512,6 +574,19 @@
               //  this.$nextTick(() => this.pickWorkFlow());
               return (this.workflows = wflows);
             });
+        },
+        getInstallations:function() {
+          return fetch(this.viewerUrl).then(res=>res.json()).then((result={})=>{
+            let {login,installations,public_repos}=result
+            if(login) {
+              this.login=login
+            }
+            if(installations && installations.length) {
+              this.installations=installations
+            } else             if(public_repos && public_repos.length) {
+              this.repos=public_repos
+            }
+          })
         },
         pickWorkFlow: function () {
           return fetch(

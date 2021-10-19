@@ -2,7 +2,7 @@
 import * as mime from 'mime'
 
 import { missing, TRequestWithParams, EnvWithDurableObject } from 'itty-router-extras';
-import type { TctxWithSentry } from '../index';
+import type { TctxWithSentry } from '../_index';
 import type {
     Options,
     CacheControl,

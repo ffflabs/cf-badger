@@ -11,7 +11,9 @@ export async function computeSVGEndpointRequest(
 
 
 
-        requestURL = new URL(url), style = requestURL.searchParams.get('style') || 'flat', branch = requestURL.searchParams.get('branch') || 'master', endpoint = `${env.WORKER_URL}/badger/${hash}?branch=${branch}`, cf: RequestInitCfProperties = {
+        requestURL = new URL(url), style = requestURL.searchParams.get('style') || 'flat',
+        branch = requestURL.searchParams.get('branch') || 'master',
+        endpoint = `${env.WORKER_URL}/badger/${hash}?branch=${branch}`, cf: RequestInitCfProperties = {
             cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
         };
     console.log({ url })

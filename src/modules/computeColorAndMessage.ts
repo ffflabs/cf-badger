@@ -19,11 +19,11 @@ export interface IWorkflow {
 
 export interface IWorkflowRun {
   id: number;
-  name: string;
+  name?: string | null;
   node_id: string;
-  head_branch: string;
+  head_branch?: string | null;
   run_number: number;
-  status: string & keyof typeof Status;
+  status?: null | (string & keyof typeof Status)
   conclusion: string & keyof typeof Conclusion;
   workflow_id: number;
   check_suite_id: number;
@@ -37,6 +37,7 @@ export interface IWorkflowRun {
   cancel_url: string;
   rerun_url: string;
   workflow_url: string;
+  created_at?: string
 }
 // #CB2431
 
@@ -90,8 +91,26 @@ export interface IWorkflowRuns {
 }
 type ShieldsAttributes = { color: string; message: string, isError?: boolean }
 
-export type WorkflowRunPart = Pick<IWorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id'>
+export type TRunResults = {
+  id: number;
+  name: string;
+  head_branch: string;
+  status: "queued" | "in_progress" | "completed";
+  conclusion: "success" | "neutral" | "failure" | "cancelled" | "timed_out" | "action_required";
+  workflow_id: number;
+};
 
+export type WorkflowRunPart = Pick<IWorkflowRun, 'id' | 'url' | 'name' | 'head_branch' | 'status' | 'conclusion' | 'workflow_id' | 'created_at' | 'node_id'>
+export function getLatestRunByBranch(workflow_runs: WorkflowRunPart[]): { [s: string]: TRunResults } {
+  return workflow_runs.map(run => {
+    let { id, name, head_branch, status, conclusion, workflow_id: wf_id, created_at, node_id } = run;
+    return { id, name, head_branch, status, conclusion, workflow_id: wf_id, created_at, node_id }
+  }).reduce((accum, run) => {
+    let { head_branch } = run
+    accum[String(head_branch)] = accum[String(head_branch)] || run;
+    return accum;
+  }, {} as { [s: string]: TRunResults; });
+}
 
 
 export const Errors = {
