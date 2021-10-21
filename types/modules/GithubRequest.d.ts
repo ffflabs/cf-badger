@@ -1,7 +1,7 @@
 export declare type TWorkflowParams = {
     repo: string;
     owner: string;
-    workflow_id?: string;
+    workflow_id?: number;
     branch?: string;
 };
 /**

@@ -1,47 +1,111 @@
 /// <reference types="@cloudflare/workers-types" />
-import { IttyDurable } from 'itty-durable';
 import { EnvWithDurableObject } from 'itty-router-extras';
-import Toucan from 'toucan-js';
+import { GithubIntegrationDurable } from './GithubIntegrationDurable';
+import type { TInstallationInfo } from './GithubIntegrationDurable';
+import type { TRunResults } from './modules/computeColorAndMessage';
 import { computeColorAndMessage } from './modules/computeColorAndMessage';
+import type { IInstallWebhook } from './modules/webhook_schemes';
+import type { Octokit } from '@octokit/rest';
+export declare const str2ab: (str: string) => ArrayBuffer;
+declare type TInstallations = {
+    expiration: number;
+    installations: {
+        id: number;
+        target_type: string;
+        login: string | undefined;
+    }[];
+};
 export interface IRequestParams {
     env: EnvWithDurableObject;
     owner: string;
     repo: string;
-    workflow_id: string;
-    GITHUB_TOKEN: string;
+    workflow_id: number;
     requestURL: URL;
     hashHex: string;
     branch?: string;
+    verb?: string;
+    endpoint?: string;
+    payload: IInstallWebhook;
+    code?: string;
 }
-declare type TRunResults = {
-    id: number;
-    name: string;
-    head_branch: string;
-    status: "queued" | "in_progress" | "completed";
-    conclusion: "success" | "neutral" | "failure" | "cancelled" | "timed_out" | "action_required";
-    workflow_id: number;
-};
 export declare type TOutputResults = ReturnType<typeof computeColorAndMessage> | {
     branches: TRunResults[];
     hashHex: string;
     count: number;
 };
-export declare class Badger extends IttyDurable implements DurableObject {
-    Sentry: Toucan;
-    state: DurableObjectState & EnvWithDurableObject;
+export declare type TInstallationRepos = {
+    installationId: number | null;
+    login: string;
+    target_id?: number;
+    expiration?: number;
+    repositories: {
+        id: number;
+        name: string;
+        full_name: string;
+        private: boolean;
+    }[];
+};
+export interface Permissions {
+    actions: string;
+    metadata: string;
+}
+declare type TOwnerRepo = {
+    owner: string;
+    repo: string;
+};
+declare type TOwnerOrInstallationId = {
+    owner: string;
+    installationId?: number;
+} | {
+    owner?: string;
+    installationId: number;
+};
+export interface TWorkflow {
+    id: number;
+    node_id?: string;
+    name: string;
+    path?: string;
+    state: string;
+    created_at?: string;
+    updated_at?: string;
+    url?: string;
+    html_url?: string;
+    badge_url?: string;
+    id_url?: string;
+    filename_url?: string;
+    runs?: string;
+}
+export declare class Badger extends GithubIntegrationDurable implements DurableObject {
     [s: string]: unknown;
-    constructor(state: DurableObjectState, env: EnvWithDurableObject);
-    computeAvailableWorkflowsRequest({ requestURL, owner, repo, GITHUB_TOKEN }: {
-        requestURL: URL;
+    getInstallation({ owner, installationId }: TOwnerOrInstallationId): Promise<TInstallationInfo>;
+    getInstallationId({ owner, installationId }: TOwnerOrInstallationId): Promise<number>;
+    getRepositories({ owner, installationId, code }: TOwnerOrInstallationId & {
+        code?: string;
+    }): Promise<TInstallationRepos>;
+    getReposForUser({ code, owner }: {
+        code: string;
+        owner: string;
+    }): Promise<TInstallationRepos>;
+    getRepoWorkflows({ owner, repo, code }?: TOwnerRepo & {
+        code?: string;
+    }): Promise<{
+        workflows: TWorkflow[];
+    }>;
+    protected listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }: {
+        octokit: Octokit;
         owner: string;
         repo: string;
-        GITHUB_TOKEN: string;
+        workflow_id: number;
+        branch?: string;
     }): Promise<{
-        id: number;
-        id_url: string;
-        name: string;
-        filename_url: string;
-    }[]>;
+        workflow_runs: TRunResults[];
+        total_count: number;
+    }>;
+    getWorkflowResults({ owner, repo, workflow_id, code, branch }: TOwnerRepo & {
+        branch?: string;
+        code?: string;
+        workflow_id: number;
+    }): Promise<TOutputResults>;
     /**
      * This operation retrieves at most 100 run results for a given workflow.
      * Given the potential size of the response we store it on a KVNamespace instead
@@ -49,30 +113,34 @@ export declare class Badger extends IttyDurable implements DurableObject {
      * @param param0
      * @returns
      */
-    computeResultRequest({ owner, repo, workflow_id, GITHUB_TOKEN, hashHex, branch }: {
+    computeResultRequest({ owner, repo, workflow_id, branch }: {
         owner: string;
         repo: string;
-        workflow_id: string;
-        GITHUB_TOKEN: string;
-        hashHex: string;
+        workflow_id: number;
         branch?: string;
-    }): Promise<TOutputResults>;
+    }): Promise<Response>;
     computeResultRequestFromHash({ hashHex, branch }: {
         hashHex: string;
         branch?: string;
     }): Promise<Response>;
+    user({ code, installationId }: {
+        code: string;
+        installationId?: number;
+    }): Promise<Response>;
     /**
-     * Even if {IttyDurable} does already take care of handling the fetch method by default, we need to
-     * inject our Sentry client here, so we override it.
      *
-     * @param {Request} request
-     * @returns {Response}
+     * @param owner
+     * @returns
      */
-    fetch(request: Request): Promise<Response>;
-    getSentryInstance(request?: Request, env?: EnvWithDurableObject & {
-        [s: string]: unknown;
-    }): Toucan;
-    private respondWithError;
-    private computeErroredResponse;
+    private getOwnerInstall;
+    /**
+     *
+     * @param owner
+     * @returns
+     */
+    private getInstallById;
+    listInstallations({ raw }: {
+        raw: boolean;
+    }): Promise<TInstallations>;
 }
 export {};

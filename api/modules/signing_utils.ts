@@ -53,7 +53,8 @@ function ab2str(buf: ArrayBuffer) {
     return String.fromCharCode(... new Uint8Array(buf))
 
 }
-export async function getJWT({ privateKey, payload, alg = 'RS256', headerAdditions = {} }: { privateKey: CryptoKey, alg: keyof typeof algorithms, payload: { [s: string]: string }, headerAdditions: { [s: string]: string } }): string {
+export async function getJWT({ privateKey, payload, alg = 'RS256', headerAdditions = {} }:
+    { privateKey: CryptoKey, alg: keyof typeof algorithms, payload: { [s: string]: string }, headerAdditions: { [s: string]: string } }): Promise<string> {
     const algorithm = algorithms[alg];
 
     const header = getHeader(alg, headerAdditions);

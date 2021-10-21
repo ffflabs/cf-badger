@@ -1,5 +1,5 @@
 
-import { EnvWithDurableObject, json, error } from 'itty-router-extras';
+import { EnvWithDurableObject, json } from 'itty-router-extras';
 import {
   GithubIntegrationDurable, mapRepos, dataItemToInstallationInfo,
   computeResultHash
@@ -18,7 +18,7 @@ import type { OctokitUserInstance } from './GithubIntegrationDurable';
 import type { Octokit } from '@octokit/rest';
 
 
-export const str2ab = (str) => {
+export const str2ab = (str: string): ArrayBuffer => {
   const buf = new ArrayBuffer(str.length);
   const bufView = new Uint8Array(buf);
   for (let i = 0, strLen = str.length; i < strLen; i++) {
@@ -162,9 +162,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
       return Number(installationInfo.installationId || installationInfo.id)
     })
   }
-  private async getOctokitForInstallationOrOwner({ owner, installationId }): Promise<Octokit> {
-    return this.getOctokitForInstallation(await this.getInstallationId({ owner, installationId }))
-  }
+
   async getRepositories({ owner, installationId, code }: TOwnerOrInstallationId & { code?: string }): Promise<TInstallationRepos> {
     let cacheKey = `repositories:${String(owner || installationId)}`
     let stored = await this.getStoredWithTtl<TInstallationRepos>(cacheKey)
@@ -410,7 +408,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
     let stored = !raw && await this.getStoredWithTtl<TInstallations>(`listInstallations`)
     if (stored && stored.ttl) return stored
     const { data } = await this.getOctokit().apps.listInstallations()
-    if (raw) return data
+    if (raw) return data as unknown as TInstallations
     const installations = (data as TInstallationItem[]).map(i => dataItemToInstallationInfo(i, this.state.WORKER_URL))
 
     return this.storeWithExpiration(`listInstallations`, { installations })

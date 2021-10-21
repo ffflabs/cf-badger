@@ -18,7 +18,7 @@
     "esModuleInterop": true,
     "types": [
       "@cloudflare/workers-types",
-      "@types/node"
+      
     ],
     "rootDir": "./api",
     "noImplicitAny": true,
@@ -30,6 +30,7 @@
   "include": [
     "src/images/bindings.d.ts",
     "./api/*.ts",
+    "./api/*.d.ts",
     "./api/**/*.ts",
     "./node_modules/@cloudflare/workers-types/index.d.ts"
   ],

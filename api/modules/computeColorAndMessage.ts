@@ -19,11 +19,11 @@ export interface IWorkflow {
 
 export interface IWorkflowRun {
   id: number;
-  name?: string | null;
+  name: string
   node_id: string;
   head_branch?: string | null;
   run_number: number;
-  status?: null | (string & keyof typeof Status)
+  status: (string & keyof typeof Status)
   conclusion: string & keyof typeof Conclusion;
   workflow_id: number;
   check_suite_id: number;

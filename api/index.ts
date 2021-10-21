@@ -14,7 +14,7 @@ import type { EnvWithBindings } from 'itty-router-extras';
 
 
 
-export async function computeRunStatusParameters(request: TRequestWithParams): Promise<Omit<IRequestParams, 'workflow_id' | 'payload' | 'env'> & { workflow_id: number }> {
+export async function computeRunStatusParameters(request: TRequestWithParams): Promise<Omit<IRequestParams, 'workflow_id' | 'raw' | 'prefix' | 'payload' | 'env'> & { workflow_id: number }> {
   let { url: originalUrl, params, code } = request,
     { owner, repo, workflow_id, } = params,
     requestURL = new URL(originalUrl)
@@ -161,7 +161,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         const requestURL = new URL(request.url),
 
           raw = requestURL.searchParams.has('raw')
-        return getEnhancedIttyDurable<'listInstallations'>(request.Badger, 'durable_Badger').listInstallations({ ...request.params, code: request.code, raw } as IRequestParams)
+        return getEnhancedIttyDurable<'listInstallations'>(request.Badger, 'durable_Badger').listInstallations({ raw })
       })
     /**
     * Gets token for a used just redirected from github
@@ -198,7 +198,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
       }).
     get(`/keys/:prefix`, async (
       request: TRequestWithParams,
-      env: EnvWithDurableObject
+
     ): Promise<{ [s: string]: unknown }> => {
       return getEnhancedIttyDurable<'get_keys'>(request.Badger, 'durable_Badger')
         .get_keys({ prefix: request.params.prefix })
@@ -302,7 +302,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
       ): Promise<{ workflows: TWorkflow[] }> => {
         request.params.code = request.code
         return getEnhancedIttyDurable<'getRepoWorkflows'>(request.Badger, 'durable_Badger')
-          .getRepoWorkflows(await computeRunStatusParameters(request, env))
+          .getRepoWorkflows(await computeRunStatusParameters(request))
       })
     /**
      * List branches for a given workflow
@@ -314,7 +314,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         env: EnvWithDurableObject,
       ): Promise<TOutputResults> => {
         let durableStub = getEnhancedIttyDurable<'getWorkflowResults'>(request.Badger, 'durable_Badger')
-        let { owner, repo, workflow_id, code, requestURL } = await computeRunStatusParameters(request, env),
+        let { owner, repo, workflow_id, code, requestURL } = await computeRunStatusParameters(request),
           branch = (request.params.branch ? decodeURIComponent(request.params.branch) : requestURL.searchParams.get('branch')) || undefined
         return durableStub.getWorkflowResults({ owner, repo, workflow_id, code, branch })
       })
@@ -351,17 +351,14 @@ export default {
         IWaitableObject): Promise<Response> => {
 
 
-      const ctx: TctxWithSentry = {
-        waitUntil,
-        sentry: getSentryInstance({ request, waitUntil }, env),
-        request,
-      }
+
 
       env.GH_PRIVATE_KEY = [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
       const router = getParentRouter(env)
-      return Promise.resolve(router.handle(request, env, ctx))
+      return Promise.resolve(router.handle(request, env, { waitUntil }))
         .catch((err) => {
-          ctx.sentry.captureException(err)
+          getSentryInstance({ request, waitUntil }, env).captureException(err)
+
           console.error('event_id', err);
           return error(err.status || 500, err.message)
         });

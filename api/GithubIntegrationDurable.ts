@@ -2,11 +2,12 @@ import { createAppAuth, createOAuthUserAuth } from '@octokit/auth-app';
 import type { AuthInterface, RequestInterface } from '@octokit/auth-app/dist-types/types';
 import { Octokit } from "@octokit/rest";
 import { IttyDurable } from 'itty-durable';
-import { EnvWithDurableObject, json, error } from 'itty-router-extras';
+import { EnvWithDurableObject, error, json } from 'itty-router-extras';
+import kleur from 'kleur';
 import Toucan from 'toucan-js';
 import type { computeColorAndMessage } from './modules/computeColorAndMessage';
-import type { IInstallWebhook, Repository } from './modules/webhook_schemes';
-import type { Sender } from './modules/webhook_schemes';
+import { createKeyPair, getDERfromPEM } from './modules/signing_utils';
+import type { IInstallWebhook, Repository, Sender } from './modules/webhook_schemes';
 
 
 
@@ -48,6 +49,8 @@ export interface IRequestParams {
     owner: string,
     repo: string,
     workflow_id: string,
+    raw: boolean,
+    prefix: string,
 
     requestURL: URL,
     installationId?: number
@@ -77,21 +80,6 @@ export type TOutputResults = ReturnType<typeof computeColorAndMessage> | {
 type TghAppJWT = { token: string, appId: number, expiration: number, ttl?: number }
 
 
-
-type TOauthResponse = {
-    tokenType: "oauth";
-    type: "token";
-    clientType: "github-app";
-    token: string;
-} | {
-    tokenType: "oauth";
-    type: "token";
-    clientType: "github-app";
-    token: string;
-    refreshToken: string;
-    expiresAt: string;
-    refreshTokenExpiresAt: string;
-};
 
 type TViewerRepos = {
 
@@ -128,7 +116,6 @@ export interface TInstallationInfo {
     suspended_at: null;
     [s: string]: unknown
 }
-import { createKeyPair, getDERfromPEM, algorithms } from './modules/signing_utils';
 export type TInstallationItem = Omit<TInstallationInfo, 'installationId'> & {
     id: number;
     target_type: string// 'User' | 'Organization';
@@ -217,7 +204,6 @@ interface IInstanceEntities {
         [s: string]: OctokitUserInstance
     };
 }
-import kleur from 'kleur';
 export abstract class GithubIntegrationDurable extends IttyDurable {
     Sentry!: Toucan;
 
@@ -342,7 +328,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         const { action, installation: installationRaw, sender: senderRaw, repositories_removed, repositories_added } = payload,
             installationInfo = dataItemToInstallationInfo(installationRaw as unknown as TInstallationItem, this.state.WORKER_URL);
 
-        this.state.waitUntil(this.state.BADGER_KV.put(`installation:${payload.installation.id}`, JSON.stringify(installationRaw), { metadata: installation }))
+        this.state.waitUntil(this.state.BADGER_KV.put(`installation:${payload.installation.id}`, JSON.stringify(installationRaw), { metadata: installationInfo }))
         installationInfo.installationId = installationInfo.installationId || installationInfo.id
 
         this.storeWithExpiration(`installationId:${installationInfo.installationId}`, installationInfo, 1000000)
@@ -498,7 +484,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         }) as unknown as Octokit & { token: string, code: string, login: string, userId: number }
     }
 
-    protected async getRepoInfo({ userOctokit, owner, repo }: { userOctokit: Octokit, owner: string, repo: string }) {
+    /*protected async getRepoInfo({ userOctokit, owner, repo }: { userOctokit: Octokit, owner: string, repo: string }) {
 
 
         const query = ` {
@@ -514,10 +500,10 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
                 throw new Error(`Current user doesn't have access to requested repo`)
 
             }
-            return userOctokit.actions.g
+            return repository
         })
-    }
-    protected async getPublicRepos(userOctokit: Octokit, login): Promise<TViewerRepos & { installationId: number | null }> {
+    }*/
+    protected async getPublicRepos(userOctokit: Octokit, login: string): Promise<TViewerRepos & { installationId: number | null }> {
         const query = ` {
             user(login: "${login}") {
               id
@@ -599,8 +585,9 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             }
             return json(jsonParams)
         } catch (err) {
-            this.Sentry.captureException(err)
-            return json(this.processError(err as Error, {}), { status: err.status || 500 })
+            const httpError = err as Error & { status: number }
+            this.Sentry.captureException(httpError)
+            return json(this.processError(httpError, {}), { status: httpError.status || 500 })
         }
     }
 

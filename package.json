@@ -19,7 +19,7 @@
     "build": "rm -rf dist/* && esbuild api/index.ts --sourcemap --format=esm --bundle --outfile=dist/index.mjs",
     "build:pre": "yarn yt &&  yarn write_commit",
     "ty": "echo 'cat wrangler.toml | yj -ty > wrangler.yaml'",
-    "write_commit": "COMMIT=`git rev-parse --short HEAD` sed -i \"s/_RELEASE_/$COMMIT/g\" wrangler.toml",
+    "write_commit": "export COMMIT=`git rev-parse --short HEAD`; sed -i \"s/_RELEASE_/$COMMIT/g\" wrangler.toml",
     "yt": "cat wrangler.yaml | yj -yt -i > wrangler.toml",
     "miniflare": "  NODE_ENV=development miniflare dist/index.mjs -c ./wrangler.toml -w  -d -o Badger=Badger --wrangler-env=dev  --build-watch-path=api",
     "transpile": "tsc --project ./tsconfig.json",
