@@ -333,6 +333,8 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         request: TRequestWithParams,
         env: EnvWithDurableObject
       ): Promise<Response> => {
+        console.log('catchAll', request.url)
+        if (env.WORKER_ENV === 'production') return fetch(request)
         const newURL = new URL(request.url)
         newURL.protocol = String(env.ASSETS_PROTOCOL || 'https')
         newURL.hostname = String(env.ASSETS_URL || env.WORKER_URL)
