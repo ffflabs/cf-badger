@@ -3,7 +3,6 @@ import type { IttyDurable } from 'itty-durable';
 import { withDurables } from 'itty-durable';
 import { DurableStubGetter, error, ThrowableRouter, TRequestWithParams, EnvWithDurableObject, json } from 'itty-router-extras';
 
-import { computeAssetRequest } from './modules/computeAssetRequest';
 import { computeSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
 
 
@@ -15,7 +14,7 @@ import type { EnvWithBindings } from 'itty-router-extras';
 
 
 
-export async function computeRunStatusParameters(request: TRequestWithParams, env: EnvWithDurableObject): Promise<Omit<IRequestParams, 'payload' | 'env'>> {
+export async function computeRunStatusParameters(request: TRequestWithParams): Promise<Omit<IRequestParams, 'workflow_id' | 'payload' | 'env'> & { workflow_id: number }> {
   let { url: originalUrl, params, code } = request,
     { owner, repo, workflow_id, } = params,
     requestURL = new URL(originalUrl)
@@ -104,7 +103,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
     routes: [
 
       [
-        'GET', new RegExp(`badger/(?<hash>([a-f0-9]{20}))$`), [
+        'GET', new RegExp(`badger/_(?<hash>([a-f0-9]{20}))$`), [
           async (
             request: TRequestWithParams,
             env: EnvWithDurableObject,
@@ -116,7 +115,6 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
               branch = requestURL.searchParams.get('branch') || 'master',
               durableStub = getEnhancedIttyDurable<'computeResultRequestFromHash'>(request.Badger, 'durable_Badger')
 
-
             return durableStub.computeResultRequestFromHash({ hashHex, branch })
 
           }
@@ -125,6 +123,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
     ]
   })
 
+  //https://local.cf-badger.com/badger/ctohm/dbthor.cesion.poc/1798987
 
   return router
     .options('*', (
@@ -141,7 +140,6 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
       });
     })
 
-
     .get('/bdg/oauth',
       async (
         request: TRequestWithParams,
@@ -150,48 +148,24 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
     .get('/bdg/install', (
     ): Response => Response.redirect(`https://github.com/apps/cf-badger/installations/new`, 302))
 
-    .get('/images/*', computeAssetRequest)
 
     .all('*', withDurables())
-    .all('*', (request: TRequestWithParams): void => {
-      let cookie = request.headers.get('cookie')
-      let cookieValue = /gh_code=([a-z0-9]+)/.exec(cookie || '')
-      if (cookieValue && cookieValue.length >= 2) {
-
-        request.code = cookieValue[1]
-
-      }
-
-    })
-    .post('/badger/logout', async (
-      request: TRequestWithParams,
-      env: EnvWithDurableObject
-    ): Promise<Response> => {
-      const jsonResponse = new Response('Come back soon', {
-        status: 302,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          'set-cookie': `gh_code = ; path = /; secure; HttpOnly; SameSite=Lax` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
-        },
-      });
-      jsonResponse.headers.append('set-cookie', `code =; path = /; secure; HttpOnly; SameSite=Lax`)
-      jsonResponse.headers.set('Location', `${env.WORKER_URL}`)
-      return jsonResponse
-    })
-    .get('/badger',
+    /**
+* This endpoint isn't exposed in production
+*/
+    .get(
+      '/installations',
       async (
         request: TRequestWithParams
+      ): Promise<unknown> => {
+        const requestURL = new URL(request.url),
 
-      ): Promise<Response> => {
-        if (!request.code) {
-          return json({ login: null })
-        }
-        return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
-          .user({ code: request.code }).catch(err => {
-            console.error(err);
-            return error(500, (err as { message: string }).message)
-          })
+          raw = requestURL.searchParams.has('raw')
+        return getEnhancedIttyDurable<'listInstallations'>(request.Badger, 'durable_Badger').listInstallations({ ...request.params, code: request.code, raw } as IRequestParams)
       })
+    /**
+    * Gets token for a used just redirected from github
+    */
     .all('/bdg/code',
       async (
         request: TRequestWithParams,
@@ -208,7 +182,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
           let postData = await request.json()
 
           code = (postData).code
-          installationId = (postData).code
+          installationId = (postData).installation_id
           console.log({ postData })
         }
         console.log({ code, installationId })
@@ -221,47 +195,94 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
             console.error(err);
             return error(500, (err as { message: string }).message)
           })
-
-
-      })
-
-
-    .get(
-      '/badger/:hash/endpoint.svg',
-      computeSVGEndpointRequest)
-
-    .get(
-      '/installations',
-      async (
-        request: TRequestWithParams
-      ): Promise<unknown> => {
-        return getEnhancedIttyDurable<'listInstallations'>(request.Badger, 'durable_Badger').listInstallations({ ...request.params, code: request.code } as IRequestParams)
-      })
-    .get(
-      '/installation/:owner',
-      async (
-        request: TRequestWithParams
-      ): Promise<unknown> => {
-        return getEnhancedIttyDurable<'getInstallation'>(request.Badger, 'durable_Badger').getInstallation({ owner: request.params.owner })
-      })
-
-
+      }).
+    get(`/keys/:prefix`, async (
+      request: TRequestWithParams,
+      env: EnvWithDurableObject
+    ): Promise<{ [s: string]: unknown }> => {
+      return getEnhancedIttyDurable<'get_keys'>(request.Badger, 'durable_Badger')
+        .get_keys({ prefix: request.params.prefix })
+    })
     .post(
       `/bdg/${envCommon.WEBHOOK_ROUTE}`,
       async (
         request: TRequestWithParams
       ): Promise<{ ok: boolean }> => {
         //console.log(env)
-        const id = request.headers.get("x-github-delivery");
-        const name = request.headers.get("x-github-event");
+        const id = String(request.headers.get("x-github-delivery"));
+        const name = String(request.headers.get("x-github-event"));
         const payload = await request.json();
 
-
-
         let durableStub = getEnhancedIttyDurable<'webhook'>(request.Badger, 'durable_Badger')
-        return durableStub.webhook({ id, name, payload })
+        return Promise.resolve().then(() => {
+          return durableStub.webhook({ id, name, payload })
+
+        }).catch(err => {
+          console.error(err);
+          return json({ ok: true })
+        })
 
       })
+
+    .post('/badger/_logout', async (
+      request: TRequestWithParams,
+      env: EnvWithDurableObject
+    ): Promise<Response> => {
+      const jsonResponse = new Response('Come back soon', {
+        status: 302,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          'set-cookie': `gh_code = ; path = /; secure; HttpOnly; SameSite=Lax;Max-Age= 0` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
+        },
+      });
+      jsonResponse.headers.append('set-cookie', `code =; path = /; secure; HttpOnly; SameSite=Lax;Max-Age= 0`)
+      jsonResponse.headers.set('Location', `${env.WORKER_URL}`)
+      return jsonResponse
+    })
+    .get(
+      '/badger/:hash/endpoint.svg',
+      computeSVGEndpointRequest)
+    /**
+     * From here onwards, user is expected to be authenticated
+     */
+    .all('/badger/*', (request: TRequestWithParams): Response | void => {
+      let cookie = request.headers.get('cookie')
+      let cookieValue = /gh_code=([a-z0-9]+)/.exec(cookie || '')
+      if (!cookieValue || cookieValue.length < 2) {
+        return json({ error: 'Please authenticate to perform this request' })
+      }
+      request.code = cookieValue[1]
+
+
+
+    })
+
+    /**
+     * List installations available to logged user
+     */
+    .get('/badger',
+      async (
+        request: TRequestWithParams
+
+      ): Promise<Response> => {
+        if (!request.code) {
+          return json({ login: null })
+        }
+        return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
+          .user({ code: request.code }).catch(err => {
+            console.error(err);
+            return error(500, (err as { message: string }).message)
+          })
+      })
+
+
+
+
+
+    /**
+     * List repos for a given installation
+     */
+
     .get(
       '/badger/:owner',
       async (
@@ -270,6 +291,9 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         request.params.code = request.code
         return getEnhancedIttyDurable<'getRepositories'>(request.Badger, 'durable_Badger').getRepositories({ ...request.params } as { owner: string })
       })
+    /**
+     * List workflows for a given repo
+     */
     .get(
       '/badger/:owner/:repo',
       async (
@@ -280,7 +304,9 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         return getEnhancedIttyDurable<'getRepoWorkflows'>(request.Badger, 'durable_Badger')
           .getRepoWorkflows(await computeRunStatusParameters(request, env))
       })
-
+    /**
+     * List branches for a given workflow
+     */
     .get(
       '/badger/:owner/:repo/:workflow_id',
       async (

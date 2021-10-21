@@ -1,0 +1,1 @@
+import{b as r,B as s}from"./index.31876c0f.js";import{d as n,o as t,c as a,f as e,F as o}from"./vendor.eb742c19.js";var i=n({props:{message:String,installation:{type:String,required:!0}},setup(n){const i=n;return(n,l)=>{const p=r,u=s;return t(),a(o,null,[e(p),e(u,{owner:i.installation},null,8,["owner"])],64)}}});export{i as default};

@@ -5,7 +5,7 @@ const mode = process.env.NODE_ENV || 'production';
 const buildOptions={
   splitting: mode === "production",
 
-  entryPoints: ['src/index.ts','src/Badger.ts','src/modules/computeAssetRequest.ts','src/modules/GithubRequest.ts'],
+  entryPoints: ['api/index.ts','api/Badger.ts','api/modules/computeAssetRequest.ts','api/modules/GithubRequest.ts'],
   outdir:'dist',
   bundle: true,
   format:'esm',

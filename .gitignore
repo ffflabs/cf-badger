@@ -14,7 +14,7 @@ wrangler.yaml
 wrangler.toml
 
 .env.local
-src/images/*
+api/images/*
 meta.json
 *.pem
 

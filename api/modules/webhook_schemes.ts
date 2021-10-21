@@ -2,7 +2,7 @@
 export interface IInstallWebhook {
     action: string;
     installation: Installation;
-    repositories: Repository[];
+    repositories_removed: Repository[];
     repositories_added: Repository[];
     sender: Sender;
 }

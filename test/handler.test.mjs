@@ -10,7 +10,7 @@ test.beforeEach((t) => {
     // Create a new Miniflare environment for each test
     const mf = new Miniflare({
       scriptPath: "./dist/index.mjs",
-      // Some options omitted, see src/options/index.ts for the full list
+      // Some options omitted, see api/options/index.ts for the full list
       sourceMap: true,
       log: new ConsoleLog(), // Defaults to no-op logger
       wranglerConfigPath: "./wrangler.toml",

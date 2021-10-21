@@ -20,7 +20,7 @@
       "@cloudflare/workers-types",
       "@types/node"
     ],
-    "rootDir": "./src",
+    "rootDir": "./api",
     "noImplicitAny": true,
     "emitDeclarationOnly": true,
     "declaration": true,
@@ -29,10 +29,8 @@
   },
   "include": [
     "src/images/bindings.d.ts",
-    "./src/*.ts",
-    "./src/**/*.ts",
-    // "./test/*.ts",
-    //"./test/**/*.ts",
+    "./api/*.ts",
+    "./api/**/*.ts",
     "./node_modules/@cloudflare/workers-types/index.d.ts"
   ],
   "exclude": [

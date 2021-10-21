@@ -16,8 +16,8 @@ export async function computeSVGEndpointRequest(
         endpoint = `${env.WORKER_URL}/badger/${hash}?branch=${branch}`, cf: RequestInitCfProperties = {
             cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
         };
-    console.log({ url })
     let endpointUrl = `https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`;
+    console.log({ endpoint, endpointUrl })
     const cachedResponse = await cache.match(endpointUrl)
     if (cachedResponse && Number(cachedResponse.headers.get('cached_on')) > (Date.now() - 300000)) {
         return cachedResponse

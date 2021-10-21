@@ -2,18 +2,21 @@
 import { EnvWithDurableObject, json, error } from 'itty-router-extras';
 import {
   GithubIntegrationDurable, mapRepos, dataItemToInstallationInfo,
-  computeLoginHash
+  computeResultHash
 } from './GithubIntegrationDurable';
 import type {
   TInstallationItem, TInstallationInfo
 
 } from './GithubIntegrationDurable'
-import type { IWorkflowRun, IWorkflowRuns, WorkflowRunPart, TRunResults } from './modules/computeColorAndMessage';
+import type { IWorkflowRun, WorkflowRunPart, TRunResults } from './modules/computeColorAndMessage';
 import { computeColorAndMessage, getLatestRunByBranch } from './modules/computeColorAndMessage';
-import { GithubRequest, TWorkflowParams } from "./modules/GithubRequest";
+import type { TWorkflowParams } from "./modules/GithubRequest";
 import type { IInstallWebhook } from './modules/webhook_schemes';
+//import type { Octokit } from '@octokit/rest';
+//import { createKeyPair, decryptMessage, encryptMessage, getJWT } from './modules/signing_utils';
+import type { OctokitUserInstance } from './GithubIntegrationDurable';
 import type { Octokit } from '@octokit/rest';
-import { createKeyPair, decryptMessage, encryptMessage, getJWT } from './modules/signing_utils';
+
 
 export const str2ab = (str) => {
   const buf = new ArrayBuffer(str.length);
@@ -152,39 +155,57 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
     if (/^\d+$/.test(owner || '')) installationId = Number(owner)
     return (installationId ? this.getInstallById({ installationId }) : this.getOwnerInstall({ owner } as { owner: string }))
   }
-
+  async getInstallationId({ owner, installationId }: TOwnerOrInstallationId): Promise<number> {
+    if (/^\d+$/.test(owner || '')) installationId = Number(owner)
+    if (installationId) return installationId
+    return this.getOwnerInstall({ owner } as { owner: string }).then(installationInfo => {
+      return Number(installationInfo.installationId || installationInfo.id)
+    })
+  }
+  private async getOctokitForInstallationOrOwner({ owner, installationId }): Promise<Octokit> {
+    return this.getOctokitForInstallation(await this.getInstallationId({ owner, installationId }))
+  }
   async getRepositories({ owner, installationId, code }: TOwnerOrInstallationId & { code?: string }): Promise<TInstallationRepos> {
     let cacheKey = `repositories:${String(owner || installationId)}`
     let stored = await this.getStoredWithTtl<TInstallationRepos>(cacheKey)
 
     if (stored.ttl) return stored
     if (/^\d+$/.test(owner || '')) installationId = Number(owner)
-    try {
-      let installationInfo = await this.getInstallation({ owner, installationId } as TOwnerOrInstallationId)
+    return Promise.resolve().then(async () => {
+      let installationInfo = await this.getOwnerInstall({ owner } as { owner: string })
       installationId = Number(installationInfo.installationId || installationInfo.id)
-
-      return (await this.getOctokitForInstallation(installationId)).apps.listReposAccessibleToInstallation({ installation_id: installationId })
+      owner = installationInfo.login
+      this.debug(`getOctokitForInstallation(${installationId})`)
+      return (await this.getOctokitForInstallation(installationId).then(octokit => {
+        this.debug(`getOctokitForInstallation(${installationId})`, installationInfo)
+        return octokit
+      })).apps.listReposAccessibleToInstallation()
         .then(({ data: { repositories } }): TInstallationRepos => {
+
           let { login, target_id } = installationInfo,
             finalResult = { installationId, login, target_id, repositories: mapRepos(repositories, this.state.WORKER_URL) } as unknown as TInstallationRepos;
 
 
           return this.storeWithExpiration(cacheKey, finalResult)
         });
-    } catch (err) {
+    }).catch(async err => {
+
+
+      this.debug({ failed: 'getRepositories', owner, code, stack: err.stack.split('\n').slice(0, 2), message: err.message })
       /**
        * Plan B, attempt using logged in user token
        */
       if (isErrorResponse(err, 404) && owner && code) {
+
         return this.getReposForUser({ code, owner })
-
-
       }
       throw err
-    }
+    })
   }
+
   async getReposForUser({ code, owner }: { code: string, owner: string }): Promise<TInstallationRepos> {
     return this.actingAsUser(code).then(userOctokit => {
+
       return userOctokit.repos.listForUser({ username: owner }).then(({ data }): TInstallationRepos & { install_url: string } => {
         let firstOrg = data[0]
         if (!firstOrg) {
@@ -211,36 +232,62 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
     return Promise.resolve().then(async () => {
       let installationInfo = await this.getOwnerInstall({ owner } as { owner: string }),
         installationId = Number(installationInfo.installationId || installationInfo.id)
-      return this.getOctokitForInstallation(installationId)
+      owner = installationInfo.login
+      return (await this.getOctokitForInstallation(installationId)).actions.listRepoWorkflows({ owner, repo })
+
     }).catch(err => {
+      this.debug({ failed: 'getRepoWorkflows', owner, repo, code, stack: err.stack.split('\n').slice(0, 2), message: err.message })
+
       if (isErrorResponse(err, 404) && owner && code) {
-        return this.actingAsUser(code)
+        return this.actingAsUser(code).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
       }
-      throw err
-    }).then((octokit) => {
-      return octokit.actions.listRepoWorkflows({ owner, repo }).then(({ data }) => {
-        let { workflows } = data as IRepoWorkflows
-        return this.storeWithExpiration(cacheKey, { workflows: workflows.map(workflow => mapWorkflow({ owner, repo, workflow }, this.state.WORKER_URL)) })
-      })
+      return this.actingAsUser(this.state.GITHUB_TOKEN).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
+    }).then(({ data }) => {
+      let { workflows } = data as IRepoWorkflows
+      return this.storeWithExpiration(cacheKey, { workflows: workflows.map(workflow => mapWorkflow({ owner, repo, workflow }, this.state.WORKER_URL)) })
     })
 
   }
-  async getWorkflowResults({ owner, repo, workflow_id, code }: TOwnerRepo & { code?: string, workflow_id: number }): Promise<TOutputResults> {
+  protected async listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }: { octokit: Octokit, owner: string, repo: string, workflow_id: number, branch?: string }): Promise<{ workflow_runs: TRunResults[], total_count: number }> {
+    let cacheKey = `workflows:${owner}/${repo}/${workflow_id}/${branch || ''}`
+    let stored = await this.getStoredWithTtl<{ workflow_runs: TRunResults[], total_count: number }>(cacheKey)
+    if (stored.ttl) return stored
+    return octokit.actions.listWorkflowRuns({ owner, repo, workflow_id, branch, per_page: branch ? 1 : 100 })
+      .then(({ data }): { workflow_runs: TRunResults[], total_count: number } => {
+        let { workflow_runs: runs, total_count } = data
+        console.log(runs[0])
+        const lastruns = getLatestRunByBranch(runs as WorkflowRunPart[]) as { [s: string]: TRunResults }
+        return this.storeWithExpiration(cacheKey, { workflow_runs: Object.values(lastruns), total_count: Number(total_count) })
+      })
+  }
+
+
+  async getWorkflowResults({ owner, repo, workflow_id, code, branch }: TOwnerRepo & { branch?: string, code?: string, workflow_id: number }): Promise<TOutputResults> {
+
+    console.info('getWorkflowResults', { owner, repo, workflow_id, code, branch })
     return Promise.resolve().then(async () => {
       let installationInfo = await this.getOwnerInstall({ owner } as { owner: string }),
         installationId = Number(installationInfo.installationId || installationInfo.id)
-      return this.getOctokitForInstallation(installationId)
+      return this.getOctokitForInstallation(installationId).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
     }).catch(err => {
+      this.debug({ failed: 'getWorkflowResults', owner, repo, workflow_id, code, stack: err.stack.split('\n').slice(0, 2) })
+
       if (isErrorResponse(err, 404) && owner && code) {
-        return this.actingAsUser(code)
+        return this.actingAsUser(code).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
       }
-      throw err
-    }).then((octokit) => {
-      return octokit.actions.listWorkflowRuns({ owner, repo, workflow_id }).then(({ data }) => {
-        let { workflow_runs, total_count } = data,
-          runs = getLatestRunByBranch(workflow_runs as WorkflowRunPart[]) as { [s: string]: TRunResults }
-        return { branches: Object.values(runs), hashHex: '', count: total_count }
-      })
+      return this.actingAsUser(this.state.GITHUB_TOKEN).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
+    }).then(async ({ workflow_runs, total_count }): Promise<TOutputResults> => {
+      const hashHex = await computeResultHash({ owner, repo, workflow_id })
+      this.storeWithExpiration(`hash:${hashHex}`,
+        {
+          owner, repo, workflow_id
+        })
+      this.debug({ owner, repo, workflow_id, code, branch, hashHex })
+
+
+
+      return { hashHex, branches: workflow_runs, count: total_count }
+
     })
   }
 
@@ -256,121 +303,59 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
     owner,
     repo,
     workflow_id,
-    GITHUB_TOKEN,
-
-    hashHex,
     branch
   }: {
     owner: string,
     repo: string,
-    workflow_id: string,
-    GITHUB_TOKEN: string,
+    workflow_id: number,
 
-    hashHex: string,
     branch?: string
-  }): Promise<TOutputResults> {
-    this.state.storage.put<TWorkflowParams & { GITHUB_TOKEN: string }>(`hash:${hashHex}`,
-      {
-        owner, repo, workflow_id, GITHUB_TOKEN
+  }): Promise<Response> {
+
+    return this.getWorkflowResults({ owner, repo, workflow_id, branch })
+      .then((runs: TOutputResults) => {
+        let { branches } = runs as { branches: TRunResults[] }
+        return json(computeColorAndMessage(branches as IWorkflowRun[], Number(workflow_id), branch), {
+          headers: {
+            'cache-control': 'max-age=300, public'
+          }
+        })
       })
-    let { value: storedRuns, metadata } = await this.state.BADGER_KV.getWithMetadata<IWorkflowRuns>(`runs:${hashHex}`, 'json')
-    console.log({
-      owner, repo, workflow_id, metadata
-    })
-    if (!storedRuns) {
-      const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN)
-
-      const res = await ghRequest.fetch({ method: 'GET' }),
-        body = res.clone().body
-      if (body) {
-        this.state.waitUntil(this.state.BADGER_KV.put(`runs:${hashHex}`, body, { expirationTtl: 300, metadata: { CachedOn: Date.now() } }))
-      }
-      storedRuns = (await res.json()) as IWorkflowRuns
-    }
-    let { workflow_runs } = storedRuns,
-      runs = workflow_runs.map(run => {
-        let { id, name, head_branch, status, conclusion, workflow_id: wf_id } = run;
-        return { id, name, head_branch, status, conclusion, workflow_id: wf_id }
-      });
-
-    runs = Object.values(runs.reduce((accum, run) => {
-      let { head_branch } = run
-      accum[head_branch] = accum[head_branch] || run;
-      return accum;
-    }, {} as { [s: string]: WorkflowRunPart; }));
-
-
-    return { branches: runs, hashHex, count: workflow_runs.length }
   }
   async computeResultRequestFromHash({ hashHex, branch }: { hashHex: string, branch?: string }): Promise<Response> {
+    const { owner, repo, workflow_id } = (await this.state.storage.get(`hash:${hashHex}`) || {}) as TWorkflowParams
 
-    const { owner, repo, workflow_id, GITHUB_TOKEN } = (await this.state.storage.get(`hash:${hashHex}`) || {}) as TWorkflowParams & { GITHUB_TOKEN: string }
+    return this.computeResultRequest({ owner, repo, workflow_id: Number(workflow_id), branch })
 
-    const ghRequest = new GithubRequest({ owner, repo, workflow_id, branch }, GITHUB_TOKEN),
-      res = await ghRequest.fetch({ method: 'GET' });
-
-
-    const { workflow_runs } = (await res.json()) as IWorkflowRuns, runs = workflow_runs.map((run) => {
-      let { id, name, head_branch, status, conclusion, workflow_id: wf_id } = run;
-      return { id, name, head_branch, status, conclusion, workflow_id: wf_id };
-    })
-
-    return json(computeColorAndMessage(runs as IWorkflowRun[], Number(workflow_id), branch), {
-      headers: {
-        'cache-control': 'max-age=300, public'
-      }
-    })
   }
 
   // Generated by https://quicktype.io
   async user({ code, installationId }: { code: string, installationId?: number }): Promise<Response> {
 
-    let props = (await this.state.storage.get(code) || { token: '', login: '' }) as { [s: string]: unknown }
+    let { token, id, login } = (await this.state.storage.get(code) || { token: '', id: 0, login: '' }) as { [s: string]: unknown }
 
-    if (!props.token) {
-      return this.actingAsOauthUser(code)
+    if (!token) {
+      return this.actingAsOauthUser({ code, installationId })
     }
 
-    return this.actingAsUser(code).then(userOctoKit => {
+    return this.actingAsUser(code).then(async userOctoKit => {
 
-
-
+      //20222539
+      //20222829
       userOctoKit.code = code
-      let reposForInstallation = Promise.resolve({} as TInstallationRepos | { installations: TInstallationInfo[] })
+      //  let reposForInstallation = Promise.resolve({} as TInstallationRepos | { installations: TInstallationInfo[] })
 
-      return this.getUserPublicRepos(userOctoKit).then(async (viewer) => {
-        const { login: username, databaseId, repo_count } = viewer
-        console.log({ code, installationId, username })
+      // return this.getReposForUser({code,owner:login}).then(async (viewer) => {
+      // const { login: username, databaseId, repo_count } = viewer
+      //console.log({ code, installationId, username })
 
-        if (installationId) {
-          reposForInstallation = this.getRepositories({ installationId })
-        }
-        const installations = await this.getInstallationsForUser(userOctoKit as Octokit & { code: string, userId: number, login: string }, installationId)
+      /* if (installationId) {
+         reposForInstallation = this.getRepositories({ installationId })
+       }*/
+      const installations = await this.getInstallationsForUser(userOctoKit as OctokitUserInstance, installationId)
 
-        let payload = {
-          login: username, id: Number(databaseId), installations: installations.reduce((accum, i) => {
-            accum[i.login] = i.installationId
-            return accum
-          }, {} as { [s: string]: number })
-        }
-
-        /*   const privateKey = await this.getPrivateCryptoKey({
-             name: 'RSASSA-PKCS1-v1_5',
-             hash: { name: 'SHA-256' },
-           }),
-             jwt = await getJWT({ privateKey, payload }),
-          
-             */
-        //const publicKey: CryptoKey = await this.getPublicCryptoKey()
-        //
-        //
-        //encryptedHash = await encryptMessage(hashParams, publicKey)
-        return reposForInstallation.then(installation_repos => {
-          return json({ ...installation_repos, ...payload, repo_count, installations, public_repos: viewer.repositories })
-        });
-      }).catch(err => {
-
-        return this.errorToResponse(err, { gh_code: code })
+      return json({
+        login, id, installations
       })
     })
   }
@@ -382,6 +367,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
    * @returns 
    */
   private async getOwnerInstall({ owner }: { owner: string }): Promise<TInstallationInfo> {
+    if (/^\d+$/.test(owner || '')) return this.getInstallById({ installationId: Number(owner) })
 
     let stored = await this.getStoredWithTtl<TInstallationInfo>(`owner:${owner}`)
     if (stored.ttl) return stored
@@ -391,6 +377,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
         console.log('got owner installation')
         const installationInfo = dataItemToInstallationInfo(data as unknown as TInstallationItem, this.state.WORKER_URL)
         installationInfo.installationId = installationInfo.installationId || installationInfo.id
+        this.state.waitUntil(this.state.BADGER_KV.put(`installation:${installationInfo.installationId}`, JSON.stringify(data), { metadata: installationInfo }))
         this.storeWithExpiration(`owner:${owner}`, installationInfo, 1000000)
         this.storeWithExpiration(`installationId:${installationInfo.installationId}`, installationInfo, 1000000)
         return installationInfo
@@ -402,14 +389,14 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
    * @param owner 
    * @returns 
    */
-  private async getInstallById({ installationId }: { installationId: number }): Promise<TInstallationInfo> {
+  private async getInstallById({ installationId, raw }: { raw?: boolean, installationId: number }): Promise<TInstallationInfo> {
 
-    let stored = await this.getStoredWithTtl<TInstallationInfo>(`installationId:${installationId}`)
-    if (stored.ttl) return stored
+    let stored = !raw && await this.getStoredWithTtl<TInstallationInfo>(`installationId:${installationId}`)
+    if (stored && stored.ttl) return stored
 
     return (await this.getOctokitForInstallation(installationId)).apps.getInstallation({ installation_id: installationId }).then(async ({ data }) => {
-
       const installationInfo = dataItemToInstallationInfo(data as unknown as TInstallationItem, this.state.WORKER_URL)
+      this.state.waitUntil(this.state.BADGER_KV.put(`installation:${installationId}`, JSON.stringify(data), { metadata: installationInfo }))
       installationInfo.installationId = installationInfo.installationId || installationInfo.id
 
       this.storeWithExpiration(`installationId:${installationId}`, installationInfo, 1000000)
@@ -418,11 +405,12 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
 
     })
   }
-  async listInstallations(): Promise<TInstallations> {
+  async listInstallations({ raw }: { raw: boolean }): Promise<TInstallations> {
 
-    let stored = await this.getStoredWithTtl<TInstallations>(`listInstallations`)
-    if (stored.ttl) return stored
+    let stored = !raw && await this.getStoredWithTtl<TInstallations>(`listInstallations`)
+    if (stored && stored.ttl) return stored
     const { data } = await this.getOctokit().apps.listInstallations()
+    if (raw) return data
     const installations = (data as TInstallationItem[]).map(i => dataItemToInstallationInfo(i, this.state.WORKER_URL))
 
     return this.storeWithExpiration(`listInstallations`, { installations })

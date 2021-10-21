@@ -12,8 +12,6 @@ import type { Sender } from './modules/webhook_schemes';
 
 export async function computeLoginHash({ login, id, token }: { login: string; id: number, token: string }): Promise<string> {
     const linkParams = new TextEncoder().encode(JSON.stringify({ login, id, token }));
-
-
     const hashBuffer = await crypto.subtle.digest(
         {
             name: "SHA-1",
@@ -25,6 +23,19 @@ export async function computeLoginHash({ login, id, token }: { login: string; id
     return hashHex;
 }
 
+
+export async function computeResultHash({ owner, repo, workflow_id }: { owner: string; workflow_id: number, repo: string }): Promise<string> {
+    const linkParams = new TextEncoder().encode(JSON.stringify({ owner, repo, workflow_id }));
+    const hashBuffer = await crypto.subtle.digest(
+        {
+            name: "SHA-1",
+        },
+        linkParams
+    );
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substr(0, 20); // convert bytes to hex string. Use first 20 chars as slug
+    return hashHex
+}
 type ErrorObject = {
     name: string;
     message: string;
@@ -37,7 +48,7 @@ export interface IRequestParams {
     owner: string,
     repo: string,
     workflow_id: string,
-    GITHUB_TOKEN: string,
+
     requestURL: URL,
     installationId?: number
     hashHex: string,
@@ -92,7 +103,7 @@ type TViewerRepos = {
     [s: string]: unknown;
 
 };
-type TMinimalInstallationInfo = { login: string; installationId: number; target_id: number; repos: string }
+type TMinimalInstallationInfo = { login: string; installationId: number; target_id: number; repos: string, enabledFor: string }
 
 export interface TInstallationInfo {
     id: number
@@ -224,6 +235,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.state.release = env.RELEASE;
         this.state.APP_ID = env.APP_ID
         this.state.env = env
+        this.state.GITHUB_TOKEN = env.GITHUB_TOKEN as string;
         this.state.WORKER_ENV = env.WORKER_ENV as string;
         this.state.WORKER_URL = env.WORKER_URL as string;
         this.state.GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID as string;
@@ -237,6 +249,8 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.info = console.info.bind(console, kleur.cyan('INFO: '))
         this.warn = console.warn.bind(console, kleur.yellow('WARN: '))
         this.error = console.error.bind(console, kleur.red('ERROR: '))
+
+        this.state.storage.put(this.state.GITHUB_TOKEN, { login: 'cf-badger', id: env.APP_ID, token: this.state.GITHUB_TOKEN })
 
 
 
@@ -322,17 +336,31 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         return err
     }
 
-    webhook({ payload }: { payload: IInstallWebhook }): { ok: boolean; } {
+    async webhook({ id, name, payload }: { id: string, name: string, payload: IInstallWebhook }): Promise<{ ok: boolean; }> {
 
-        const { action, installation: installationRaw, sender: senderRaw, repositories: repositoriesRaw, repositories_added } = payload,
-            installation = dataItemToInstallationInfo(installationRaw as unknown as TInstallationItem, this.state.WORKER_URL),
-            repositories = mapRepos(repositoriesRaw, this.state.WORKER_URL),
+
+        const { action, installation: installationRaw, sender: senderRaw, repositories_removed, repositories_added } = payload,
+            installationInfo = dataItemToInstallationInfo(installationRaw as unknown as TInstallationItem, this.state.WORKER_URL);
+
+        this.state.waitUntil(this.state.BADGER_KV.put(`installation:${payload.installation.id}`, JSON.stringify(installationRaw), { metadata: installation }))
+        installationInfo.installationId = installationInfo.installationId || installationInfo.id
+
+        this.storeWithExpiration(`installationId:${installationInfo.installationId}`, installationInfo, 1000000)
+        this.storeWithExpiration(`owner:${installationInfo.login}`, installationInfo, 1000000)
+
+        const repositories = mapRepos((repositories_added || []).concat(repositories_removed || []), this.state.WORKER_URL),
             sender = mapSender(senderRaw)
+        this.Sentry.captureMessage(`Received webhook for ${action} on ${installationInfo.login} `)
 
-
-        console.log({ action, installation, repositories, repositories_added, sender })
+        console.log({ id, name, action, installationInfo, repositories: repositories.length, repositories_added, sender })
 
         return { "ok": true }
+    }
+    async get_keys({ prefix }: { prefix: string }): Promise<{ [s: string]: unknown }> {
+        this.debug({ get_keys: prefix })
+        const list = await this.state.storage.list({ prefix })
+        this.debug({ list, keys: list.keys })
+        return Object.fromEntries(list) as { [s: string]: unknown }
     }
     protected actingAsInstallation(installationId: number): RequestInterface {
         let appAuth = this.createAppAuth(installationId);
@@ -347,9 +375,9 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
     async getInstallationsForUser(userOctokit: OctokitUserInstance, installationId?: number): Promise<TMinimalInstallationInfo[]> {
         const cacheKey = `${userOctokit.code}:installations`
-        let stored = await this.getStoredWithTtl<{ installations: { [s: number]: TMinimalInstallationInfo } }>(cacheKey) || {}
+        let stored = await this.getStoredWithTtl<{ installations: { [s: number]: TMinimalInstallationInfo } }>(cacheKey) || { ttl: null, installations: {} }
 
-        if (stored && stored.ttl && stored.installations && !installationId) {
+        if (stored && stored.ttl && stored.installations && Object.keys(stored.installations).length && !installationId) {
             return Object.values(stored.installations)
         }
         return userOctokit.rest.apps.listInstallationsForAuthenticatedUser().then(async ({ data }): Promise<TMinimalInstallationInfo[]> => {
@@ -359,7 +387,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
                     let { login, installationId: iid, target_id, repository_selection: enabledFor } = installation
 
 
-                    accum[iid] = { login, installationId: iid, target_id: Number(target_id), enabledFor, repos: `${this.state.WORKER_URL}/badger/${login}` }
+                    accum[iid] = { login, installationId: Number(iid), target_id: Number(target_id), enabledFor, repos: `${this.state.WORKER_URL}/badger/${login}` }
                     return accum;
                 }, stored.installations || {})
                 // Cache available installations. 
@@ -370,7 +398,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             return []
         })
     }
-    protected async actingAsOauthUser(code: string): Promise<Response> {
+    protected async actingAsOauthUser({ code, installationId }: { code: string, installationId?: number }): Promise<Response> {
 
         /**
          * Having just authenticated with github, we must trade the code
@@ -393,7 +421,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             throw new Error('Could not get token')
         }
 
-
+        this.debug({ method: 'actingAsOauthUser', code, installationId })
         userOctokit.token = authObj.token
         userOctokit.code = code
         return userOctokit.users.getAuthenticated().then(async ({ data: { login, id } }) => {
@@ -402,9 +430,10 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             userOctokit.userId = id
             this.state.storage.put(code, payload)
             const hash = await computeLoginHash(payload)
+            userOctokit.code = hash
             this.state.storage.put(hash, payload)
 
-            const installations = await this.getInstallationsForUser(userOctokit)
+            const installations = await this.getInstallationsForUser(userOctokit, installationId)
             const jsonResponse = new Response(JSON.stringify({ ...payload, hash, installations }), {
                 status: 302,
                 headers: {
@@ -413,7 +442,12 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
                 },
             });
             jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; secure; HttpOnly; SameSite=Lax`)
-            jsonResponse.headers.set('Location', `${this.state.WORKER_URL}`)
+            let location = [`${this.state.WORKER_URL}`]
+            let installation = installations.find(i => i.installationId === installationId)
+            if (installation && installation.login) {
+                location.push(installation.login)
+            }
+            jsonResponse.headers.set('Location', location.join('/'))
 
             return jsonResponse
         })
@@ -429,7 +463,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         }
         this.debug({ storedInfo: Object.keys(props) })
         if (this.state.userOctokit[code]) {
-            console.log(`Octokit instance already existed for code ${code}, token ${props.token}`)
+            console.log(`Octokit instance already existed for code ${code},login: ${props.login} token ${props.token}`)
             this.state.userOctokit[code].code = code
             return this.state.userOctokit[code]
         }
@@ -464,31 +498,63 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         }) as unknown as Octokit & { token: string, code: string, login: string, userId: number }
     }
 
+    protected async getRepoInfo({ userOctokit, owner, repo }: { userOctokit: Octokit, owner: string, repo: string }) {
 
-    protected async getUserPublicRepos(userOctokit: Octokit): Promise<TViewerRepos> {
-        const query = `{
-            viewer {
-              login,
+
+        const query = ` {
+        repository(owner: "${owner}", name: "${repo}") {
+            id
+            name
+            nameWithOwner
+            isPrivate
+            databaseId
+        }`;
+        return userOctokit.graphql(query).then(({ repository }) => {
+            if (repository.isPrivate) {
+                throw new Error(`Current user doesn't have access to requested repo`)
+
+            }
+            return userOctokit.actions.g
+        })
+    }
+    protected async getPublicRepos(userOctokit: Octokit, login): Promise<TViewerRepos & { installationId: number | null }> {
+        const query = ` {
+            user(login: "${login}") {
+              id
+              login
               databaseId
               repositories(first: 100,privacy:PUBLIC) {
-                edges {
-                  node {
-                   id, name,nameWithOwner,isPrivate,databaseId
-                  }
-                }
-              }
+                          edges {
+                            node {
+                             id, name,nameWithOwner,isPrivate,databaseId
+                            }
+                          }
+                        }
+            }
+            organization(login: "${login}") {
+              id,login,databaseId
+              repositories(first: 100,privacy:PUBLIC) {
+                          edges {
+                            node {
+                             id, name,nameWithOwner,isPrivate,databaseId
+                            }
+                          }
+                        }
             }
           }`;
 
 
 
 
-        const { viewer } = (await userOctokit.graphql(query)) as { viewer: TViewerRepos }
-
-
+        const { user, organization } = (await userOctokit.graphql(query)) as { user: TViewerRepos, organization: TViewerRepos }
+        let viewer = user || organization
         viewer.repositories = mapRepoEdges((viewer.repositories as { edges: RepoEdge[]; }).edges, this.state.WORKER_URL);
         viewer.repo_count = viewer.repositories.length;
-        return viewer
+
+
+        const result = { installationId: null, install_url: `https://github.com/apps/cf-badger/installations/new/permissions?target_id=${viewer.databaseId}`, target_id: viewer.databaseId, ...viewer }
+
+        return result
     }
 
     protected createAppAuth(installationId?: number, type?: string): AuthInterface {
@@ -510,15 +576,16 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
 
 
-        let { owner, repo, workflow_id, requestURL, hashHex, branch, verb, endpoint, payload, code, installationId } = (body[0] || {}) as IRequestParams,
+        let { owner, repo, workflow_id, requestURL, hashHex, branch, verb, raw, endpoint, payload, code, prefix, installationId } = (body[0] || {}) as IRequestParams,
             method: string = req.url.split('/call/').pop() as string,
-            jsonParams = { owner, repo, workflow_id, branch, installationId },
+            jsonParams = { owner, repo, workflow_id, branch, prefix, raw, installationId },
             jsonParamsFull = { ...jsonParams, requestURL, hashHex, branch, verb, endpoint, payload, code }
 
         this.Sentry = this.getSentryInstance(req)
         try {
 
             if (typeof this[method] === 'function') {
+
                 console.log({ method })
                 // eslint-disable-next-line @typescript-eslint/ban-types
                 return (this[method] as Function)(jsonParamsFull).then((result: unknown) => {
