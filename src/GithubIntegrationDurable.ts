@@ -220,6 +220,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.state.GITHUB_PUBKEY = env.GITHUB_PUBKEY
         this.state.release = env.RELEASE;
         this.state.APP_ID = env.APP_ID
+        this.state.FRONTEND_HOSTNAME = env.FRONTEND_HOSTNAME
         this.state.env = env
         this.state.GITHUB_TOKEN = env.GITHUB_TOKEN as string;
         this.state.WORKER_ENV = env.WORKER_ENV as string;
@@ -424,11 +425,11 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
                 status: 302,
                 headers: {
                     "Access-Control-Allow-Origin": "*",
-                    'set-cookie': `gh_code = ${String(hash)}; path = /; secure; HttpOnly; SameSite=Lax` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
+                    'set-cookie': `gh_code = ${String(hash)}; domain=.cf-badger.com; path = /; secure; HttpOnly; SameSite=None` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
                 },
             });
-            jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; secure; HttpOnly; SameSite=Lax`)
-            let location = [`${this.state.WORKER_URL}`]
+            jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; domain=.cf-badger.com; secure; HttpOnly; SameSite=None`)
+            let location = [`https://${this.state.FRONTEND_HOSTNAME}`]
             let installation = installations.find(i => i.installationId === installationId)
             if (installation && installation.login) {
                 location.push(installation.login)

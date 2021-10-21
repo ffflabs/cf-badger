@@ -249,7 +249,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
       let cookie = request.headers.get('cookie')
       let cookieValue = /gh_code=([a-z0-9]+)/.exec(cookie || '')
       if (!cookieValue || cookieValue.length < 2) {
-        return json({ error: 'Please authenticate to perform this request' })
+        return json({ error: 'Please authenticate to perform this request' }, {})
       }
       request.code = cookieValue[1]
 
@@ -265,8 +265,13 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         request: TRequestWithParams
 
       ): Promise<Response> => {
+        const headers = {
+          "x-code": request.code || 'none',
+          "access-control-allow-origin": "*"
+        }
+
         if (!request.code) {
-          return json({ login: null })
+          return json({ login: null }, { headers })
         }
         return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
           .user({ code: request.code }).catch(err => {
@@ -334,10 +339,9 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         env: EnvWithDurableObject
       ): Promise<Response> => {
         console.log('catchAll', request.url)
-        if (env.WORKER_ENV === 'production') return fetch(request)
         const newURL = new URL(request.url)
-        newURL.protocol = String(env.ASSETS_PROTOCOL || 'https')
-        newURL.hostname = String(env.ASSETS_URL || env.WORKER_URL)
+        newURL.protocol = String('https')
+        newURL.hostname = String(env.FRONTEND_HOSTNAME || env.WORKER_URL)
         newURL.port = String(env.ASSETS_PORT || 443)
         return fetch(newURL.toString(), request)
       })

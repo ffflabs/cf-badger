@@ -1,1 +1,0 @@
-import{b as e,B as r}from"./index.efaee062.js";import{d as s,o as a,c as n,f as t,F as o}from"./vendor.eb742c19.js";var i=s({props:{message:String,installation:{type:String,required:!0}},setup(s){const i=s;return(s,l)=>{const p=e,u=r;return a(),n(o,null,[t(p),t(u,{owner:i.installation},null,8,["owner"])],64)}}});export{i as default};
