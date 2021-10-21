@@ -266,8 +266,6 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
     return Promise.resolve().then(async () => {
       let installationInfo = await this.getOwnerInstall({ owner } as { owner: string }),
         installationId = Number(installationInfo.installationId || installationInfo.id)
-      owner = installationInfo.login
-
       return this.getOctokitForInstallation(installationId).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
     }).catch(err => {
       this.debug({ failed: 'getWorkflowResults', owner, repo, workflow_id, code, stack: err.stack.split('\n').slice(0, 2) })
