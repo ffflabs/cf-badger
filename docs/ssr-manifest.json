@@ -819,40 +819,40 @@
     "/assets/about.a50812c2.js"
   ],
   "logo.svg": [
-    "/assets/README.45e1ef7f.js",
+    "/assets/README.556bf812.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/before_and_after200.svg": [
-    "/assets/README.45e1ef7f.js",
+    "/assets/README.556bf812.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/sshot.png": [
-    "/assets/README.45e1ef7f.js",
+    "/assets/README.556bf812.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/markdown.png": [
-    "/assets/README.45e1ef7f.js",
+    "/assets/README.556bf812.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/permissions.png": [
-    "/assets/README.45e1ef7f.js",
+    "/assets/README.556bf812.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "src/pages/README.md": [
-    "/assets/README.45e1ef7f.js",
+    "/assets/README.556bf812.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "src/pages/[installation]/[name].vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/[name].dfb61f55.js"
+    "/assets/[name].d9852abd.js"
   ],
   "src/pages/[installation]/[name].vue": [
-    "/assets/[name].dfb61f55.js"
+    "/assets/[name].d9852abd.js"
   ],
   "src/pages/[installation]/index.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/index.290c93b6.js"
+    "/assets/index.47bdf06b.js"
   ],
   "src/pages/[installation]/index.vue": [
-    "/assets/index.290c93b6.js"
+    "/assets/index.47bdf06b.js"
   ],
   "src/pages/[...all].vue?vue&type=script&setup=true&lang.ts": [
     "/assets/[...all].3ed168ed.js"
@@ -873,12 +873,12 @@
     "/assets/404.655945d2.js"
   ],
   "@vite-icons/carbon/logo-twitter": [
-    "/assets/home.b6c79793.js"
+    "/assets/home.d1ea7c6e.js"
   ],
   "src/components/Header.vue": [
-    "/assets/home.b6c79793.js"
+    "/assets/home.d1ea7c6e.js"
   ],
   "src/layouts/home.vue": [
-    "/assets/home.b6c79793.js"
+    "/assets/home.d1ea7c6e.js"
   ]
 }
