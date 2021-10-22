@@ -402,16 +402,17 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             }
         })) as OctokitUserInstance
 
-
         const authObj = (await userOctokit.auth()) as { token: string }
         if (!(authObj as { token: string }).token) {
             throw new Error('Could not get token')
         }
+        return Promise.resolve().then(async () => {
 
-        this.debug({ method: 'actingAsOauthUser', code, installationId })
-        userOctokit.token = authObj.token
-        userOctokit.code = code
-        return userOctokit.users.getAuthenticated().then(async ({ data: { login, id } }) => {
+            this.debug({ method: 'actingAsOauthUser', code, installationId })
+            userOctokit.token = authObj.token
+            userOctokit.code = code
+            return userOctokit.users.getAuthenticated();
+        }).then(async ({ data: { login, id } }) => {
             const payload = { token: authObj.token, login, id }
             userOctokit.login = login
             userOctokit.userId = id
@@ -420,8 +421,8 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             userOctokit.code = hash
             this.state.storage.put(hash, payload)
 
-            const installations = await this.getInstallationsForUser(userOctokit, installationId)
-            const jsonResponse = new Response(JSON.stringify({ ...payload, hash, installations }), {
+            // const installations = await this.getInstallationsForUser(userOctokit, installationId)
+            const jsonResponse = new Response(JSON.stringify({ ...payload, hash /*, installations*/ }), {
                 status: 302,
                 headers: {
                     "Access-Control-Allow-Origin": "*",
@@ -430,13 +431,17 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             });
             jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; domain=.cf-badger.com; secure; HttpOnly; SameSite=None`)
             let location = [`https://${this.state.FRONTEND_HOSTNAME}`]
-            let installation = installations.find(i => i.installationId === installationId)
-            if (installation && installation.login) {
-                location.push(installation.login)
-            }
+            // let installation = installations.find(i => i.installationId === installationId)
+            //if (installation && installation.login) {
+            //  location.push(installation.login)
+            //}
             jsonResponse.headers.set('Location', location.join('/'))
 
             return jsonResponse
+        }).catch(err => {
+            this.Sentry.captureException(err);
+            console.trace(err)
+            throw err
         })
 
 
