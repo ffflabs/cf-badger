@@ -10,10 +10,10 @@ env:
   BADGER_KV_ID: ${{ secrets.BADGER_KV_ID }}
   BADGER_KV_PREVIEW_ID: ${{ secrets.BADGER_KV_PREVIEW_ID }}
   CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-  GH_PRIVATE_KEY: ${{GH_PRIVATE_KEY}}  
-  APP_ID: ${{APP_ID}}
-  GITHUB_CLIENT_ID: ${{CLIENT_ID}}
-  GITHUB_CLIENT_SECRET: ${{CLIENT_SECRET}}
+  GH_PRIVATE_KEY: ${{ secrets.GH_PRIVATE_KEY }}  
+  APP_ID: ${{ secrets.APP_ID }}
+  GITHUB_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  GITHUB_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 jobs:
   test:
     runs-on: ubuntu-latest

@@ -26,6 +26,7 @@ export interface IRequestParams {
 export declare type TOutputResults = ReturnType<typeof computeColorAndMessage> | {
     branches: TRunResults[];
     hashHex: string;
+    name?: string;
     count: number;
 };
 export declare type TInstallationRepos = {

@@ -7,7 +7,7 @@
 <a href="https://workers.cloudflare.com/">
 <img src="docs/images/cf-workers-badge.svg"></a>
 &nbsp; 
-<a href="https://github.com/ffflabs/cf-badger/actions/workflows/tests.yml">
+<a href="https://github.com/ffflabs/cf-badger/actions/workflows/test.yml">
 <img src="https://cf-badger.com/badger/_39bde4f39ee9a2140d3a/endpoint.svg?branch=master&style=for-the-badge">
 </a>&nbsp; 
 <a href="https://pages.cloudflare.com/">
@@ -17,7 +17,7 @@
 <div align="center" style="text-align:center"><a href="https://cf-badger.com">CF-Badger</a> is my project for the <a href="https://challenge.developers.cloudflare.com/">Cloudflare Developer Summer Challenge</a></div>
 
 </p> 
-
+<a href="undefined"><img alt="undefined" src="https://local.cf-badger.com/images/endpoint.svg?branch=master&style=for-the-badge" /></a>
 
 ## 💥 Private Repos vs Public Badges. That's our pain point
 

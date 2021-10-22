@@ -53,6 +53,9 @@ export declare class Badger extends GithubIntegrationDurable implements DurableO
         hashHex: string;
         branch?: string;
     }): Promise<Response>;
+    redirectToWorkFlow({ hashHex }: {
+        hashHex: string;
+    }): Promise<Response>;
     user({ code, installationId }: {
         code: string;
         installationId?: number;

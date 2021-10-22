@@ -3,6 +3,8 @@ export declare type TWorkflowParams = {
     owner: string;
     workflow_id?: number;
     branch?: string;
+    filename_url?: string;
+    name?: string;
 };
 /**
  * Computes a request to Github's REST api.
