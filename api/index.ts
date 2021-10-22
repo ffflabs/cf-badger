@@ -95,15 +95,14 @@ function getEnhancedIttyDurable<TMethodName extends string>(stubGetter: DurableS
   return stubGetter.get(nameId) as unknown as IttyDurable & ittyWithMethod<TMethodName>
 }
 
-function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableRouter<TRequestWithParams> {
-  //const privateKey = [PRIVATE_KEY_1, PRIVATE_KEY_2, PRIVATE_KEY_3].join("\n");
-
-
+function getAuthenticatedRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableRouter<TRequestWithParams> {
   const router = ThrowableRouter<TRequestWithParams>({
+    stack: true,
+    base: '/badger',
     routes: [
 
       [
-        'GET', new RegExp(`badger/_(?<hash>([a-f0-9]{20}))$`), [
+        'GET', new RegExp(`_(?<hash>([a-f0-9]{20}))$`), [
           async (
             request: TRequestWithParams,
             env: EnvWithDurableObject,
@@ -122,10 +121,76 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
       ]
     ]
   })
+  /**
+  * From here onwards, user is expected to be authenticated
+  */
+  return router
+
+    /**
+     * List installations available to logged user
+     */
+    .get('/',
+      async (
+        request: TRequestWithParams
+
+      ): Promise<Response> => {
+        if (!request.code) {
+          return json({ login: request.code })
+        }
+        return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
+          .user({ code: request.code })
+      })
+
+    /**
+     * List repos for a given installation
+     */
+    .get(
+      '/:owner',
+      async (
+        request: TRequestWithParams
+      ): Promise<TInstallationRepos> => {
+        request.params.code = request.code
+        return getEnhancedIttyDurable<'getRepositories'>(request.Badger, 'durable_Badger').getRepositories({ ...request.params } as { owner: string })
+      })
+    /**
+     * List workflows for a given repo
+     */
+    .get(
+      '/:owner/:repo',
+      async (
+        request: TRequestWithParams,
+        env: EnvWithDurableObject
+      ): Promise<{ workflows: TWorkflow[] }> => {
+        request.params.code = request.code
+        return getEnhancedIttyDurable<'getRepoWorkflows'>(request.Badger, 'durable_Badger')
+          .getRepoWorkflows(await computeRunStatusParameters(request))
+      })
+    /**
+     * List branches for a given workflow
+     */
+    .get(
+      '/:owner/:repo/:workflow_id',
+      async (
+        request: TRequestWithParams,
+        env: EnvWithDurableObject,
+      ): Promise<TOutputResults> => {
+        let durableStub = getEnhancedIttyDurable<'getWorkflowResults'>(request.Badger, 'durable_Badger')
+        let { owner, repo, workflow_id, code, requestURL } = await computeRunStatusParameters(request),
+          branch = (request.params.branch ? decodeURIComponent(request.params.branch) : requestURL.searchParams.get('branch')) || undefined
+        return durableStub.getWorkflowResults({ owner, repo, workflow_id, code, branch })
+      })
+}
+function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableRouter<TRequestWithParams> {
+  //const privateKey = [PRIVATE_KEY_1, PRIVATE_KEY_2, PRIVATE_KEY_3].join("\n");
+
+
+  const router = ThrowableRouter<TRequestWithParams>({
+    stack: true
+  })
 
   //https://local.cf-badger.com/badger/ctohm/dbthor.cesion.poc/1798987
 
-  return router
+  router
     .options('*', (
 
 
@@ -150,19 +215,6 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
 
 
     .all('*', withDurables())
-    /**
-* This endpoint isn't exposed in production
-*/
-    .get(
-      '/installations',
-      async (
-        request: TRequestWithParams
-      ): Promise<unknown> => {
-        const requestURL = new URL(request.url),
-
-          raw = requestURL.searchParams.has('raw')
-        return getEnhancedIttyDurable<'listInstallations'>(request.Badger, 'durable_Badger').listInstallations({ raw })
-      })
     /**
     * Gets token for a used just redirected from github
     */
@@ -192,14 +244,7 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
 
         return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
           .user({ code, installationId })
-      }).
-    get(`/keys/:prefix`, async (
-      request: TRequestWithParams,
-
-    ): Promise<{ [s: string]: unknown }> => {
-      return getEnhancedIttyDurable<'get_keys'>(request.Badger, 'durable_Badger')
-        .get_keys({ prefix: request.params.prefix })
-    })
+      })
     .post(
       `/bdg/${envCommon.WEBHOOK_ROUTE}`,
       async (
@@ -217,8 +262,10 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
         })
 
       })
-
-    .post('/badger/_logout', async (
+    /**
+     * Allow ppl to logout even if they weren't logged in, what gives...
+     */
+    .post('/bdg/_logout', async (
       request: TRequestWithParams,
       env: EnvWithDurableObject
     ): Promise<Response> => {
@@ -237,99 +284,59 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
       '/badger/:hash/endpoint.svg',
       computeSVGEndpointRequest)
     /**
-     * From here onwards, user is expected to be authenticated
+     * Before delegating to authenticated router, ensure the user has the needed cookie
      */
-    .all('/badger/*', (request: TRequestWithParams): Response | void => {
+    .all('/badger/*', (request: TRequestWithParams, env: EnvWithDurableObject): Response | void => {
       let cookie = request.headers.get('cookie')
-      let cookieValue = /gh_code=([a-z0-9]+)/.exec(cookie || '')
+      let cookieValue = /gh_code=([a-z0-9_]+)/.exec(cookie || '')
       if (!cookieValue || cookieValue.length < 2) {
         return json({ error: 'Please authenticate to perform this request' })
       }
       request.code = cookieValue[1]
-
-
-
+      return getAuthenticatedRouter(envCommon, Sentry).handle(request, env)
     })
 
+  /**
+* This endpoint isn't exposed in production
+*/
+  router.get(
+    '/installations',
+    async (
+      request: TRequestWithParams
+    ): Promise<unknown> => {
+      const requestURL = new URL(request.url),
+
+        raw = requestURL.searchParams.has('raw')
+      return getEnhancedIttyDurable<'listInstallations'>(request.Badger, 'durable_Badger').listInstallations({ raw })
+    })
+    .get(`/keys/:prefix`, async (
+      request: TRequestWithParams,
+
+    ): Promise<{ [s: string]: unknown }> => {
+      return getEnhancedIttyDurable<'get_keys'>(request.Badger, 'durable_Badger')
+        .get_keys({ prefix: request.params.prefix })
+    })
+
+  return router.get(
+    '*',
     /**
-     * List installations available to logged user
+     * Serve static assets with kv-asset-handler when running in local environment
+     * (there files are outside the worker's route in production)
+     * @param {TRequestWithParams} request 
+     * @param {EnvWithDurableObject} env 
+     * @param {TctxWithSentry} ctx 
+     * @returns {Response}
      */
-    .get('/badger',
-      async (
-        request: TRequestWithParams
-
-      ): Promise<Response> => {
-        if (!request.code) {
-          return json({ login: null })
-        }
-        return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
-          .user({ code: request.code })
-      })
-
-
-
-
-
-    /**
-     * List repos for a given installation
-     */
-
-    .get(
-      '/badger/:owner',
-      async (
-        request: TRequestWithParams
-      ): Promise<TInstallationRepos> => {
-        request.params.code = request.code
-        return getEnhancedIttyDurable<'getRepositories'>(request.Badger, 'durable_Badger').getRepositories({ ...request.params } as { owner: string })
-      })
-    /**
-     * List workflows for a given repo
-     */
-    .get(
-      '/badger/:owner/:repo',
-      async (
-        request: TRequestWithParams,
-        env: EnvWithDurableObject
-      ): Promise<{ workflows: TWorkflow[] }> => {
-        request.params.code = request.code
-        return getEnhancedIttyDurable<'getRepoWorkflows'>(request.Badger, 'durable_Badger')
-          .getRepoWorkflows(await computeRunStatusParameters(request))
-      })
-    /**
-     * List branches for a given workflow
-     */
-    .get(
-      '/badger/:owner/:repo/:workflow_id',
-      async (
-        request: TRequestWithParams,
-        env: EnvWithDurableObject,
-      ): Promise<TOutputResults> => {
-        let durableStub = getEnhancedIttyDurable<'getWorkflowResults'>(request.Badger, 'durable_Badger')
-        let { owner, repo, workflow_id, code, requestURL } = await computeRunStatusParameters(request),
-          branch = (request.params.branch ? decodeURIComponent(request.params.branch) : requestURL.searchParams.get('branch')) || undefined
-        return durableStub.getWorkflowResults({ owner, repo, workflow_id, code, branch })
-      })
-
-    .get(
-      '*',
-      /**
-       * Serve static assets with kv-asset-handler when running in local environment
-       * (there files are outside the worker's route in production)
-       * @param {TRequestWithParams} request 
-       * @param {EnvWithDurableObject} env 
-       * @param {TctxWithSentry} ctx 
-       * @returns {Response}
-       */
-      async (
-        request: TRequestWithParams,
-        env: EnvWithDurableObject
-      ): Promise<Response> => {
-        const newURL = new URL(request.url)
-        newURL.protocol = String(env.ASSETS_PROTOCOL || 'https')
-        newURL.hostname = String(env.ASSETS_URL || env.WORKER_URL)
-        newURL.port = String(env.ASSETS_PORT || 443)
-        return fetch(newURL.toString(), request)
-      })
+    async (
+      request: TRequestWithParams,
+      env: EnvWithDurableObject
+    ): Promise<Response> => {
+      const newURL = new URL(request.url)
+      newURL.protocol = String(env.ASSETS_PROTOCOL || 'https')
+      newURL.hostname = String(env.ASSETS_URL || env.WORKER_URL)
+      newURL.port = String(env.ASSETS_PORT || 443)
+      return fetch(newURL.toString(), request)
+    })
 }
 
 export default {
@@ -347,12 +354,15 @@ export default {
 
       env.GH_PRIVATE_KEY = [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
       const router = getParentRouter(env, Sentry)
+      const { GITHUB_CLIENT_ID, GITHUB_CODE, GITHUB_CLIENT_SECRET } = env
+
       return Promise.resolve(router.handle(request, env, { waitUntil }))
+
 
         .catch(err => {
           Sentry.captureException(err)
           console.error(err);
-          return json({ message: err.message, stack: err.stack.split('\n') })
+          return json({ message: err.message, stack: env.WORKER_ENV === 'development' ? String(err.stack).replace(new RegExp(env.PROJECT_ROOT, 'ig'), '').split('\n') : [] })
         })
     }
 }

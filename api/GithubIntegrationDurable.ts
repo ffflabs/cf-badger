@@ -207,22 +207,24 @@ interface IInstanceEntities {
 export abstract class GithubIntegrationDurable extends IttyDurable {
     Sentry!: Toucan;
 
-    state: DurableObjectState & EnvWithDurableObject & IInstanceEntities
+    state: DurableObjectState & EnvWithDurableObject & IInstanceEntities & { BADGER_KV_ID: string }
     [s: string]: unknown
     debug: (...args: unknown[]) => void;
     constructor(state: DurableObjectState, env: EnvWithDurableObject) {
         super(state, env)
 
 
-        this.state = state as DurableObjectState & EnvWithDurableObject & IInstanceEntities
+        this.state = state as DurableObjectState & EnvWithDurableObject & IInstanceEntities & { BADGER_KV_ID: string }
         this.state.BADGER_KV = env.BADGER_KV as KVNamespace
         this.state.GH_PRIVATE_KEY = env.GH_PRIVATE_KEY || [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
         this.state.GITHUB_PUBKEY = env.GITHUB_PUBKEY
+        this.state.BADGER_KV_ID = env.BADGER_KV_ID as string
         this.state.release = env.RELEASE;
         this.state.APP_ID = env.APP_ID
         this.state.FRONTEND_HOSTNAME = env.FRONTEND_HOSTNAME
         this.state.env = env
         this.state.GITHUB_TOKEN = env.GITHUB_TOKEN as string;
+        this.state.GITHUB_CODE = env.GITHUB_CODE as string
         this.state.WORKER_ENV = env.WORKER_ENV as string;
         this.state.WORKER_URL = env.WORKER_URL as string;
         this.state.GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID as string;
@@ -237,7 +239,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.warn = console.warn.bind(console, kleur.yellow('WARN: '))
         this.error = console.error.bind(console, kleur.red('ERROR: '))
 
-        this.state.storage.put(this.state.GITHUB_TOKEN, { login: 'cf-badger', id: env.APP_ID, token: this.state.GITHUB_TOKEN })
+        this.state.storage.put(env.BADGER_KV_ID as string, { login: 'cf-badger', id: env.APP_ID, token: this.state.GITHUB_TOKEN })
 
 
 
@@ -450,7 +452,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         }).catch(err => {
             this.Sentry.captureException(err);
             console.trace(err)
-            throw err
+            return error(401, `${err.message} - using code ${code}`)
         })
 
 
@@ -648,13 +650,17 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
 
     protected async getStoredWithTtl<T extends Record<string, unknown>>(key: string): Promise<T & { ttl: number }> {
-        let stored = (await this.state.storage.get(key) || { expiration: 0 }) as T & { expiration: number, ttl: number },
-            ttl = GithubIntegrationDurable.secondsRemaining(stored.expiration)
-        if (ttl > 30) {
-            console.log(`getStoredWithTtl: ${key}, ttl ${ttl}`)
-            return { ...stored, ttl }
+        try {
+            let stored = (await this.state.storage.get(key) || { expiration: 0 }) as T & { expiration: number, ttl: number },
+                ttl = GithubIntegrationDurable.secondsRemaining(stored.expiration)
+            if (ttl > 30) {
+                console.log(`getStoredWithTtl: ${key}, ttl ${ttl}`)
+                return { ...stored, ttl }
+            }
+            return { ttl: 0 } as T & { ttl: number }
+        } catch (err) {
+            return { ttl: 0 } as T & { ttl: number }
         }
-        return { ttl: 0 } as T & { ttl: number }
     }
     protected storeWithExpiration<T>(key: string, result: T, ttl = 180): T & { expiration: number, ttl: number } {
         let resultWithExpiration = { ...result, expiration: Math.floor(Date.now() / 1000) + ttl }

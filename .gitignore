@@ -18,3 +18,4 @@ api/images/*
 meta.json
 *.pem
 
+vite.config.ts.js

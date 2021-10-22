@@ -11,6 +11,7 @@ compatibility_date = "2021-09-09"
   WORKER_URL = "https://cf-badger.com/badger/*"
   RELEASE = "_RELEASE_"
   GITHUB_TOKEN = "_GITHUB_TOKEN"
+  BADGER_KV_ID = "_BADGER_KV_ID"
 
 [durable_objects]
 
@@ -34,6 +35,7 @@ compatibility_date = "2021-09-09"
       GITHUB_TOKEN = "_GITHUB_TOKEN"
       WORKER_URL = "https://cf-badger.com/badger/*"
       RELEASE = "_RELEASE_"
+      BADGER_KV_ID = "_BADGER_KV_ID"
 
     [[env.dev.kv_namespaces]]
       binding = "BADGER_KV"

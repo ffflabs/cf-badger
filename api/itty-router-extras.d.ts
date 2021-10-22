@@ -22,8 +22,13 @@ declare module "itty-router-extras" {
         PRIVATE_KEY_2: string;
         PRIVATE_KEY_3: string;
         GH_PRIVATE_KEY: string;
+        GITHUB_CLIENT_ID: string;
+        GITHUB_CODE: string;
+        GITHUB_CLIENT_SECRET: string;
         WEBHOOK_ROUTE: string;
         GITHUB_PUBKEY: string;
+        PROJECT_ROOT: string;
+        BADGER_KV_ID: string
     }
 
 

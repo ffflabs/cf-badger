@@ -119,7 +119,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
       if (isErrorResponse(err, 404) && owner && code) {
         return this.actingAsUser(code).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
       }
-      return this.actingAsUser(this.state.GITHUB_TOKEN).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
+      return this.actingAsUser(this.state.BADGER_KV_ID).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
     }).then(({ data }) => {
       let { workflows } = data as IRepoWorkflows
       return this.storeWithExpiration(cacheKey, { workflows: workflows.map(workflow => mapWorkflow({ owner, repo, workflow }, this.state.WORKER_URL)) })
@@ -133,7 +133,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
     return octokit.actions.listWorkflowRuns({ owner, repo, workflow_id, branch, per_page: branch ? 1 : 100 })
       .then(({ data }): { workflow_runs: TRunResults[], total_count: number } => {
         let { workflow_runs: runs, total_count } = data
-        console.log(runs[0])
+        //  console.log(runs[0])
         const lastruns = getLatestRunByBranch(runs as WorkflowRunPart[]) as { [s: string]: TRunResults }
         return this.storeWithExpiration(cacheKey, { workflow_runs: Object.values(lastruns), total_count: Number(total_count) })
       })
@@ -142,14 +142,14 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
 
   async getWorkflowResults({ owner, repo, workflow_id, code, branch }: TOwnerRepo & { branch?: string, code?: string, workflow_id: number }): Promise<TOutputResults> {
 
-    console.info('getWorkflowResults', { owner, repo, workflow_id, code, branch })
+    // console.info('getWorkflowResults', { owner, repo, workflow_id, code, branch })
     return Promise.resolve().then(async () => {
       let installationInfo = await this.getOwnerInstall({ owner } as { owner: string }),
         installationId = Number(installationInfo.installationId || installationInfo.id)
       owner = installationInfo.login
       return this.getOctokitForInstallation(installationId).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
     }).catch(err => {
-      this.debug({ failed: 'getWorkflowResults', owner, repo, workflow_id, code, stack: err.stack.split('\n').slice(0, 2) })
+      //  this.debug({ failed: 'getWorkflowResults', owner, repo, workflow_id, code, stack: err.stack.split('\n').slice(0, 2) })
 
       if (isErrorResponse(err, 404) && owner && code) {
         return this.actingAsUser(code).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
@@ -161,7 +161,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
         {
           owner, repo, workflow_id
         })
-      this.debug({ owner, repo, workflow_id, code, branch, hashHex })
+      //this.debug({ owner, repo, workflow_id, code, branch, hashHex })
 
 
 
@@ -212,7 +212,7 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
   async user({ code, installationId }: { code: string, installationId?: number }): Promise<Response> {
 
     let { token, id, login } = (await this.state.storage.get(code) || { token: '', id: 0, login: '' }) as { [s: string]: unknown }
-
+    // return { token, id, login }
     if (!token) {
       return this.actingAsOauthUser({ code, installationId })
     }

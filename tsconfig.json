@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "target": "ES2020",
-    "module": "CommonJS",
+    "module": "ESNext",
     "lib": [
       "ES2020",
       "WebWorker"
@@ -16,11 +16,14 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": true,
     "types": [
       "@cloudflare/workers-types",
       
     ],
-    "rootDir": "./api",
+    "rootDirs": ["./api","./test"],
+    "skipLibCheck": true,
     "noImplicitAny": true,
     "emitDeclarationOnly": true,
     "declaration": true,
@@ -32,8 +35,7 @@
     "./api/*.ts",
     "./api/*.d.ts",
     "./api/**/*.ts",
-    "./node_modules/@cloudflare/workers-types/index.d.ts"
-  ],
+      "./node_modules/@cloudflare/workers-types/index.d.ts", "test/handler.test.ts"  ],
   "exclude": [
     "transpiled/",
     "node_modules/",
