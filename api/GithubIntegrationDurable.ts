@@ -91,7 +91,7 @@ type TViewerRepos = {
     [s: string]: unknown;
 
 };
-type TMinimalInstallationInfo = { login: string; installationId: number; target_id: number; repos: string, enabledFor: string }
+type TMinimalInstallationInfo = { login: string; target_type?: string; installationId: number; target_id: number; repos: string, enabledFor: string }
 
 export interface TInstallationInfo {
     id: number
@@ -220,6 +220,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.state.GITHUB_PUBKEY = env.GITHUB_PUBKEY
         this.state.release = env.RELEASE;
         this.state.APP_ID = env.APP_ID
+        this.state.FRONTEND_HOSTNAME = env.FRONTEND_HOSTNAME
         this.state.env = env
         this.state.GITHUB_TOKEN = env.GITHUB_TOKEN as string;
         this.state.WORKER_ENV = env.WORKER_ENV as string;
@@ -361,19 +362,19 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
     async getInstallationsForUser(userOctokit: OctokitUserInstance, installationId?: number): Promise<TMinimalInstallationInfo[]> {
         const cacheKey = `${userOctokit.code}:installations`
-        let stored = await this.getStoredWithTtl<{ installations: { [s: number]: TMinimalInstallationInfo } }>(cacheKey) || { ttl: null, installations: {} }
+        let stored = false && await this.getStoredWithTtl<{ installations: { [s: number]: TMinimalInstallationInfo } }>(cacheKey) || { ttl: null, installations: {} }
 
         if (stored && stored.ttl && stored.installations && Object.keys(stored.installations).length && !installationId) {
             return Object.values(stored.installations)
         }
         return userOctokit.rest.apps.listInstallationsForAuthenticatedUser().then(async ({ data }): Promise<TMinimalInstallationInfo[]> => {
             if (data.installations && data.installations.length) {
-
+                //      this.debug(data.installations)
                 stored.installations = (data.installations as TInstallationItem[]).map(i => dataItemToInstallationInfo(i, this.state.WORKER_URL)).reduce((accum, installation) => {
-                    let { login, installationId: iid, target_id, repository_selection: enabledFor } = installation
+                    let { login, target_type, installationId: iid, target_id, repository_selection: enabledFor } = installation
+                    console.log({ login, target_type })
 
-
-                    accum[iid] = { login, installationId: Number(iid), target_id: Number(target_id), enabledFor, repos: `${this.state.WORKER_URL}/badger/${login}` }
+                    accum[iid] = { login, target_type, installationId: Number(iid), target_id: Number(target_id), enabledFor, repos: `${this.state.WORKER_URL}/badger/${login}` }
                     return accum;
                 }, stored.installations || {})
                 // Cache available installations. 
@@ -424,11 +425,11 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
                 status: 302,
                 headers: {
                     "Access-Control-Allow-Origin": "*",
-                    'set-cookie': `gh_code = ${String(hash)}; path = /; secure; HttpOnly; SameSite=Lax` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
+                    'set-cookie': `gh_code = ${String(hash)}; domain=.cf-badger.com; path = /; secure; HttpOnly; SameSite=None` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
                 },
             });
-            jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; secure; HttpOnly; SameSite=Lax`)
-            let location = [`${this.state.WORKER_URL}`]
+            jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; domain=.cf-badger.com; secure; HttpOnly; SameSite=None`)
+            let location = [`https://${this.state.FRONTEND_HOSTNAME}`]
             let installation = installations.find(i => i.installationId === installationId)
             if (installation && installation.login) {
                 location.push(installation.login)
@@ -476,7 +477,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             this.state.userOctokit[code].userId = id;
             this.state.userOctokit[code].login = login;
 
-            console.log(`created Octokit instance this.state.userOctokit[${code}], token ${props.token}`);
+            console.log(`created Octokit instance this.state.userOctokit[${code}], token ${props.token} for user ${login}`);
             return this.state.userOctokit[code];
         }).catch(err => {
             this.Sentry.captureException(err);
@@ -484,25 +485,6 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         }) as unknown as Octokit & { token: string, code: string, login: string, userId: number }
     }
 
-    /*protected async getRepoInfo({ userOctokit, owner, repo }: { userOctokit: Octokit, owner: string, repo: string }) {
-
-
-        const query = ` {
-        repository(owner: "${owner}", name: "${repo}") {
-            id
-            name
-            nameWithOwner
-            isPrivate
-            databaseId
-        }`;
-        return userOctokit.graphql(query).then(({ repository }) => {
-            if (repository.isPrivate) {
-                throw new Error(`Current user doesn't have access to requested repo`)
-
-            }
-            return repository
-        })
-    }*/
     protected async getPublicRepos(userOctokit: Octokit, login: string): Promise<TViewerRepos & { installationId: number | null }> {
         const query = ` {
             user(login: "${login}") {

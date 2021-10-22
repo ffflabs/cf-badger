@@ -95,7 +95,7 @@ function getEnhancedIttyDurable<TMethodName extends string>(stubGetter: DurableS
   return stubGetter.get(nameId) as unknown as IttyDurable & ittyWithMethod<TMethodName>
 }
 
-function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWithParams> {
+function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableRouter<TRequestWithParams> {
   //const privateKey = [PRIVATE_KEY_1, PRIVATE_KEY_2, PRIVATE_KEY_3].join("\n");
 
 
@@ -191,10 +191,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         }
 
         return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
-          .user({ code, installationId }).catch(err => {
-            console.error(err);
-            return error(500, (err as { message: string }).message)
-          })
+          .user({ code, installationId })
       }).
     get(`/keys/:prefix`, async (
       request: TRequestWithParams,
@@ -217,9 +214,6 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
         return Promise.resolve().then(() => {
           return durableStub.webhook({ id, name, payload })
 
-        }).catch(err => {
-          console.error(err);
-          return json({ ok: true })
         })
 
       })
@@ -269,10 +263,7 @@ function getParentRouter(envCommon: EnvWithBindings): ThrowableRouter<TRequestWi
           return json({ login: null })
         }
         return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')
-          .user({ code: request.code }).catch(err => {
-            console.error(err);
-            return error(500, (err as { message: string }).message)
-          })
+          .user({ code: request.code })
       })
 
 
@@ -351,18 +342,18 @@ export default {
         IWaitableObject): Promise<Response> => {
 
 
+      const Sentry = getSentryInstance({ request, waitUntil }, env)
 
 
       env.GH_PRIVATE_KEY = [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
-      const router = getParentRouter(env)
+      const router = getParentRouter(env, Sentry)
       return Promise.resolve(router.handle(request, env, { waitUntil }))
-        .catch((err) => {
-          getSentryInstance({ request, waitUntil }, env).captureException(err)
 
-          console.error('event_id', err);
-          return error(err.status || 500, err.message)
-        });
-
+        .catch(err => {
+          Sentry.captureException(err)
+          console.error(err);
+          return json({ message: err.message, stack: err.stack.split('\n') })
+        })
     }
 }
 
