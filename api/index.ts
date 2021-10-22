@@ -3,7 +3,7 @@ import type { IttyDurable } from 'itty-durable';
 import { withDurables } from 'itty-durable';
 import { DurableStubGetter, error, ThrowableRouter, TRequestWithParams, EnvWithDurableObject, json } from 'itty-router-extras';
 
-import { computeSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
+import { computeSVGEndpointRequest, computeEmbeddedSVGEndpointRequest } from './modules/computeSVGEndpointRequest';
 
 
 
@@ -74,14 +74,14 @@ function getSentryInstance(ctx: Context, env: EnvWithBindings): Toucan {
   return {
     captureException: (err: Error) => {
       console.error(err);
-      return Date.now();
+      return 0
     },
     addBreadcrumb: (args: { [s: string]: unknown; }) => {
       breadCrumbs.push(args);
     },
     captureMessage: (msg: string) => {
       console.log(msg);
-      return Date.now();
+      return 0
     }
   } as unknown as Toucan;
 
@@ -96,6 +96,7 @@ function getEnhancedIttyDurable<TMethodName extends string>(stubGetter: DurableS
 }
 
 function getAuthenticatedRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableRouter<TRequestWithParams> {
+
   const router = ThrowableRouter<TRequestWithParams>({
     stack: true,
     base: '/badger',
@@ -122,9 +123,21 @@ function getAuthenticatedRouter(envCommon: EnvWithBindings, Sentry: Toucan): Thr
     ]
   })
   /**
-  * From here onwards, user is expected to be authenticated
-  */
-  return router
+     * Before delegating to authenticated router, ensure the user has the needed cookie
+     */
+  return router.all('*', (request: TRequestWithParams, env: EnvWithDurableObject): Response | void => {
+    let cookie = request.headers.get('cookie')
+    let cookieValue = /gh_code=([a-z0-9_]+)/.exec(cookie || '')
+    if (!cookieValue || cookieValue.length < 2) {
+      return json({ error: 'Please authenticate to perform this request' })
+    }
+    request.code = cookieValue[1]
+
+  })
+    /**
+    * From here onwards, user is expected to be authenticated
+    */
+
 
     /**
      * List installations available to logged user
@@ -283,18 +296,13 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
     .get(
       '/badger/:hash/endpoint.svg',
       computeSVGEndpointRequest)
+    .get(
+      '/badger/:hash/endpoint.html',
+      computeEmbeddedSVGEndpointRequest)
     /**
      * Before delegating to authenticated router, ensure the user has the needed cookie
      */
-    .all('/badger/*', (request: TRequestWithParams, env: EnvWithDurableObject): Response | void => {
-      let cookie = request.headers.get('cookie')
-      let cookieValue = /gh_code=([a-z0-9_]+)/.exec(cookie || '')
-      if (!cookieValue || cookieValue.length < 2) {
-        return json({ error: 'Please authenticate to perform this request' })
-      }
-      request.code = cookieValue[1]
-      return getAuthenticatedRouter(envCommon, Sentry).handle(request, env)
-    })
+    .all('/badger/*', (request: TRequestWithParams, env: EnvWithDurableObject): Response | void => getAuthenticatedRouter(envCommon, Sentry).handle(request, env))
 
   /**
 * This endpoint isn't exposed in production

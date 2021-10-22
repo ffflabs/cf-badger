@@ -56,7 +56,10 @@ export const Conclusion = {
     color: "critical",
     message: "failing",
   })
-
+  , startup_failure: (): ShieldsAttributes => ({
+    color: "critical",
+    message: "failing",
+  })
   , cancelled: (): ShieldsAttributes => ({
     color: "inactive",
     message: "cancelled",
@@ -146,9 +149,13 @@ export function computeColorAndMessage(runs: WorkflowRunPart[], workflow_id: num
   if (!wfRun) {
     return { ...payload('Unknown workflow'), ...Errors.no_runs() }
   }
-
+  let payloadOutput = payload(wfRun.name)
   if (wfRun.status === 'completed') {
-    return { ...payload(wfRun.name), ...Conclusion[wfRun.conclusion]() }
+    let conclusionFn = Conclusion[wfRun.conclusion]
+    console.log({ payloadOutput, wfRun, conclusionFn })
+    const finalmente = { ...payloadOutput, ...(typeof conclusionFn === 'function' ? conclusionFn() : conclusionFn) }
+    console.log({ finalmente })
+    return finalmente
   }
-  return { ...payload(wfRun.name), ...Status[wfRun.status]() }
+  return { ...payloadOutput, ...Status[wfRun.status]() }
 }

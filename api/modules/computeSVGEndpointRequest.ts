@@ -44,6 +44,41 @@ export async function computeSVGEndpointRequest(
     //metadata = this.getMetadata(metadata)
 
 
+}
+export async function computeEmbeddedSVGEndpointRequest(
+    request: TRequestWithParams,
+    env: EnvWithDurableObject
+    , ctx: TctxWithSentry
+): Promise<Response> {
+
+    const { url, params: { hash } } = request,
+        requestURL = new URL(url), style = requestURL.searchParams.get('style') || 'flat',
+        branch = requestURL.searchParams.get('branch') || 'master',
+        endpoint = `${env.WORKER_URL}/badger/${hash}?branch=${branch}`, cf: RequestInitCfProperties = {
+            cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
+        };
+    let endpointUrl = `https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`;
+    console.log({ endpoint, endpointUrl })
+
+
+
+    return fetch(endpoint).then(res => res.json()).then(runProps => {
+
+
+        return new Response(`
+        <img src="${endpointUrl}" >
+        <pre>${endpointUrl}</pre>
+        <pre>${endpoint}</pre>
+        <pre>${JSON.stringify(runProps, null, 4)}</pre>
+        `, {
+            headers: {
+                'content-type': 'text/html'
+            }
+        })
+    })
+
+
+    //metadata = this.getMetadata(metadata)
 
 
 }

@@ -40,6 +40,7 @@ export declare const Conclusion: {
     success: () => ShieldsAttributes;
     neutral: () => ShieldsAttributes;
     failure: () => ShieldsAttributes;
+    startup_failure: () => ShieldsAttributes;
     cancelled: () => ShieldsAttributes;
     timed_out: () => ShieldsAttributes;
     action_required: () => ShieldsAttributes;

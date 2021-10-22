@@ -229,7 +229,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.state.WORKER_URL = env.WORKER_URL as string;
         this.state.GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID as string;
         this.state.GITHUB_CLIENT_SECRET = env.GITHUB_CLIENT_SECRET as string;
-        this.state.appAuth = { token: '', appId: env.APP_ID, expiration: Math.floor(Date.now() / 1000) - 1000, ttl: 0 } as TghAppJWT
+        this.state.appAuth = { token: '', appId: env.APP_ID, expiration: 0, ttl: 0 } as TghAppJWT
         this.state.octokit = {} as { app: Octokit }
         this.state.userOctokit = {} as { [s: string]: OctokitUserInstance }
         this.state.octokit.app = this.getOctokit()
