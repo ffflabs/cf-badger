@@ -70,10 +70,10 @@ jobs:
           BADGER_KV_PREVIEW_ID: ${{env.BADGER_KV_PREVIEW_ID}}
           BADGER_KV_ID: ${{env.BADGER_KV_ID}}
           CF_API_TOKEN: ${{env.CF_API_TOKEN}}
-          GH_PRIVATE_KEY: ${{GH_PRIVATE_KEY}}
-          APP_ID: ${{APP_ID}}
-          GITHUB_CLIENT_ID: ${{GITHUB_CLIENT_ID}}
-          GITHUB_CLIENT_SECRET: ${{GITHUB_CLIENT_SECRET}}
+          GH_PRIVATE_KEY: ${{env.GH_PRIVATE_KEY}}
+          APP_ID: ${{env.APP_ID}}
+          GITHUB_CLIENT_ID: ${{env.GITHUB_CLIENT_ID}}
+          GITHUB_CLIENT_SECRET: ${{env.GITHUB_CLIENT_SECRET}}
 
       - run: yarn build
       - name: Run test
@@ -87,7 +87,7 @@ jobs:
           BADGER_KV_ID: ${{env.BADGER_KV_ID}}
           BADGER_KV_PREVIEW_ID: ${{env.BADGER_KV_PREVIEW_ID}}
           CF_API_TOKEN: ${{env.CF_API_TOKEN}}
-          GH_PRIVATE_KEY: ${{GH_PRIVATE_KEY}}
-          APP_ID: ${{APP_ID}}
-          GITHUB_CLIENT_ID: ${{GITHUB_CLIENT_ID}}
-          GITHUB_CLIENT_SECRET: ${{GITHUB_CLIENT_SECRET}}          
+          GH_PRIVATE_KEY: ${{env.GH_PRIVATE_KEY}}
+          APP_ID: ${{env.APP_ID}}
+          GITHUB_CLIENT_ID: ${{env.GITHUB_CLIENT_ID}}
+          GITHUB_CLIENT_SECRET: ${{env.GITHUB_CLIENT_SECRET}}          
