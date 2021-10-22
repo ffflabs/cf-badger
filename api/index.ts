@@ -44,8 +44,8 @@ export type TctxWithSentry = {
   sentry: Toucan;
 } & IWaitableObject;
 
-import { Badger, TInstallationRepos, TOutputResults, TWorkflow } from './Badger';
-
+import { Badger } from './Badger';
+import type { TInstallationRepos, TOutputResults, TWorkflow } from './modules/TInstallations'
 
 import type { IRequestParams } from './GithubIntegrationDurable';
 
@@ -144,7 +144,7 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
       async (
         request: TRequestWithParams,
         env: EnvWithDurableObject
-      ): Promise<Response> => Response.redirect(`https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&redirect_uri=${env.WORKER_URL}/bdg/code`))
+      ): Promise<Response> => Response.redirect(`https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&redirect_uri=${env.WORKER_URL}`))
     .get('/bdg/install', (
     ): Response => Response.redirect(`https://github.com/apps/cf-badger/installations/new`, 302))
 
@@ -226,10 +226,10 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
         status: 302,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          'set-cookie': `gh_code = ; path = /; secure; HttpOnly; SameSite=Lax;Max-Age= 0` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
+          'set-cookie': `gh_code = ''; domain=.cf-badger.com; path = /; secure; HttpOnly; SameSite=None;Max-Age=0`
         },
       });
-      jsonResponse.headers.append('set-cookie', `code =; path = /; secure; HttpOnly; SameSite=Lax;Max-Age= 0`)
+      jsonResponse.headers.append('set-cookie', `code = ''; path = /; domain=.cf-badger.com; secure; HttpOnly; SameSite=None; Max-Age=0`)
       jsonResponse.headers.set('Location', `${env.WORKER_URL}`)
       return jsonResponse
     })

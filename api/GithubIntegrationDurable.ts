@@ -376,7 +376,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
                     accum[iid] = { login, target_type, installationId: Number(iid), target_id: Number(target_id), enabledFor, repos: `${this.state.WORKER_URL}/badger/${login}` }
                     return accum;
-                }, stored.installations || {})
+                }, (stored.installations || {}) as { [s: number]: any })
                 // Cache available installations. 
                 this.storeWithExpiration(cacheKey, { ...stored }, 300)
 
@@ -421,23 +421,32 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             userOctokit.code = hash
             this.state.storage.put(hash, payload)
 
-            // const installations = await this.getInstallationsForUser(userOctokit, installationId)
-            const jsonResponse = new Response(JSON.stringify({ ...payload, hash /*, installations*/ }), {
+            let installations = [] as TMinimalInstallationInfo[]
+
+
+            return this.getInstallationsForUser(userOctokit, installationId)
+                .then(installs => {
+                    installations = installs;
+                    return { login, id, hash, installations }
+                }).catch(err => {
+                    this.Sentry.captureException(err);
+                    console.error(err)
+                    return { login, id, hash, installations }
+                });
+        }).then(({ login, id, hash, installations }) => {
+
+
+            const jsonResponse = new Response(JSON.stringify({ login, id, hash, installations }), {
                 status: 302,
                 headers: {
                     "Access-Control-Allow-Origin": "*",
-                    'set-cookie': `gh_code = ${String(hash)}; domain=.cf-badger.com; path = /; secure; HttpOnly; SameSite=None` //badger_jwt = ${String(jwt)}; path = /; secure; HttpOnly; SameSite=Lax`
+                    'set-cookie': `gh_code = ${String(hash)}; domain=.cf-badger.com; path = /; secure; HttpOnly; SameSite=None`
                 },
             });
             jsonResponse.headers.append('set-cookie', `code = ${String(code)}; path = /; domain=.cf-badger.com; secure; HttpOnly; SameSite=None`)
-            let location = [`https://${this.state.FRONTEND_HOSTNAME}`]
-            // let installation = installations.find(i => i.installationId === installationId)
-            //if (installation && installation.login) {
-            //  location.push(installation.login)
-            //}
-            jsonResponse.headers.set('Location', location.join('/'))
 
             return jsonResponse
+
         }).catch(err => {
             this.Sentry.captureException(err);
             console.trace(err)

@@ -820,40 +820,40 @@
     "/assets/about.a50812c2.js"
   ],
   "logo.svg": [
-    "/assets/README.0d40c7f1.js",
+    "/assets/README.6d583102.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/before_and_after200.svg": [
-    "/assets/README.0d40c7f1.js",
+    "/assets/README.6d583102.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/sshot.png": [
-    "/assets/README.0d40c7f1.js",
+    "/assets/README.6d583102.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/markdown.png": [
-    "/assets/README.0d40c7f1.js",
+    "/assets/README.6d583102.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/permissions.png": [
-    "/assets/README.0d40c7f1.js",
+    "/assets/README.6d583102.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "src/pages/README.md": [
-    "/assets/README.0d40c7f1.js",
+    "/assets/README.6d583102.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "src/pages/[installation]/[name].vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/[name].9a78b85f.js"
+    "/assets/[name].e61df34a.js"
   ],
   "src/pages/[installation]/[name].vue": [
-    "/assets/[name].9a78b85f.js"
+    "/assets/[name].e61df34a.js"
   ],
   "src/pages/[installation]/index.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/index.09db999e.js"
+    "/assets/index.901e0293.js"
   ],
   "src/pages/[installation]/index.vue": [
-    "/assets/index.09db999e.js"
+    "/assets/index.901e0293.js"
   ],
   "src/pages/[...all].vue?vue&type=script&setup=true&lang.ts": [
     "/assets/[...all].3ed168ed.js"
@@ -874,12 +874,15 @@
     "/assets/404.655945d2.js"
   ],
   "@vite-icons/carbon/logo-twitter": [
-    "/assets/home.f4c97c53.js"
+    "/assets/home.5a46494e.js"
   ],
   "src/components/Header.vue": [
-    "/assets/home.f4c97c53.js"
+    "/assets/home.5a46494e.js"
+  ],
+  "src/layouts/home.vue?vue&type=script&setup=true&lang.ts": [
+    "/assets/home.5a46494e.js"
   ],
   "src/layouts/home.vue": [
-    "/assets/home.f4c97c53.js"
+    "/assets/home.5a46494e.js"
   ]
 }

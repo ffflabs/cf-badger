@@ -61,6 +61,7 @@ declare type TViewerRepos = {
 };
 declare type TMinimalInstallationInfo = {
     login: string;
+    target_type?: string;
     installationId: number;
     target_id: number;
     repos: string;
