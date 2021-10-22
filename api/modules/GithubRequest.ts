@@ -4,6 +4,8 @@ export type TWorkflowParams = {
     owner: string;
     workflow_id?: number;
     branch?: string;
+    filename_url?: string;
+    name?: string;
 };
 
 /**

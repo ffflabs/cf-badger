@@ -13,7 +13,7 @@ export async function computeSVGEndpointRequest(
 
         requestURL = new URL(url), style = requestURL.searchParams.get('style') || 'flat',
         branch = requestURL.searchParams.get('branch') || 'master',
-        endpoint = `${env.WORKER_URL}/badger/${hash}?branch=${branch}`, cf: RequestInitCfProperties = {
+        endpoint = `${env.WORKER_URL}/badger/_${hash.replace(/^_/, '')}?branch=${branch}`, cf: RequestInitCfProperties = {
             cacheTtlByStatus: { '200-299': 300, '400-499': 1, '500-599': 0 },
         };
     let endpointUrl = `https://img.shields.io/endpoint.svg?url=${encodeURIComponent(endpoint)}&style=${style}`;
@@ -48,7 +48,7 @@ export async function computeSVGEndpointRequest(
 export async function computeEmbeddedSVGEndpointRequest(
     request: TRequestWithParams,
     env: EnvWithDurableObject
-    , ctx: TctxWithSentry
+
 ): Promise<Response> {
 
     const { url, params: { hash } } = request,

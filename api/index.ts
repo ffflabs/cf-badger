@@ -95,37 +95,50 @@ function getEnhancedIttyDurable<TMethodName extends string>(stubGetter: DurableS
   return stubGetter.get(nameId) as unknown as IttyDurable & ittyWithMethod<TMethodName>
 }
 
-function getAuthenticatedRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableRouter<TRequestWithParams> {
-
+function getAuthenticatedRouter(envCommon: EnvWithBindings, ctx: TctxWithSentry): ThrowableRouter<TRequestWithParams> {
+  const base = '/badger'
   const router = ThrowableRouter<TRequestWithParams>({
     stack: true,
-    base: '/badger',
+    base,
     routes: [
 
       [
         'GET', new RegExp(`_(?<hash>([a-f0-9]{20}))$`), [
           async (
             request: TRequestWithParams,
-            env: EnvWithDurableObject,
-
           ): Promise<Response> => {
-            withDurables()(request, env)
             const requestURL = new URL(request.url),
               hashHex = request.params.hash,
-              branch = requestURL.searchParams.get('branch') || 'master',
-              durableStub = getEnhancedIttyDurable<'computeResultRequestFromHash'>(request.Badger, 'durable_Badger')
+              branch = requestURL.searchParams.get('branch') || 'master'
+            return getEnhancedIttyDurable<'computeResultRequestFromHash'>(request.Badger, 'durable_Badger').computeResultRequestFromHash({ hashHex, branch })
 
-            return durableStub.computeResultRequestFromHash({ hashHex, branch })
-
+          }
+        ]
+      ], [
+        'GET', new RegExp(`_(?<hash>([a-f0-9]{20}))\.yml$`), [
+          async (
+            request: TRequestWithParams,
+          ): Promise<Response> => {
+            return getEnhancedIttyDurable<'redirectToWorkFlow'>(request.Badger, 'durable_Badger').redirectToWorkFlow({ hashHex: request.params.hash })
+          }
+        ]
+      ],
+      [
+        'GET', new RegExp(`_(?<hash>([a-f0-9]{20}))\.svg$`), [
+          async (
+            request: TRequestWithParams, env: EnvWithDurableObject
+          ): Promise<Response> => {
+            return computeSVGEndpointRequest(request, env, ctx)
           }
         ]
       ]
     ]
   })
+
   /**
      * Before delegating to authenticated router, ensure the user has the needed cookie
      */
-  return router.all('*', (request: TRequestWithParams, env: EnvWithDurableObject): Response | void => {
+  return router.all('*', (request: TRequestWithParams): Response | void => {
     let cookie = request.headers.get('cookie')
     let cookieValue = /gh_code=([a-z0-9_]+)/.exec(cookie || '')
     if (!cookieValue || cookieValue.length < 2) {
@@ -185,7 +198,6 @@ function getAuthenticatedRouter(envCommon: EnvWithBindings, Sentry: Toucan): Thr
       '/:owner/:repo/:workflow_id',
       async (
         request: TRequestWithParams,
-        env: EnvWithDurableObject,
       ): Promise<TOutputResults> => {
         let durableStub = getEnhancedIttyDurable<'getWorkflowResults'>(request.Badger, 'durable_Badger')
         let { owner, repo, workflow_id, code, requestURL } = await computeRunStatusParameters(request),
@@ -193,7 +205,7 @@ function getAuthenticatedRouter(envCommon: EnvWithBindings, Sentry: Toucan): Thr
         return durableStub.getWorkflowResults({ owner, repo, workflow_id, code, branch })
       })
 }
-function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableRouter<TRequestWithParams> {
+function getParentRouter(envCommon: EnvWithBindings, ctx: TctxWithSentry): ThrowableRouter<TRequestWithParams> {
   //const privateKey = [PRIVATE_KEY_1, PRIVATE_KEY_2, PRIVATE_KEY_3].join("\n");
 
 
@@ -204,10 +216,7 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
   //https://local.cf-badger.com/badger/ctohm/dbthor.cesion.poc/1798987
 
   router
-    .options('*', (
-
-
-    ): Response => {
+    .options('*', (): Response => {
       // console.log(env)
       return new Response(null, {
         headers: {
@@ -293,16 +302,19 @@ function getParentRouter(envCommon: EnvWithBindings, Sentry: Toucan): ThrowableR
       jsonResponse.headers.set('Location', `${env.WORKER_URL}`)
       return jsonResponse
     })
+
     .get(
       '/badger/:hash/endpoint.svg',
       computeSVGEndpointRequest)
+
     .get(
       '/badger/:hash/endpoint.html',
       computeEmbeddedSVGEndpointRequest)
+
     /**
      * Before delegating to authenticated router, ensure the user has the needed cookie
      */
-    .all('/badger/*', (request: TRequestWithParams, env: EnvWithDurableObject): Response | void => getAuthenticatedRouter(envCommon, Sentry).handle(request, env))
+    .all('/badger/*', (request: TRequestWithParams, env: EnvWithDurableObject): Response | void => getAuthenticatedRouter(envCommon, ctx).handle(request, env))
 
   /**
 * This endpoint isn't exposed in production
@@ -357,18 +369,18 @@ export default {
         IWaitableObject): Promise<Response> => {
 
 
-      const Sentry = getSentryInstance({ request, waitUntil }, env)
 
+      const ctx = { waitUntil, request, sentry: getSentryInstance({ request, waitUntil }, env) }
 
       env.GH_PRIVATE_KEY = [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
-      const router = getParentRouter(env, Sentry)
-      const { GITHUB_CLIENT_ID, GITHUB_CODE, GITHUB_CLIENT_SECRET } = env
+      const router = getParentRouter(env, ctx)
 
-      return Promise.resolve(router.handle(request, env, { waitUntil }))
+
+      return Promise.resolve(router.handle(request, env,))
 
 
         .catch(err => {
-          Sentry.captureException(err)
+          ctx.sentry.captureException(err)
           console.error(err);
           return json({ message: err.message, stack: env.WORKER_ENV === 'development' ? String(err.stack).replace(new RegExp(env.PROJECT_ROOT, 'ig'), '').split('\n') : [] })
         })

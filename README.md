@@ -8,7 +8,7 @@
 <img src="docs/images/cf-workers-badge.svg"></a>
 &nbsp; 
 <a href="https://github.com/ffflabs/cf-badger/actions/workflows/tests.yml">
-<img src="https://cf-badger.com/badger/9c6530e5f3abdb0f6247/endpoint.svg?branch=master&style=for-the-badge">
+<img src="https://cf-badger.com/badger/_39bde4f39ee9a2140d3a/endpoint.svg?branch=master&style=for-the-badge">
 </a>&nbsp; 
 <a href="https://pages.cloudflare.com/">
 <img src="docs/images/cf-pages-badge.svg"></a>

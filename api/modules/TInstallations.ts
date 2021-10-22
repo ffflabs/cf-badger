@@ -32,6 +32,7 @@ export interface IRequestParams {
 export type TOutputResults = ReturnType<typeof computeColorAndMessage> | {
     branches: TRunResults[];
     hashHex: string;
+    name?: string;
     count: number;
 };
 
