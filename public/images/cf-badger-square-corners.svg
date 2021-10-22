@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="svg926"
+   version="1.1"
+   viewBox="0 0 50.799995 50.8"
+   height="50.799999mm"
+   width="50.799995mm"
+   sodipodi:docname="cf-badger-square-corners.svg"
+   inkscape:version="1.1 (1:1.1+202106031931+af4d65493e)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview628"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="1572.6055"
+     inkscape:cy="91.923881"
+     inkscape:window-width="2560"
+     inkscape:window-height="1396"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg926" />
+  <defs
+     id="defs920">
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.72757014,0,0,0.94333228,-24.122096,211.06164)"
+       id="linearGradient11018"
+       x1="26.925823"
+       y1="0"
+       x2="26.925823"
+       y2="53.851646">
+      <stop
+         stop-color="#444D56"
+         offset="0%"
+         id="stop11014"
+         style="stop-color:#ee7005;stop-opacity:1" />
+      <stop
+         stop-color="#24292E"
+         offset="100%"
+         id="stop11016"
+         style="stop-color:#f7a735;stop-opacity:1" />
+    </linearGradient>
+    <inkscape:path-effect
+       effect="join_type"
+       id="path-effect710"
+       is_visible="true"
+       lpeversion="1"
+       linecap_type="butt"
+       line_width="1"
+       linejoin_type="bevel"
+       miter_limit="100"
+       attempt_force_join="true" />
+    <linearGradient
+       y2="93.069389"
+       y1="208.83029"
+       x1="171.76585"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-h"
+       gradientTransform="matrix(0.06563802,0,0,0.22728529,33.462907,254.84629)"
+       x2="398.69717"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop41"
+         stop-opacity=".5"
+         stop-color="#fff"
+         offset="0%" />
+      <stop
+         id="stop43"
+         stop-opacity=".1"
+         stop-color="#fff"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="98.778008"
+       y1="2.2265534"
+       x2="564.00464"
+       x1="385.07071"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-g"
+       gradientTransform="matrix(0.06592841,0,0,0.2262842,33.462907,254.84629)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop36"
+         stop-opacity=".5"
+         stop-color="#fff"
+         offset="0%" />
+      <stop
+         id="stop38"
+         stop-opacity=".1"
+         stop-color="#fff"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="23.900692"
+       y1="274.72061"
+       x2="216.66068"
+       x1="283.41779"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-f"
+       gradientTransform="matrix(0.08947946,0,0,0.16672604,33.462907,254.84629)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop31"
+         stop-color="#ffa95f"
+         offset="0%" />
+      <stop
+         id="stop33"
+         stop-color="#ffebc8"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="0"
+       y1="211.19463"
+       x2="557.76331"
+       x1="293.98117"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-e"
+       gradientTransform="matrix(0.06877003,0,0,0.21693398,33.462907,254.84629)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop24"
+         stop-opacity=".8"
+         stop-color="#d96504"
+         offset="0%" />
+      <stop
+         id="stop26"
+         stop-opacity=".2"
+         stop-color="#d96504"
+         offset="49.8%" />
+      <stop
+         id="stop28"
+         stop-opacity="0"
+         stop-color="#d96504"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="24.296316"
+       y1="279.26801"
+       x2="351.07346"
+       x1="418.93558"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-d"
+       gradientTransform="matrix(0.0909606,0,0,0.16401118,33.462907,254.84629)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop19"
+         stop-color="#ee6f05"
+         offset="0%" />
+      <stop
+         id="stop21"
+         stop-color="#fab743"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="83.889603"
+       y1="13.818598"
+       x2="144.51086"
+       x1="103.17684"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-c"
+       gradientTransform="matrix(0.11889691,0,0,0.12547471,33.462907,254.84629)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop14"
+         stop-color="#eb6f07"
+         offset="0%" />
+      <stop
+         id="stop16"
+         stop-opacity="0"
+         stop-color="#eb720a"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="203.70241"
+       y1="296.25995"
+       x2="76.342865"
+       x1="145.50487"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-b"
+       gradientTransform="matrix(0.10707473,0,0,0.13932846,33.462907,254.84629)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop9"
+         stop-color="#d96504"
+         offset="0%" />
+      <stop
+         id="stop11"
+         stop-opacity="0"
+         stop-color="#d96504"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="24.268799"
+       y1="241.87607"
+       x2="61.352177"
+       x1="119.26956"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-a"
+       gradientTransform="matrix(0.07991105,0,0,0.18668952,33.462907,254.84629)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop4"
+         stop-color="#eb6f07"
+         offset="0%" />
+      <stop
+         id="stop6"
+         stop-color="#fab743"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.72757014,0,0,0.94333228,-24.122096,211.06164)"
+       id="workflow-fill"
+       x1="26.925823"
+       y1="0"
+       x2="26.925823"
+       y2="53.851646">
+      <stop
+         stop-color="#444D56"
+         offset="0%"
+         id="stop1541"
+         style="stop-color:#24292f;stop-opacity:1" />
+      <stop
+         stop-color="#24292E"
+         offset="100%"
+         id="stop1543"
+         style="stop-color:#434c54;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.39620968,0,0,1.7322655,15.058755,211.06164)"
+       id="state-fill"
+       x1="14.662878"
+       y1="0"
+       x2="14.662878"
+       y2="29.325756">
+      <stop
+         stop-color="#D73A49"
+         offset="0%"
+         id="stop1546" />
+      <stop
+         stop-color="#CB2431"
+         offset="100%"
+         id="stop1548" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.268264,0,0,2.0055873,-57.231344,-1.9973677)"
+       id="workflow-fill-8"
+       x1="53.67495"
+       y1="0"
+       x2="53.67495"
+       y2="107.3499">
+      <stop
+         stop-color="#444D56"
+         offset="0%"
+         id="stop1615" />
+      <stop
+         stop-color="#24292E"
+         offset="100%"
+         id="stop1617" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.61084122,0,0,1.661488,0,-1.9973677)"
+       id="state-fill-8"
+       x1="40.927166"
+       y1="0"
+       x2="40.927166"
+       y2="81.854332">
+      <stop
+         stop-color="#34D058"
+         offset="0%"
+         id="stop1620" />
+      <stop
+         stop-color="#28A745"
+         offset="100%"
+         id="stop1622" />
+    </linearGradient>
+    <linearGradient
+       y2="93.069389"
+       y1="208.83029"
+       x1="171.76585"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-h-7"
+       gradientTransform="matrix(0.07414486,0,0,0.25201395,79.134509,187.90598)"
+       x2="398.69717"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop41-6"
+         stop-opacity=".5"
+         stop-color="#fff"
+         offset="0%" />
+      <stop
+         id="stop43-4"
+         stop-opacity=".1"
+         stop-color="#fff"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="98.778008"
+       y1="2.2265534"
+       x2="564.00464"
+       x1="385.07071"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-g-3"
+       gradientTransform="matrix(0.07447288,0,0,0.25090394,79.134509,187.90598)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop36-0"
+         stop-opacity=".5"
+         stop-color="#fff"
+         offset="0%" />
+      <stop
+         id="stop38-3"
+         stop-opacity=".1"
+         stop-color="#fff"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="23.900692"
+       y1="274.72061"
+       x2="216.66068"
+       x1="283.41779"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-f-0"
+       gradientTransform="matrix(0.1010762,0,0,0.18486585,79.134509,187.90598)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop31-9"
+         stop-color="#ffa95f"
+         offset="0%" />
+      <stop
+         id="stop33-2"
+         stop-color="#ffebc8"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="0"
+       y1="211.19463"
+       x2="557.76331"
+       x1="293.98117"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-e-5"
+       gradientTransform="matrix(0.07768278,0,0,0.24053642,79.134509,187.90598)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop24-4"
+         stop-opacity=".8"
+         stop-color="#d96504"
+         offset="0%" />
+      <stop
+         id="stop26-0"
+         stop-opacity=".2"
+         stop-color="#d96504"
+         offset="49.8%" />
+      <stop
+         id="stop28-5"
+         stop-opacity="0"
+         stop-color="#d96504"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="24.296316"
+       y1="279.26801"
+       x2="351.07346"
+       x1="418.93558"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-d-9"
+       gradientTransform="matrix(0.10274931,0,0,0.18185562,79.134509,187.90598)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop19-4"
+         stop-color="#ee6f05"
+         offset="0%" />
+      <stop
+         id="stop21-6"
+         stop-color="#fab743"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="83.889603"
+       y1="13.818598"
+       x2="144.51086"
+       x1="103.17684"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-c-9"
+       gradientTransform="matrix(0.13430623,0,0,0.13912638,79.134509,187.90598)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop14-2"
+         stop-color="#eb6f07"
+         offset="0%" />
+      <stop
+         id="stop16-2"
+         stop-opacity="0"
+         stop-color="#eb720a"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="203.70241"
+       y1="296.25995"
+       x2="76.342865"
+       x1="145.50487"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-b-4"
+       gradientTransform="matrix(0.12095187,0,0,0.15448741,79.134509,187.90598)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop9-7"
+         stop-color="#d96504"
+         offset="0%" />
+      <stop
+         id="stop11-7"
+         stop-opacity="0"
+         stop-color="#d96504"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       y2="24.268799"
+       y1="241.87607"
+       x2="61.352177"
+       x1="119.26956"
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-a-5"
+       gradientTransform="matrix(0.07991105,0,0,0.18668952,41.204326,192.89586)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop4-4"
+         stop-color="#eb6f07"
+         offset="0%" />
+      <stop
+         id="stop6-8"
+         stop-color="#fab743"
+         offset="100%" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="66.002632"
+       x2="50"
+       y1="66.002632"
+       x1="0"
+       id="linearGradient1812"
+       xlink:href="#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-a-5" />
+    <linearGradient
+       y2="24.268799"
+       x2="61.352177"
+       y1="241.87607"
+       x1="119.26956"
+       gradientTransform="matrix(0.09026771,0,0,0.20700136,79.134509,187.90598)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient1814"
+       xlink:href="#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-a-5" />
+    <linearGradient
+       y2="66.002632"
+       x2="50"
+       y1="66.002632"
+       x1="0"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient1826"
+       xlink:href="#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-a-5" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#workflow-fill"
+       id="linearGradient3069"
+       x1="36.091114"
+       y1="122.26859"
+       x2="36.091114"
+       y2="72.842644"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0251028,0,0,1,-42.768074,-71.699489)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11018"
+       id="linearGradient9313"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.33226599,0,0,1,75.610307,-71.69949)"
+       x1="-88.762787"
+       y1="120.51055"
+       x2="-105.38187"
+       y2="83.324287" />
+  </defs>
+  <metadata
+     id="metadata923">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <rect
+     style="fill:url(#linearGradient3069);fill-opacity:1;stroke:none;stroke-width:1.1117;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect2163"
+     width="214.98248"
+     height="50.784332"
+     x="-182.10806"
+     y="0" />
+  <rect
+     style="display:inline;fill:url(#linearGradient9313);fill-opacity:1;stroke:none;stroke-width:0.632915;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect2163-1"
+     width="69.682144"
+     height="50.784332"
+     x="30.446117"
+     y="-7.1054274e-15" />
+  <g
+     transform="translate(-44.303624,4.80014)"
+     style="display:none"
+     id="layer3">
+    <path
+       style="font-size:11px;font-family:'DejaVu Sans', Verdana, Geneva, sans-serif;fill:url(#linearGradient1812);fill-opacity:1;fill-rule:nonzero;stroke-width:1.00742519"
+       id="state-bg-9"
+       d="m 0,-1.9973677 h 46.939 c 1.69,0 3.061,1.36301804 3.061,3.0447164 V 130.95524 c 0,1.6817 -1.371533,3.11778 -3.061,3.04472 H 0 Z"
+       transform="matrix(0.37352941,0,0,0.37352941,78.543819,-4.1701199)" />
+  </g>
+  <g
+     style="display:inline"
+     transform="translate(-76.972553,-187.90598)"
+     id="layer1">
+    <path
+       id="path52-1"
+       d="m 93.897446,188.63731 6.760604,11.97205 -6.208719,10.96987 a 3.5872557,3.5211945 0 0 0 0,3.4264 l 6.208719,10.99697 -6.760604,11.97206 a 7.174511,7.0423889 0 0 1 -3.035371,-2.80341 L 80.100308,216.8204 a 7.2021056,7.0694753 0 0 1 0,-7.04238 l 10.761767,-18.35085 a 7.174511,7.0423889 0 0 1 3.035371,-2.78986 z"
+       style="fill:url(#linearGradient1814);stroke-width:0.13669506" />
+    <path
+       id="path54-2"
+       d="m 94.449331,211.59277 a 3.5872557,3.5211945 0 0 0 0,3.41286 l 6.208719,10.99697 -6.760604,11.97206 a 7.174511,7.0423889 0 0 1 -3.035371,-2.80341 L 80.100308,216.8204 c -0.855423,-1.4491 3.932184,-3.18262 14.349023,-5.21407 z"
+       style="opacity:0.7;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-b-4);stroke-width:0.13669506" />
+    <path
+       id="path56-8"
+       d="m 94.587302,189.84263 6.070748,10.76673 -1.007198,1.71997 -5.35329,-8.89778 c -1.545279,-2.47839 -3.90459,-1.19179 -6.857177,3.81914 l 0.441508,-0.74487 2.980182,-5.07865 a 7.174511,7.0423889 0 0 1 3.007777,-2.78986 l 0.703653,1.20532 z"
+       style="opacity:0.5;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-c-9);stroke-width:0.13669506" />
+    <path
+       id="path60-3"
+       d="m 118.04247,238.61118 -10.6238,0.0948 12.85893,-23.80869 a 3.725227,3.656625 0 0 0 0,-3.43994 l -12.85893,-23.55137 h 2.4283 l 13.49359,23.44303 a 3.725227,3.656625 0 0 1 -0.0138,3.62953 2155.6647,2115.967 0 0 0 -8.6508,14.89737 c -2.62146,4.52338 -1.49009,7.43514 3.3665,8.73527 z"
+       style="fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-e-5);stroke-width:0.13669506" />
+    <path
+       id="path62-6"
+       d="m 97.070787,238.69244 c -1.103771,0 -2.207541,-0.25732 -3.173341,-0.71778 l 13.272874,-23.49721 c 0.41392,-0.73132 0.41392,-1.62516 0,-2.35648 L 93.897446,188.63731 a 7.174511,7.0423889 0 0 1 3.173341,-0.73133 h 10.761793 l 13.38322,23.68679 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.38322,23.68681 z"
+       style="fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-f-0);stroke-width:0.13669506" />
+    <path
+       id="path64-8"
+       d="m 120.2776,212.12097 -13.68676,-24.21499 h 1.24174 l 13.38322,23.68679 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.38322,23.68681 h -1.24174 l 13.68676,-24.21499 c 0.41392,-0.73132 0.41392,-1.62516 0,-2.35648 z"
+       style="opacity:0.6;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-g-3);stroke-width:0.13669506" />
+    <path
+       id="path66-0"
+       d="M 107.17032,212.12097 93.897446,188.63731 c 0.413914,-0.2167 0.910611,-0.37921 1.379713,-0.51463 2.924993,5.15989 7.243491,12.98778 12.969341,23.47009 a 3.5872557,3.5211945 0 0 1 0,3.41286 l -13.176297,23.41595 c -0.469104,-0.13543 -0.717452,-0.23022 -1.158961,-0.43338 l 13.245278,-23.49721 c 0.41391,-0.73132 0.41391,-1.62516 0,-2.35648 z"
+       style="opacity:0.6;fill:url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-h-7);stroke-width:0.13669506" />
+  </g>
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot2495"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     transform="matrix(0.37349158,0,0,0.37349158,66.876389,-9.4257266)"><flowRegion
+       id="flowRegion2497"><rect
+         id="rect2499"
+         width="623.1864"
+         height="126.91525"
+         x="-650.84747"
+         y="35.796608" /></flowRegion><flowPara
+       id="flowPara2501"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:96px;font-family:FreeSans;-inkscape-font-specification:'FreeSans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1">CF-Badger</flowPara></flowRoot>
+</svg>

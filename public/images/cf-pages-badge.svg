@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 194.73621 28"
+   version="1.1"
+   id="svg19"
+   sodipodi:docname="cf-pages-logo.svg"
+   inkscape:version="1.1 (1:1.1+202106031931+af4d65493e)"
+   width="194.73621"
+   height="28"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview21"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="2.6640625"
+     inkscape:cx="159.15543"
+     inkscape:cy="-24.58651"
+     inkscape:window-width="2560"
+     inkscape:window-height="1396"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg19"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <title
+     id="title2">Cloudflare Pages</title>
+  <defs
+     id="defs11">
+    <linearGradient
+       id="CloudflarePagesLogo--gradient"
+       x1="71.818031"
+       x2="17.799355"
+       y1="-0.49070397"
+       y2="51.832664"
+       gradientTransform="scale(0.80864959,1.2366296)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#fbb743"
+         id="stop4" />
+      <stop
+         offset="100%"
+         stop-color="#f28333"
+         id="stop6" />
+      <stop
+         offset="100%"
+         stop-color="#ea6b00"
+         id="stop8" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-d"
+       id="linearGradient10857"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.276645,0,0,2.3019203,2357.9627,-133.20132)"
+       x1="418.93558"
+       y1="279.26801"
+       x2="351.07346"
+       y2="24.296316" />
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-d"
+       x1="418.93558"
+       x2="351.07346"
+       y1="279.26801"
+       y2="24.296316"
+       gradientTransform="scale(0.74471471,1.3427961)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#ee6f05"
+         id="stop1039" />
+      <stop
+         offset="100%"
+         stop-color="#fab743"
+         id="stop1041" />
+    </linearGradient>
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-a"
+       x1="119.26956"
+       x2="61.352177"
+       y1="241.87607"
+       y2="24.268799"
+       gradientTransform="scale(0.65424958,1.5284687)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#eb6f07"
+         id="stop1024" />
+      <stop
+         offset="100%"
+         stop-color="#fab743"
+         id="stop1026" />
+    </linearGradient>
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-b"
+       x1="145.50487"
+       x2="76.342865"
+       y1="296.25995"
+       y2="203.70241"
+       gradientTransform="scale(0.87664464,1.1407131)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#d96504"
+         id="stop1029" />
+      <stop
+         offset="100%"
+         stop-color="#d96504"
+         stop-opacity="0"
+         id="stop1031" />
+    </linearGradient>
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-c"
+       x1="103.17684"
+       x2="144.51086"
+       y1="13.818598"
+       y2="83.889603"
+       gradientTransform="scale(0.97343549,1.0272894)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#eb6f07"
+         id="stop1034" />
+      <stop
+         offset="100%"
+         stop-color="#eb720a"
+         stop-opacity="0"
+         id="stop1036" />
+    </linearGradient>
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-e"
+       x1="293.98117"
+       x2="557.76331"
+       y1="211.19463"
+       y2="0"
+       gradientTransform="scale(0.56303553,1.7760868)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#d96504"
+         stop-opacity=".8"
+         id="stop1044" />
+      <stop
+         offset="49.8%"
+         stop-color="#d96504"
+         stop-opacity=".2"
+         id="stop1046" />
+      <stop
+         offset="100%"
+         stop-color="#d96504"
+         stop-opacity="0"
+         id="stop1048" />
+    </linearGradient>
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-f"
+       x1="283.41779"
+       x2="216.66068"
+       y1="274.72061"
+       y2="23.900692"
+       gradientTransform="scale(0.73258827,1.3650232)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#ffa95f"
+         id="stop1051" />
+      <stop
+         offset="100%"
+         stop-color="#ffebc8"
+         id="stop1053" />
+    </linearGradient>
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-g"
+       x1="385.07071"
+       x2="564.00464"
+       y1="2.2265534"
+       y2="98.778008"
+       gradientTransform="scale(0.53977054,1.8526391)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#fff"
+         stop-opacity=".5"
+         id="stop1056" />
+      <stop
+         offset="100%"
+         stop-color="#fff"
+         stop-opacity=".1"
+         id="stop1058" />
+    </linearGradient>
+    <linearGradient
+       id="CloudflareWorkersLogoCombinationMarkHorizontal--gradient-h"
+       x1="171.76585"
+       y1="208.83029"
+       y2="93.069389"
+       gradientTransform="scale(0.53739306,1.8608353)"
+       x2="398.69717"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#fff"
+         stop-opacity=".5"
+         id="stop1061" />
+      <stop
+         offset="100%"
+         stop-color="#fff"
+         stop-opacity=".1"
+         id="stop1063" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#workflow-fill"
+       id="linearGradient3069-0"
+       x1="36.091114"
+       y1="122.26859"
+       x2="36.091114"
+       y2="72.842644"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.15013217,0,0,0.14654864,181.6939,-5.9540292)" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.72757014,0,0,0.94333228,-24.122096,211.06164)"
+       id="workflow-fill"
+       x1="26.925823"
+       y1="0"
+       x2="26.925823"
+       y2="53.851646">
+      <stop
+         stop-color="#444D56"
+         offset="0%"
+         id="stop1541"
+         style="stop-color:#24292f;stop-opacity:1" />
+      <stop
+         stop-color="#24292E"
+         offset="100%"
+         id="stop1543"
+         style="stop-color:#434c54;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <g
+     fill="none"
+     fill-rule="nonzero"
+     id="g17"
+     transform="matrix(0.34303277,0,0,0.34303277,1.8219882,2.9265161)">
+    <path
+       fill="#b7bbbd"
+       d="M 41.94,8 H 56 l 2,2 v 44 l -2,2 H 36.84 l 0.97,-1.5 H 55.38 L 56.5,53.38 V 10.62 L 55.38,9.5 H 43.26 l -1.43,7.39 H 40.3 L 41.67,9.43 41.95,8 Z M 8,56 6,54 V 10 L 8,8 h 19.9 l -1,1.5 H 8.62 L 7.5,10.62 V 53.38 L 8.62,54.5 H 23.1 L 22.86,56 Z m 3,-5 h 8.5 l -0.3,1.5 H 10 L 9.5,52 v -9 l 1.5,3 z m 34,0 1.5,1.5 H 39 L 40,51 Z"
+       id="path13" />
+    <path
+       fill="url(#CloudflarePagesLogo--gradient)"
+       d="M 28.67,38 H 15 l -1.66,-3.12 23,-34 3.62,1.5 L 35.42,26 H 49 l 1.68,3.09 -22,34 -3.66,-1.4 z M 11.5,15 a 1.5,1.5 0 1 1 0,-3 1.5,1.5 0 0 1 0,3 z m 4,0 a 1.5,1.5 0 1 1 0,-3 1.5,1.5 0 0 1 0,3 z m 4,0 a 1.5,1.5 0 1 1 0,-3 1.5,1.5 0 0 1 0,3 z"
+       id="path15"
+       style="fill:url(#CloudflarePagesLogo--gradient)" />
+  </g>
+  <metadata
+     id="metadata838">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Cloudflare Pages</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer6"
+     style="display:inline;fill:none;fill-opacity:1;stroke:#8c9396;stroke-opacity:1"
+     transform="matrix(3.6740342,0,0,3.6816718,-592.27414,-16.464438)">
+    <path
+       id="rect2163"
+       style="fill:none;fill-opacity:1;stroke:#8c9396;stroke-width:0.162866;stroke-opacity:1"
+       d="m 162.24985,4.5534334 h 31.50732 v 7.4423746 h -31.50725 c -0.53355,0 -0.96309,-0.429539 -0.96309,-0.963091 V 5.5165249 c 0,-0.5335527 0.42954,-0.9630915 0.96309,-0.9630915 z"
+       sodipodi:nodetypes="sccsssss" />
+    <g
+       id="layer7"
+       style="display:inline;fill:none;fill-opacity:1;stroke:#8c9396;stroke-opacity:1" />
+  </g>
+  <text
+     transform="matrix(0.10595634,0,0,0.10595634,-5.1468518,-0.83479177)"
+     x="682.5"
+     y="175"
+     textLength="785"
+     fill="#ffffff"
+     id="text12"
+     lengthAdjust="spacing"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:100px;font-family:Verdana, Geneva, 'DejaVu Sans', sans-serif;-inkscape-font-specification:'Verdana, Geneva, DejaVu Sans, sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#8c9396;fill-opacity:1;text-rendering:geometricPrecision">CLOUDFLARE</text>
+  <g
+     id="g5407"
+     transform="matrix(0.04355489,0,0,0.04355489,1.4801082,5.8019042)">
+    <path
+       fill="url(#CloudflareWorkersLogoCombinationMarkHorizontal--gradient-d)"
+       d="m 4333.7787,-133.20189 c 68.1407,0 90.0198,23.34335 103.2915,90.17914 v 231.24749 212.86802 c 0,67.91671 -34.6098,108.55862 -102.5265,108.55862 H 2714.5306 v -642.85327 z"
+       id="path1078-1"
+       style="fill:url(#linearGradient10857);stroke-width:1.71427"
+       sodipodi:nodetypes="sscssccs" />
+  </g>
+  <text
+     transform="matrix(0.10595634,0,0,0.10595634,-18.017962,-0.60480977)"
+     x="1643.75"
+     y="175"
+     textLength="657.5"
+     fill="#ffffff"
+     font-weight="bold"
+     id="text14"
+     lengthAdjust="spacing"
+     style="font-size:100px;font-family:Verdana, Geneva, 'DejaVu Sans', sans-serif;letter-spacing:20.6448px;text-anchor:middle;text-rendering:geometricPrecision"><tspan
+       style="word-spacing:-41.2897px"
+       id="tspan64800">P</tspan><tspan
+       id="tspan60764">AGES</tspan></text>
+</svg>

@@ -19,3 +19,13 @@ meta.json
 *.pem
 
 vite.config.ts.js
+.DS_Store
+*.local
+dist
+dist-ssr
+node_modules
+**/_*
+worker-site/worker
+
+.env.*
+
