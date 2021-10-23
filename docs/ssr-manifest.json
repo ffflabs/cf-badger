@@ -820,40 +820,40 @@
     "/assets/about.a06f3142.js"
   ],
   "logo.svg": [
-    "/assets/README.087ff0a5.js",
+    "/assets/README.f17d111d.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/before_and_after200.svg": [
-    "/assets/README.087ff0a5.js",
+    "/assets/README.f17d111d.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/sshot.png": [
-    "/assets/README.087ff0a5.js",
+    "/assets/README.f17d111d.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/markdown.png": [
-    "/assets/README.087ff0a5.js",
+    "/assets/README.f17d111d.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "../../../../../../images/permissions.png": [
-    "/assets/README.087ff0a5.js",
+    "/assets/README.f17d111d.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "src/pages/README.md": [
-    "/assets/README.087ff0a5.js",
+    "/assets/README.f17d111d.js",
     "/assets/logo.c91e3ad8.svg"
   ],
   "src/pages/[installation]/[name].vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/[name].b89f465e.js"
+    "/assets/[name].45e155af.js"
   ],
   "src/pages/[installation]/[name].vue": [
-    "/assets/[name].b89f465e.js"
+    "/assets/[name].45e155af.js"
   ],
   "src/pages/[installation]/index.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/index.bbebda7b.js"
+    "/assets/index.053b8c7b.js"
   ],
   "src/pages/[installation]/index.vue": [
-    "/assets/index.bbebda7b.js"
+    "/assets/index.053b8c7b.js"
   ],
   "src/pages/[...all].vue?vue&type=script&setup=true&lang.ts": [
     "/assets/[...all].33149dfa.js"
@@ -874,15 +874,15 @@
     "/assets/404.0c8b344a.js"
   ],
   "@vite-icons/carbon/logo-twitter": [
-    "/assets/home.7d360792.js"
+    "/assets/home.04eb9e33.js"
   ],
   "src/components/Header.vue": [
-    "/assets/home.7d360792.js"
+    "/assets/home.04eb9e33.js"
   ],
   "src/layouts/home.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/home.7d360792.js"
+    "/assets/home.04eb9e33.js"
   ],
   "src/layouts/home.vue": [
-    "/assets/home.7d360792.js"
+    "/assets/home.04eb9e33.js"
   ]
 }
