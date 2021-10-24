@@ -663,7 +663,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
             let stored = (await this.state.storage.get(key) || { expiration: 0 }) as T & { expiration: number, ttl: number },
                 ttl = GithubIntegrationDurable.secondsRemaining(stored.expiration)
             if (ttl > 30) {
-                console.log(`getStoredWithTtl: ${key}, ttl ${ttl}`)
+                this.debug(`getStoredWithTtl: ${key}, ttl ${ttl}`)
                 return { ...stored, ttl }
             }
             return { ttl: 0 } as T & { ttl: number }

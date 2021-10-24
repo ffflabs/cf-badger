@@ -15,6 +15,7 @@ compatibility_date = "2021-09-09"
   APP_ID= "_APP_ID"
   GITHUB_CLIENT_ID= "_GITHUB_CLIENT_ID"
   GITHUB_CLIENT_SECRET= "_GITHUB_CLIENT_SECRET"
+  SENTRY_DSN= ""
 [durable_objects]
 
   [[durable_objects.bindings]]
@@ -39,6 +40,7 @@ compatibility_date = "2021-09-09"
       RELEASE = "_RELEASE_"
       BADGER_KV_ID = "_BADGER_KV_ID"
       APP_ID= "_APP_ID"
+      SENTRY_DSN= ""
       GITHUB_CLIENT_ID= "_GITHUB_CLIENT_ID"
       GITHUB_CLIENT_SECRET= "_GITHUB_CLIENT_SECRET"
 
