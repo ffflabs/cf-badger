@@ -25,8 +25,18 @@ export async function computeLoginHash({ login, id, token }: { login: string; id
 }
 
 
-export async function computeResultHash({ owner, repo, workflow_id }: { owner: string; workflow_id: number, repo: string }): Promise<string> {
-    const linkParams = new TextEncoder().encode(JSON.stringify({ owner, repo, workflow_id }));
+export async function computeResultHash({
+    owner,
+    repo,
+    workflow_id,
+    filename_url
+}: {
+    filename_url?: string,
+    owner: string;
+    workflow_id: number,
+    repo: string
+}): Promise<string> {
+    const linkParams = new TextEncoder().encode(JSON.stringify({ owner, repo, workflow_id, filename_url }));
     const hashBuffer = await crypto.subtle.digest(
         {
             name: "SHA-1",
@@ -224,7 +234,6 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.state.FRONTEND_HOSTNAME = env.FRONTEND_HOSTNAME
         this.state.env = env
         this.state.GITHUB_TOKEN = env.GITHUB_TOKEN as string;
-        this.state.GITHUB_CODE = env.GITHUB_CODE as string
         this.state.WORKER_ENV = env.WORKER_ENV as string;
         this.state.WORKER_URL = env.WORKER_URL as string;
         this.state.GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID as string;

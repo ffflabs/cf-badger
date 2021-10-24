@@ -94,7 +94,12 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
       })
     })
   }
-  async getRepoWorkflows({ owner, repo, code }: TOwnerRepo & { code?: string } = {} as TOwnerRepo): Promise<{ workflows: TWorkflow[] }> {
+  async getRepoWorkflows({
+    owner,
+    repo,
+    code }: TOwnerRepo & {
+      code?: string
+    } = {} as TOwnerRepo): Promise<{ workflows: TWorkflow[] }> {
     let cacheKey = `workflows:${owner}/${repo}`
     let stored = await this.getStoredWithTtl<{ workflows: TWorkflow[] }>(cacheKey)
     if (stored.ttl) return stored
@@ -107,30 +112,67 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
     }).catch(err => {
       this.debug({ failed: 'getRepoWorkflows', owner, repo, code, stack: err.stack.split('\n').slice(0, 2), message: err.message })
 
-      if (isErrorResponse(err, 404) && owner && code) {
-        return this.actingAsUser(code).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
+      if (isErrorResponse(err, 404) && owner) {
+        return this.actingAsUser(code || this.state.BADGER_KV_ID).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
       }
-      return this.actingAsUser(this.state.BADGER_KV_ID).then(octokit => octokit.actions.listRepoWorkflows({ owner, repo }))
+      throw err
     }).then(({ data }) => {
       let { workflows } = data as IRepoWorkflows
       return this.storeWithExpiration(cacheKey, { workflows: workflows.map(workflow => mapWorkflow({ owner, repo, workflow }, this.state.WORKER_URL)) })
     })
-
   }
-  protected async listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }: { octokit: Octokit, owner: string, repo: string, workflow_id: number, branch?: string }): Promise<{ workflow_runs: TRunResults[], total_count: number }> {
-
-    let workflowsInfo = (await this.state.storage.get<{ workflows: TWorkflow[] }>(`workflows:${owner}/${repo}`)),
-      workflowInfo = workflowsInfo && workflowsInfo.workflows && workflowsInfo.workflows.find(w => w.id === workflow_id)
-
+  private async getWorkflowInfo({
+    owner,
+    repo,
+    workflow_id,
+  }: {
+    owner: string,
+    repo: string,
+    workflow_id: number,
+  }): Promise<{
+    name: string,
+    state: string,
+    filename_url?: string
+  }> {
+    return this.getRepoWorkflows({ owner, repo }).then(({ workflows }) => {
+      return (workflows.find(w => w.id === workflow_id) || { name: 'N/A', state: 'N/A', filename_url: undefined }) as TWorkflow
+    }).then(({
+      name,
+      state,
+      filename_url
+    }) => ({
+      name,
+      state,
+      filename_url
+    }))
+  }
+  protected async listWorkflowRuns({
+    octokit,
+    owner,
+    repo,
+    workflow_id,
+    branch
+  }: {
+    octokit: Octokit,
+    owner: string,
+    repo: string,
+    workflow_id: number,
+    branch?: string
+  }): Promise<{ name: string, state: string, filename_url?: string, workflow_runs: TRunResults[], total_count: number }> {
+    let { name, state, filename_url } = await this.getWorkflowInfo({ owner, repo, workflow_id })
     let cacheKey = `workflows:${owner}/${repo}/${workflow_id}/${branch || ''}`
-    let stored = await this.getStoredWithTtl<{ workflow_runs: TRunResults[], total_count: number }>(cacheKey)
-    if (stored.ttl) return { ...workflowInfo, ...stored }
+    let stored = await this.getStoredWithTtl<{
+      name: string,
+      state: string,
+      filename_url: string, workflow_runs: TRunResults[], total_count: number
+    }>(cacheKey)
+    if (stored.ttl) return { ...stored, name, state, filename_url }
     return octokit.actions.listWorkflowRuns({ owner, repo, workflow_id, branch, exclude_pull_requests: true, per_page: branch ? 1 : 100 })
-      .then(({ data }): { workflow_runs: TRunResults[], total_count: number } => {
+      .then(({ data }): { name: string, state: string, filename_url?: string, workflow_runs: TRunResults[], total_count: number } => {
         let { workflow_runs: runs, total_count } = data
-        console.log(runs[0])
+        //console.log(runs[0])
         const lastruns = getLatestRunByBranch(runs as WorkflowRunPart[]) as { [s: string]: TRunResults }
-        return this.storeWithExpiration(cacheKey, { ...workflowInfo, workflow_runs: Object.values(lastruns), total_count: Number(total_count) })
+        return this.storeWithExpiration(cacheKey, { name, state, filename_url, workflow_runs: Object.values(lastruns), total_count: Number(total_count) })
       })
   }
 
@@ -144,22 +186,23 @@ export class Badger extends GithubIntegrationDurable implements DurableObject {
       owner = installationInfo.login
       return this.getOctokitForInstallation(installationId).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
     }).catch(err => {
-      //  this.debug({ failed: 'getWorkflowResults', owner, repo, workflow_id, code, stack: err.stack.split('\n').slice(0, 2) })
-
-      if (isErrorResponse(err, 404) && owner && code) {
-        return this.actingAsUser(code).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
+      if (isErrorResponse(err, 404) && owner) {
+        return this.actingAsUser(code || this.state.BADGER_KV_ID).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
       }
-      return this.actingAsUser(this.state.GITHUB_TOKEN).then(octokit => this.listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }))
-    }).then(async ({ name, state, filename_url, url, workflow_runs, total_count }): Promise<TOutputResults> => {
+      throw err
+
+    }).then(async ({
+      name,
+      state,
+      filename_url,
+
+      workflow_runs,
+      total_count }): Promise<TOutputResults> => {
       const hashHex = await computeResultHash({ owner, repo, workflow_id, filename_url })
       this.storeWithExpiration(`hash:${hashHex}`,
         {
           owner, repo, workflow_id, filename_url
         })
-      //this.debug({ owner, repo, workflow_id, code, branch, hashHex })
-
-
-
       return { name, state, filename_url, hashHex, branches: workflow_runs, count: total_count }
 
     })
