@@ -372,7 +372,7 @@ export default {
 
       const ctx = { waitUntil, request, sentry: getSentryInstance({ request, waitUntil }, env) }
 
-      env.GH_PRIVATE_KEY = [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
+      env.GH_PRIVATE_KEY = env.GH_PRIVATE_KEY || [env.PRIVATE_KEY_1, env.PRIVATE_KEY_2, env.PRIVATE_KEY_3].join("\n");
       const router = getParentRouter(env, ctx)
 
 
