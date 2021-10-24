@@ -69,19 +69,14 @@ jobs:
 
       - name: populate GH vars on wrangler.toml 
         run: |
-          sed -i "s/_GH_PRIVATE_KEY/$GH_PRIVATE_KEY/g" wrangler.toml
+          echo "GH_PRIVATE_KEY=$GH_PRIVATE_KEY" >> .env
           sed -i "s/_APP_ID/$APP_ID/g" wrangler.toml
-        shell: bash
-        env:
-          GH_PRIVATE_KEY: ${{env.GH_PRIVATE_KEY}}
-          APP_ID: ${{env.APP_ID}}
-
-      - name: populate GH CLIENT vars on wrangler.toml 
-        run: |
           sed -i "s/_GITHUB_CLIENT_ID/$GITHUB_CLIENT_ID/g" wrangler.toml
           sed -i "s/_GITHUB_CLIENT_SECRET/$GITHUB_CLIENT_SECRET/g" wrangler.toml
         shell: bash
         env:
+          GH_PRIVATE_KEY: ${{env.GH_PRIVATE_KEY}}
+          APP_ID: ${{env.APP_ID}}
           GITHUB_CLIENT_ID: ${{env.GITHUB_CLIENT_ID}}
           GITHUB_CLIENT_SECRET: ${{env.GITHUB_CLIENT_SECRET}}
 
