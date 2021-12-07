@@ -18,6 +18,8 @@
 
 </p> 
 
+[![CodeQL](https://cf-badger.com/badger/_b14dff568bb84d2bfe80/endpoint.svg?branch=master&style=for-the-badge)](https://github.com/ffflabs/cf-badger/actions/workflows/codeql-analysis.yml)
+
 [![Deploy_Development](https://cf-badger.com/badger/_37f5d792a59297163894/endpoint.svg?branch=develop&style=for-the-badge)](https://github.com/TreidSPA/api.mydot.app/actions/workflows/sentry_deploy_dev.yml)
 
 ## 💥 Private Repos vs Public Badges. That's our pain point
