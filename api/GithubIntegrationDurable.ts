@@ -6,7 +6,6 @@ import { EnvWithDurableObject, error, json } from 'itty-router-extras';
 import kleur from 'kleur';
 import Toucan from 'toucan-js';
 import type { computeColorAndMessage } from './modules/computeColorAndMessage';
-import { createKeyPair, getDERfromPEM } from './modules/signing_utils';
 import type { IInstallWebhook, Repository, Sender } from './modules/webhook_schemes';
 
 
@@ -253,70 +252,9 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
 
     }
-    protected async getOrCreateKeyPair(): Promise<{ privateKey: ArrayBuffer; publicKey: ArrayBuffer; }> {
-
-        let StoredPrivateKey = await this.state.BADGER_KV.get('ENCRYPT_PRIVATE_KEY', 'arrayBuffer'),
-            StoredPublicKey = await this.state.BADGER_KV.get('ENCRYPT_PUBLIC_KEY', 'arrayBuffer')
-        if (!StoredPrivateKey || !StoredPublicKey) {
-            const { privateKey, publicKey } = await createKeyPair()
-            //return Promise.all([
-            //keyPair.privateKey ? exportPrivateCryptoKey(keyPair.privateKey) : Promise.resolve(''),
-            //keyPair.publicKey ? exportPublicCryptoKey(keyPair.publicKey) : Promise.resolve('')
-            //])
-            if (privateKey) await this.state.BADGER_KV.put('ENCRYPT_PRIVATE_KEY', privateKey)
-            if (publicKey) await this.state.BADGER_KV.put('ENCRYPT_PUBLIC_KEY', publicKey)
-            StoredPrivateKey = privateKey
-            StoredPublicKey = publicKey
-        }
-        return { privateKey: StoredPrivateKey, publicKey: StoredPublicKey } as { privateKey: ArrayBuffer; publicKey: ArrayBuffer; }
-    }
-    protected async getPublicCryptoKey(): Promise<CryptoKey> {
 
 
-        if (!this.state.publicCriptoKey) {
 
-            let { privateKey, publicKey } = await this.getOrCreateKeyPair()
-
-            this.state.publicCriptoKey = await crypto.subtle.importKey(
-                'spki',
-                getDERfromPEM(this.state.GITHUB_PUBKEY),
-                {
-                    name: "RSA-OAEP",
-                    hash: { name: 'SHA-256' },
-                },
-                false,
-                ['verify', 'encrypt']
-            );
-
-        }
-        return this.state.publicCriptoKey as CryptoKey
-    }
-
-    protected async getPrivateCryptoKey(algorithm: { name: string, hash: { name: string } }, force = false): Promise<CryptoKey> {
-
-
-        if (!this.state.privateCriptoKey || force) {
-
-            let { privateKey, publicKey } = await this.getOrCreateKeyPair()
-
-            algorithm = algorithm || {
-                name: "RSA-OAEP",
-                hash: { name: 'SHA-256' },
-            } as { name: string, hash: { name: string } }
-
-
-            this.state.privateCriptoKey = await crypto.subtle.importKey(
-                'pkcs8',
-                getDERfromPEM(this.state.GH_PRIVATE_KEY),
-
-                algorithm,
-                false,
-                ['decrypt', 'sign']
-            );
-
-        }
-        return this.state.privateCriptoKey as CryptoKey
-    }
 
     protected processError(err: Error & { status?: unknown, url?: string }, extra: { [s: string]: string | number }): ErrorObject & { eventId?: string } {
         let eventId = this.getSentryInstance().captureException(err)
@@ -339,7 +277,7 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
 
         const { action, installation: installationRaw, sender: senderRaw, repositories_removed, repositories_added } = payload,
             installationInfo = dataItemToInstallationInfo(installationRaw as unknown as TInstallationItem, this.state.WORKER_URL);
-
+        this.Sentry.addBreadcrumb({ type: action, data: payload })
         this.state.waitUntil(this.state.BADGER_KV.put(`installation:${payload.installation.id}`, JSON.stringify(installationRaw), { metadata: installationInfo }))
         installationInfo.installationId = installationInfo.installationId || installationInfo.id
 

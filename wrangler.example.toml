@@ -1,5 +1,5 @@
 name = "cf-badger"
-route = "https://cf-badger.com/badger/*"
+route = "https://cf-badger.com/*"
 account_id = "_ACCOUNT_ID_"
 zone_id = "_ZONE_ID_"
 api_token = "_API_TOKEN_"
@@ -8,7 +8,7 @@ compatibility_date = "2021-09-09"
 
 [vars]
   WORKER_ENV = "production"
-  WORKER_URL = "https://cf-badger.com/badger/*"
+  WORKER_URL = "https://cf-badger.com"
   RELEASE = "_RELEASE_"
   GITHUB_TOKEN = "_GITHUB_TOKEN"
   BADGER_KV_ID = "_BADGER_KV_ID"
@@ -27,6 +27,11 @@ compatibility_date = "2021-09-09"
   preview_id = "_BADGER_KV_PREVIEW_ID"
   id = "_BADGER_KV_ID"
 
+[miniflare]
+  upstream = "https://cf-badger.com"
+  cache_persist = true
+  wrangler_env = "dev"
+  port = 8989
 
 [env]
 
@@ -36,7 +41,7 @@ compatibility_date = "2021-09-09"
     [env.dev.vars]
       WORKER_ENV = "development"
       GITHUB_TOKEN = "_GITHUB_TOKEN"
-      WORKER_URL = "https://cf-badger.com/badger/*"
+      WORKER_URL = "https://cf-badger.com"
       RELEASE = "_RELEASE_"
       BADGER_KV_ID = "_BADGER_KV_ID"
       APP_ID= "_APP_ID"

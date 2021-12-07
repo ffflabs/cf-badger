@@ -160,6 +160,7 @@ function getAuthenticatedRouter(envCommon: EnvWithBindings, ctx: TctxWithSentry)
         request: TRequestWithParams
 
       ): Promise<Response> => {
+        return json({ login: request.code })
         if (!request.code) {
           return json({ login: request.code })
         }
@@ -261,7 +262,7 @@ function getParentRouter(envCommon: EnvWithBindings, ctx: TctxWithSentry): Throw
         }
         console.log({ code, installationId })
         if (!code) {
-          return Response.redirect(env.WORKER_URL)
+          return json({ error: "no_code" })
         }
 
         return getEnhancedIttyDurable<'user'>(request.Badger, 'durable_Badger')

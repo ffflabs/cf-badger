@@ -11,7 +11,8 @@ export declare function computeLoginHash({ login, id, token }: {
     id: number;
     token: string;
 }): Promise<string>;
-export declare function computeResultHash({ owner, repo, workflow_id }: {
+export declare function computeResultHash({ owner, repo, workflow_id, filename_url }: {
+    filename_url?: string;
     owner: string;
     workflow_id: number;
     repo: string;
@@ -142,17 +143,6 @@ export declare abstract class GithubIntegrationDurable extends IttyDurable {
     [s: string]: unknown;
     debug: (...args: unknown[]) => void;
     constructor(state: DurableObjectState, env: EnvWithDurableObject);
-    protected getOrCreateKeyPair(): Promise<{
-        privateKey: ArrayBuffer;
-        publicKey: ArrayBuffer;
-    }>;
-    protected getPublicCryptoKey(): Promise<CryptoKey>;
-    protected getPrivateCryptoKey(algorithm: {
-        name: string;
-        hash: {
-            name: string;
-        };
-    }, force?: boolean): Promise<CryptoKey>;
     protected processError(err: Error & {
         status?: unknown;
         url?: string;

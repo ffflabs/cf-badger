@@ -11,8 +11,7 @@ import type {
 import type { IWorkflowRun, WorkflowRunPart, TRunResults } from './modules/computeColorAndMessage';
 import { computeColorAndMessage, getLatestRunByBranch } from './modules/computeColorAndMessage';
 import type { TWorkflowParams } from "./modules/GithubRequest";
-//import type { Octokit } from '@octokit/rest';
-//import { createKeyPair, decryptMessage, encryptMessage, getJWT } from './modules/signing_utils';
+
 import type { OctokitUserInstance } from './GithubIntegrationDurable';
 import type { Octokit } from '@octokit/rest';
 import { TOwnerOrInstallationId, TInstallationRepos, isErrorResponse, TOwnerRepo, TWorkflow, IRepoWorkflows, mapWorkflow, TOutputResults, TInstallations } from './modules/TInstallations';

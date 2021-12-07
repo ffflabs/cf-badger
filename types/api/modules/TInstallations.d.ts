@@ -27,6 +27,8 @@ export declare type TOutputResults = ReturnType<typeof computeColorAndMessage> |
     branches: TRunResults[];
     hashHex: string;
     name?: string;
+    state?: string;
+    filename_url?: string;
     count: number;
 };
 export declare type TInstallationRepos = {

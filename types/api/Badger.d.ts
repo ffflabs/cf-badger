@@ -21,6 +21,7 @@ export declare class Badger extends GithubIntegrationDurable implements DurableO
     }): Promise<{
         workflows: TWorkflow[];
     }>;
+    private getWorkflowInfo;
     protected listWorkflowRuns({ octokit, owner, repo, workflow_id, branch }: {
         octokit: Octokit;
         owner: string;
@@ -28,6 +29,9 @@ export declare class Badger extends GithubIntegrationDurable implements DurableO
         workflow_id: number;
         branch?: string;
     }): Promise<{
+        name: string;
+        state: string;
+        filename_url?: string;
         workflow_runs: TRunResults[];
         total_count: number;
     }>;
