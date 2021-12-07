@@ -58,6 +58,7 @@ jobs:
           sed -i "s/_BADGER_KV_PREVIEW_ID/$BADGER_KV_PREVIEW_ID/g" wrangler.toml
           sed -i "s/_BADGER_KV_ID/$BADGER_KV_ID/g" wrangler.toml
           sed -i "s/_GITHUB_TOKEN/$GITHUB_TOKEN/g" wrangler.toml
+          cat wrangler.toml
         shell: bash
         env:
           WORKER_ENV: 'development'

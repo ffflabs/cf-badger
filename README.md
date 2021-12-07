@@ -1,5 +1,5 @@
 
-&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;[![Logo](/logo.svg)](https://cf-badger.com/) &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;[![Logo](logo.svg)](https://cf-badger.com/) &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
 
 [Cf-Badger](https://cf-badger.com) generates short urls displaying current status (actually, delayed up to 5 min) of your private repos workflows without exposing but the bare minimum of your code.
  
@@ -17,7 +17,8 @@
 <div align="center" style="text-align:center"><a href="https://cf-badger.com">CF-Badger</a> is my project for the <a href="https://challenge.developers.cloudflare.com/">Cloudflare Developer Summer Challenge</a></div>
 
 </p> 
-<a href="undefined"><img alt="undefined" src="https://local.cf-badger.com/images/endpoint.svg?branch=master&style=for-the-badge" /></a>
+
+[![Deploy_Development](https://cf-badger.com/badger/_37f5d792a59297163894/endpoint.svg?branch=develop&style=for-the-badge)](https://github.com/TreidSPA/api.mydot.app/actions/workflows/sentry_deploy_dev.yml)
 
 ## 💥 Private Repos vs Public Badges. That's our pain point
 

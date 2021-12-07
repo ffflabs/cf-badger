@@ -247,7 +247,6 @@ export abstract class GithubIntegrationDurable extends IttyDurable {
         this.warn = console.warn.bind(console, kleur.yellow('WARN: '))
         this.error = console.error.bind(console, kleur.red('ERROR: '))
 
-        this.state.storage.put(env.BADGER_KV_ID as string, { login: 'cf-badger', id: env.APP_ID, token: this.state.GITHUB_TOKEN })
 
 
 
