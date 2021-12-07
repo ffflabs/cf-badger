@@ -7,18 +7,21 @@
 <a href="https://workers.cloudflare.com/">
 <img src="../images/cf-workers-badge.svg"></a>
 &nbsp; 
-<a href="https://github.com/ffflabs/cf-badger/actions/workflows/test.yml">
-<img src="https://cf-badger.com/badger/_39bde4f39ee9a2140d3a/endpoint.svg?branch=master&style=for-the-badge">
-</a>&nbsp; 
 <a href="https://pages.cloudflare.com/">
 <img src="../images/cf-pages-badge.svg"></a>
 <img src="https://img.shields.io/static/v1?label=Made%20With&message=TypeScript&color=f0f0f0&labelColor=3974c0&style=for-the-badge&logo=typescript&logoColor=white&messageColor=3974c0">
 
+<div align="center" style="text-align:center">
+<a href="https://github.com/ffflabs/cf-badger/actions/workflows/codeql-analysis.yml"><img src="https://cf-badger.com/badger/_b14dff568bb84d2bfe80/endpoint.svg?branch=master&style=for-the-badge"></a>
+&nbsp; 
+<a href="https://github.com/ffflabs/cf-badger/actions/workflows/test.yml"><img src="https://cf-badger.com/badger/_39bde4f39ee9a2140d3a/endpoint.svg?branch=master&style=for-the-badge"/> </a>
+&nbsp; 
+</div>
 <div align="center" style="text-align:center"><a href="https://cf-badger.com">CF-Badger</a> is my project for the <a href="https://challenge.developers.cloudflare.com/">Cloudflare Developer Summer Challenge</a></div>
 
 </p> 
 
-[![CodeQL](https://cf-badger.com/badger/_b14dff568bb84d2bfe80/endpoint.svg?branch=master&style=for-the-badge)](https://github.com/ffflabs/cf-badger/actions/workflows/codeql-analysis.yml)
+
  
 
 ## 💥 Private Repos vs Public Badges. That's our pain point
@@ -34,14 +37,16 @@ The visual cue you get from a status badge conveys valuable info well beyond the
   
 Basically, any road that aims to preserve the code's private nature leads to broken badge images.
 
-<p align="center" style="text-align:center">
+<div align="center" style="font-size:0.8em;text-align:center">
 
 
 <img src="../images/before_and_after200.svg">
 
-<div align="center" style="font-size:0.8em;text-align:center">How to get from broken to flawless?</div>
 
-</p>
+
+<div align="center" style="font-size:0.8em;text-align:center">How to get from broken to flawless?</div>
+</div>
+
 
 ------------
 
